@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prumo — gestão escolar</title>
+<meta name="theme-color" content="#1f3fb0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Sofia+Sans+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: calmo, prático, de secretaria escolar organizada; frases curtas.
+   IDEA: o quadro de horários da sala dos professores — grade de dias × aulas.
+   PICTURE: a própria ferramenta; no topo, uma faixa com a grade e casas trocadas em coral.
+   COLOUR and TYPE: azul-caderno dominante, papel branco, coral de acento; Sofia Sans Condensed nos títulos, Atkinson Hyperlegible no texto.
+   LAYOUT: faixa azul com nome e abas; conteúdo em uma coluna de até 1100px; tabelas viram cartões no celular. */
+:root{color-scheme:light dark;
+--bg:light-dark(#f6f7fb,#0f131b);--paper:light-dark(#ffffff,#171d28);--ink:light-dark(#151c2e,#e9edf5);--muted:light-dark(#566078,#9ba7bb);
+--line:light-dark(#dbe0ea,#2a3344);--blue:light-dark(#1f3fb0,#86a2ff);--blueBg:light-dark(#1f3fb0,#16245a);--blueSoft:light-dark(#e9eeff,#1c2747);
+--coral:light-dark(#d9432a,#ff8b72);--coralSoft:light-dark(#fdece7,#3a2019);--ok:light-dark(#18734a,#62d39d);--okSoft:light-dark(#e3f4ea,#15301f);
+--warn:light-dark(#8a5a00,#f0c162);--warnSoft:light-dark(#fff4d8,#362c12);--grey:light-dark(#eef0f4,#222a38)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Atkinson Hyperlegible",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Sofia Sans Condensed","Arial Narrow",sans-serif;line-height:1.05;margin:0 0 .4em;text-wrap:balance}
+h1{font-size:clamp(32px,5vw,44px);font-weight:800}h2{font-size:26px;font-weight:800}h3{font-size:20px;font-weight:700}
+p{margin:.3em 0 .8em;max-width:70ch}
+a{color:var(--blue)}
+.top{background:var(--blueBg);color:#fff;padding:18px max(4vw,16px) 0}
+.topin{max-width:1100px;margin:auto;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand b{font:800 36px/1 "Sofia Sans Condensed",sans-serif;letter-spacing:.5px}
+.brand span{opacity:.85;font-size:15px}
+.quem{display:flex;gap:10px;align-items:center;font-size:14px;flex-wrap:wrap}
+.quem button{background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:8px;padding:6px 10px;font:700 14px "Atkinson Hyperlegible",sans-serif;cursor:pointer;min-height:36px}
+.sync{opacity:.85}
+nav.tabs{max-width:1100px;margin:0 auto}nav.tabs:empty{height:16px}
+.modbar{display:flex;align-items:center;gap:12px;padding:12px 0 10px}
+.modbar .voltar{background:rgba(255,255,255,.16);color:#fff;border:0;border-radius:10px;padding:8px 14px;font:700 15px "Atkinson Hyperlegible",sans-serif;cursor:pointer;min-height:40px}
+.modbar .mt{display:flex;align-items:center;gap:8px;font:800 24px/1 "Sofia Sans Condensed",sans-serif}
+.subs{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:12px}
+.subs button{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:999px;padding:10px 14px;font:700 15px "Atkinson Hyperlegible",sans-serif;cursor:pointer;min-height:44px}
+.subs button[aria-current=page]{background:var(--bg);color:var(--ink)}
+nav.tabs button:focus-visible{outline:3px solid #ffd2c7;outline-offset:-3px}
+.brand b{cursor:pointer}
+.mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:18px}
+.mod{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;cursor:pointer;color:var(--ink);font:15px/1.4 "Atkinson Hyperlegible",sans-serif;min-height:150px;transition:border-color .15s,transform .15s}
+.mod:hover{border-color:var(--blue);transform:translateY(-2px)}
+.mod b{font:800 24px/1.1 "Sofia Sans Condensed",sans-serif}
+.mod span:last-child{color:var(--muted)}
+.mod .ico{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:var(--blueSoft);color:var(--blue);margin-bottom:4px}
+.mod.cfg .ico{background:var(--coralSoft);color:var(--coral)}
+@media(max-width:600px){.mods{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}.mod{min-height:130px;padding:14px}.mod b{font-size:20px}.mod span:last-child{font-size:13px}.subs button{padding:8px 11px;font-size:14px;min-height:40px}.brand b{font-size:30px}.top{padding-top:12px}}
+@media(prefers-reduced-motion:reduce){.mod{transition:none}}
+main{max-width:1100px;margin:auto;padding:24px max(4vw,16px) 40px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px;margin:0 0 18px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:end}
+label{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:14px}
+label.ck{flex-direction:row;align-items:center;gap:8px;font-weight:400;font-size:15px;min-height:36px}
+label.ck input{min-height:auto;width:20px;height:20px;flex:none}
+input,select,textarea{font:16px "Atkinson Hyperlegible",sans-serif;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px}
+textarea{width:100%;min-height:120px}
+textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;min-height:140px}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:1px}
+button.b,label.b{font:700 15px "Atkinson Hyperlegible",sans-serif;border-radius:10px;padding:10px 16px;min-height:44px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink);position:relative}
+button.b.p{background:var(--blue);border-color:var(--blue);color:light-dark(#fff,#0f131b)}
+button.b.c{background:var(--coral);border-color:var(--coral);color:light-dark(#fff,#0f131b)}
+button.b.s{padding:6px 10px;min-height:36px;font-size:14px}
+button.b.perigo{background:var(--coralSoft);border-color:var(--coral);color:var(--coral)}
+button.b:disabled{opacity:.45;cursor:not-allowed}
+.hid{position:absolute;opacity:0;width:1px;height:1px}
+.acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.muted{color:var(--muted)}.small{font-size:14px}
+.chips{display:flex;flex-direction:column;gap:8px}
+.prof{border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.prof.on{border-color:var(--coral);background:var(--coralSoft)}
+.tog{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:8px 14px;min-height:40px;font:700 15px "Atkinson Hyperlegible",sans-serif;cursor:pointer}
+.tog[aria-pressed=true]{background:var(--coral);border-color:var(--coral);color:light-dark(#fff,#0f131b)}
+.tog.a{padding:4px 10px;min-height:34px;font-size:14px}
+.cols2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px 18px}
+@media(max-width:700px){.cols2{grid-template-columns:minmax(0,1fr)}}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:13px;color:var(--muted);font-weight:700}
+td select{max-width:100%}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.nw{white-space:nowrap}
+.tag{display:inline-block;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:700;white-space:nowrap}
+.t-ok{background:var(--okSoft);color:var(--ok)}.t-w{background:var(--warnSoft);color:var(--warn)}.t-c{background:var(--coralSoft);color:var(--coral)}.t-b{background:var(--blueSoft);color:var(--blue)}
+pre.zap{white-space:pre-wrap;background:var(--grey);border-radius:12px;padding:14px;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:0}
+.texto{white-space:pre-wrap;background:var(--grey);border-radius:12px;padding:16px;margin:0;line-height:1.6}
+.grade td,.grade th{text-align:center;padding:4px}
+.grade th:first-child,.grade td:first-child{text-align:left;white-space:nowrap}
+.grade input{width:100%;min-width:62px;text-align:center;padding:6px;min-height:40px;font-size:15px}
+.k-aula{background:var(--blueSoft)}.k-prioritario,.k-disponivel{background:var(--okSoft)}.k-condicional{background:var(--warnSoft)}.k-indisponivel{background:var(--grey)}.k-erro{background:var(--coralSoft);border-color:var(--coral)!important}
+.cellt{border-radius:8px;padding:6px;font-size:14px}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}
+.steps li{counter-increment:s;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 16px 16px 64px;position:relative}
+.steps li::before{content:counter(s);position:absolute;left:16px;top:14px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--blueSoft);color:var(--blue);font:800 20px "Sofia Sans Condensed",sans-serif}
+.steps li.feito::before{content:"✓";background:var(--ok);color:#fff}
+.rel{margin-top:12px;border-radius:12px;padding:12px 14px}
+.rel ul{margin:.3em 0;padding-left:1.2em}
+.rel.err{background:var(--coralSoft)}.rel.ok{background:var(--okSoft)}.rel.w{background:var(--warnSoft)}
+.empty{text-align:center;padding:36px 16px}
+.subtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.scroll{overflow-x:auto}
+details{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:10px;background:var(--paper)}
+summary{cursor:pointer;font-weight:700}
+.lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.item{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.item h3{margin:0}
+.bolhas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.bol{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);background:var(--paper);color:var(--ink);font:700 15px "Atkinson Hyperlegible",sans-serif;cursor:pointer}
+.bol[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:light-dark(#fff,#0f131b)}
+.bol.errada[aria-pressed=true]{background:var(--coral);border-color:var(--coral)}
+.qrow{display:flex;gap:10px;align-items:center;padding:4px 0;border-bottom:1px solid var(--line)}
+.qrow b{width:34px;text-align:right;flex:none;font-variant-numeric:tabular-nums}
+.quest{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+.alt{display:flex;gap:8px;align-items:center;margin-top:6px}
+.alt input[type=text]{flex:1}
+.alt input[type=radio]{width:22px;height:22px;min-height:auto;flex:none}
+/* modo estudante */
+body.aluno .top nav,body.aluno .quem,body.aluno footer{display:none}
+.relogio{font:800 40px/1 "Sofia Sans Condensed",sans-serif;font-variant-numeric:tabular-nums}
+.relogio.pouco{color:var(--coral)}
+.opc{display:block;width:100%;text-align:left;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:14px;padding:14px 16px;margin:10px 0;font:17px/1.4 "Atkinson Hyperlegible",sans-serif;cursor:pointer;min-height:56px}
+.opc[aria-pressed=true]{border-color:var(--blue);background:var(--blueSoft)}
+.navq{display:flex;flex-wrap:wrap;gap:6px}
+.navq button{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:700 15px "Atkinson Hyperlegible",sans-serif;cursor:pointer}
+.navq button.r{background:var(--okSoft);border-color:var(--ok)}
+.navq button.at{outline:3px solid var(--blue)}
+.enun{font-size:19px;line-height:1.5;white-space:pre-wrap}
+.auth{max-width:440px;margin:24px auto}
+footer{text-align:center;padding:10px 16px 40px;color:var(--muted);font-size:14px}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(120px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:700;max-width:92vw;transition:transform .25s;z-index:9}
+#toast.on{transform:translateX(-50%) translateY(0)}
+#folhas{display:none}
+@media(prefers-reduced-motion:reduce){#toast{transition:none}}
+@media(max-width:600px){table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;color:var(--muted);font-size:13px}.stack td:empty{display:none}.stack td input,.stack td select{width:100%}}
+@media print{.top,nav,footer,.noprint,#toast{display:none!important}body{background:#fff;color:#000}.card{border:0}
+ body.imprimindo main{display:none}body.imprimindo #folhas{display:block}@page{margin:0}#folhas svg{width:210mm;height:297mm;display:block;page-break-after:always}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<header class="top">
+  <div class="topin">
+    <div class="brand"><b data-act="go" data-v="inicio">Prumo</b><span id="escolaNome">Gestão escolar</span></div>
+    <div class="quem" id="quem"></div>
+  </div>
+  <nav class="tabs" id="tabs" aria-label="Seções"></nav>
+</header>
+<main id="app"></main>
+<div id="folhas"></div>
+<footer id="rodape">Desenvolvido por <a href="https://www.instagram.com/pedror_motta/" target="_blank" rel="noopener">Pedro Motta</a></footer>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+{
+/* =====================================================================
+   CONFIGURAÇÃO DO SERVIDOR CENTRAL (Supabase)
+   Deixe em branco para usar o modo demonstração (dados só neste aparelho).
+   ===================================================================== */
+const SERVIDOR={url:'https://dqiczyjjbjperoagswgp.supabase.co',chave:'sb_publishable_STerZw0LCBYFdkh3enzfNQ_jSg87ebz'};
+
+const KEY='prumo.v2';
+const COLS=['professores','turmas','estudantes','horario','historico','avaliacoes','correcoes','provas','tentativas','ocorrencias','relatorios'];
+const CFG=['escola','turnos','sabado','tipos','reserva','listas','periodos','ocTipos','ocInicial','ocInicio','ocProvidencias'];
+const PROF_ESCREVE=['avaliacoes','correcoes','provas','ocorrencias','relatorios'];
+const CAD=['config','professores','turmas','estudantes','horario'];
+const PAPEIS={prioritario:'Plantão — usar primeiro',disponivel:'Livre — pode substituir',condicional:'Condicional — só se tiver poucos no dia',indisponivel:'Não pode substituir'};
+const NOMEPAPEL={master:'Master',coordenacao:'Coordenação',professor:'Professor(a)',aee:'AEE'};
+const DIAS5=['Segunda','Terça','Quarta','Quinta','Sexta'];
+const SIT=['Consolidado','Em consolidação','Não consolidado'];
+const LETRAS='ABCDE';
+const uid=()=>Date.now().toString(36).slice(-5)+Math.random().toString(36).slice(2,7);
+function padrao(){return{escola:'',turnos:[{nome:'Manhã',aulas:5,horas:'07:00, 07:50, 08:40, 09:50, 10:40'}],sabado:false,
+ tipos:[{sigla:'PLT',nome:'Plantão de substituição',papel:'prioritario',limite:0},{sigla:'LIV',nome:'Horário livre (janela)',papel:'disponivel',limite:0},{sigla:'PLAN',nome:'Planejamento',papel:'condicional',limite:1},{sigla:'IND',nome:'Indisponível',papel:'indisponivel',limite:0}],
+ reserva:[],periodos:['1º trimestre','2º trimestre','3º trimestre'],
+ listas:{barreiras:['Dificuldade de concentração e atenção','Dificuldade na leitura e na escrita','Dificuldade no raciocínio matemático','Faltas frequentes','Dificuldade de interação com os colegas','Pouca autonomia nas atividades','Comportamento que interfere na aprendizagem'],
+  adaptacoes:['Atividades adaptadas ao nível de aprendizagem','Avaliação adaptada','Mais tempo para as atividades','Leitura das questões pelo professor','Uso de material concreto','Lugar próximo ao professor','Enunciados curtos e diretos'],
+  acessibilidade:['Material ampliado','Recursos visuais de apoio','Apoio de profissional em sala','Tecnologia assistiva','Rotina visual'],
+  intervencoes:['Atendimento em pequeno grupo','Recomposição das aprendizagens','Contato com a família','Encaminhamento ao AEE','Encaminhamento à rede de saúde ou de assistência','Acompanhamento da coordenação'],
+  itens:{'Língua Portuguesa':['Lê com fluência textos adequados ao ano','Compreende e interpreta textos','Produz textos com coerência','Usa ortografia e pontuação adequadas ao ano','Expressa-se oralmente com clareza'],
+   'Matemática':['Resolve as operações adequadas ao ano','Resolve problemas compreendendo o enunciado','Compreende o sistema de numeração','Lê e interpreta tabelas e gráficos','Usa noções de geometria e medidas']}},
+ ocTipos:[{nome:'Conversa ou distração que atrapalha a aula',desconto:0.25},{nome:'Recusa em fazer as atividades',desconto:0.5},{nome:'Uso indevido do celular',desconto:0.5},{nome:'Desrespeito a colega ou funcionário',desconto:1},{nome:'Dano ao patrimônio',desconto:1.5},{nome:'Agressão física',desconto:2}],
+ ocInicial:5,ocInicio:'',ocProvidencias:['Conversa com o estudante','Contato com a família','Encaminhamento à coordenação','Convocação da família','Registro no diário de bordo'],
+ professores:[],turmas:[],estudantes:[],horario:[],historico:[],avaliacoes:[],correcoes:[],provas:[],tentativas:[],ocorrencias:[],relatorios:[]}}
+const MODO=SERVIDOR.url&&SERVIDOR.chave?'servidor':'local';
+let S=padrao(),ME={papel:'master',nome:'',uid:null,email:''},ESCOLA=null,ESCOLA_COD='',sb=null,MEMBROS=[],pronto=MODO==='local';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>String(s??'').normalize('NFD').replace(/[̀-ͯ]/g,'').trim().toLowerCase().replace(/\s+/g,' ');
+const kT=s=>norm(s).replace(/[\s\-º°ª.\/]/g,'');
+const dias=()=>S.sabado?DIAS5.concat('Sábado'):DIAS5;
+const nAulas=t=>Math.max(1,Math.min(12,parseInt(S.turnos[t]?.aulas)||1));
+const horas=t=>String(S.turnos[t]?.horas||'').split(/[,;]/).map(s=>s.trim()).filter(Boolean);
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const hoje=()=>iso(new Date());
+const agoraHM=()=>{const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+const dataBR=s=>s?s.split('-').reverse().join('/'):'';
+const lista=a=>a.length<2?(a[0]||''):a.slice(0,-1).join(', ')+' e '+a[a.length-1];
+const minusc=s=>s?s[0].toLowerCase()+s.slice(1):s;
+const num=v=>(Math.round(v*10)/10).toLocaleString('pt-BR');
+const isMaster=()=>ME.papel==='master';
+const gestor=()=>ME.papel==='master'||ME.papel==='coordenacao';
+const isCoord=gestor;
+const veTudo=()=>gestor()||ME.papel==='aee';
+let toastT;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),3400)}
+let armado=null,armT;
+function confirma(b,id){if(armado===id){armado=null;clearTimeout(armT);return true}armado=id;b.dataset.orig=b.textContent;b.textContent='Clique de novo para confirmar';b.classList.add('perigo');clearTimeout(armT);armT=setTimeout(()=>{armado=null;if(b.isConnected){b.textContent=b.dataset.orig;b.classList.remove('perigo')}},4500);return false}
+async function copiar(txt){try{await navigator.clipboard.writeText(txt);toast('Copiado.');return}catch(e){}const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();toast(ok?'Copiado.':'Não consegui copiar. Selecione o texto e copie.')}
+function baixar(nome,txt,tipo){try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:tipo||'text/plain;charset=utf-8'}));a.download=nome;document.body.appendChild(a);a.click();a.remove()}catch(e){}toast('Se o download não começou, use o botão Copiar.')}
+const libs={};
+function carregar(url,glob){if(window[glob])return Promise.resolve(window[glob]);return libs[url]||(libs[url]=new Promise((ok,no)=>{const s=document.createElement('script');s.src=url;s.onload=()=>window[glob]?ok(window[glob]):no(new Error('lib'));s.onerror=()=>{delete libs[url];no(new Error('lib'))};document.head.appendChild(s)}))}
+const LIB_SB='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+const LIB_QR='https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';
+const LIB_JSQR='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js';
+const LIB_XLSX='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+
+/* ---------- persistência ---------- */
+function ids(){for(const c of COLS)for(const d of S[c])if(!d.id)d.id=uid()}
+let snap=new Map();
+const podeColecao=c=>isMaster()||(gestor()&&!CAD.includes(c))||PROF_ESCREVE.includes(c);
+function docsAtuais(){const m=new Map();const cfg={};for(const k of CFG)cfg[k]=S[k];if(podeColecao('config'))m.set('config|config',JSON.stringify(cfg));for(const c of COLS){if(!podeColecao(c))continue;for(const d of S[c]){if(!isCoord()&&d.autorUid&&d.autorUid!==ME.uid)continue;m.set(c+'|'+d.id,JSON.stringify(d))}}return m}
+function save(){ids();if(MODO==='local'){try{localStorage.setItem(KEY,JSON.stringify(S));return true}catch(e){toast('Não consegui salvar neste navegador. Faça um backup agora.');return false}}agendarSync();return true}
+let syncT,syncando=false,pend=false;
+function setSync(t){const el=$('sync');if(el)el.textContent=t}
+function agendarSync(){pend=true;setSync('Salvando…');clearTimeout(syncT);syncT=setTimeout(sync,600)}
+async function sync(){if(syncando){syncT=setTimeout(sync,600);return}syncando=true;pend=false;const atual=docsAtuais();const up=[],del={};
+ for(const[k,v]of atual)if(snap.get(k)!==v)up.push(k);
+ for(const k of snap.keys()){const c=k.split('|')[0];if(!atual.has(k)&&podeColecao(c)){const d=k.slice(c.length+1);const own=!isCoord()?S[c]?.some(x=>x.id===d):false;if(!own&&(isCoord()||JSON.parse(snap.get(k)).autorUid===ME.uid))(del[c]||(del[c]=[])).push(d)}}
+ try{for(let i=0;i<up.length;i+=300){const rows=up.slice(i,i+300).map(k=>{const c=k.split('|')[0];return{escola_id:ESCOLA,colecao:c,id:k.slice(c.length+1),doc:JSON.parse(atual.get(k)),atualizado_em:new Date().toISOString()}});const{error}=await sb.from('dados').upsert(rows);if(error)throw error;rows.forEach(r=>snap.set(r.colecao+'|'+r.id,JSON.stringify(r.doc)))}
+  for(const c in del)for(let i=0;i<del[c].length;i+=200){const part=del[c].slice(i,i+200);const{error}=await sb.from('dados').delete().eq('escola_id',ESCOLA).eq('colecao',c).in('id',part);if(error)throw error;part.forEach(d=>snap.delete(c+'|'+d))}
+  setSync('Salvo')}catch(e){setSync('Erro ao salvar');toast('Não consegui salvar no servidor: '+(e.message||e))}syncando=false}
+async function carregarServidor(){let all=[],from=0;for(;;){const{data,error}=await sb.from('dados').select('colecao,id,doc').eq('escola_id',ESCOLA).range(from,from+999);if(error)throw error;all=all.concat(data);if(data.length<1000)break;from+=1000}
+ const n=padrao();snap=new Map();for(const r of all){if(r.colecao==='config')for(const k of CFG){if(r.doc[k]!==undefined)n[k]=r.doc[k]}else if(n[r.colecao])n[r.colecao].push(r.doc);snap.set(r.colecao+'|'+r.id,JSON.stringify(r.doc))}S=n}
+async function atualizarDoServidor(){if(MODO!=='servidor'||!ESCOLA||pend||syncando)return;const ae=document.activeElement;if(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))return;try{await carregarServidor();if(['inicio','hoje','corretor','prova','relatorios','relver','ochist','ocpontos','historico'].includes(view))render()}catch(e){}}
+
+/* ---------- consultas ---------- */
+function tipoPorSigla(s){const k=kT(s);return k?S.tipos.find(t=>kT(t.sigla)===k):null}
+function turmaPor(s){const k=kT(s);return k?S.turmas.find(t=>kT(t.nome)===k):null}
+function classe(v){v=String(v??'').trim();if(!v)return{k:'vazio'};const tp=tipoPorSigla(v);if(tp)return{k:'tipo',tipo:tp};const tu=turmaPor(v);if(tu)return{k:'aula',turma:tu.nome};return{k:'erro',v}}
+function linha(p,t,d){return S.horario.find(h=>h.prof===p&&h.turno===t&&h.dia===d)}
+function cel(p,t,d,a){const l=linha(p,t,d);return l?(l.aulas[a]||''):''}
+function turnoIdx(s){const n=norm(s);if(!n)return S.turnos.length===1?0:-1;return S.turnos.findIndex(t=>{const m=norm(t.nome);return m===n||m.startsWith(n)})}
+function diaIdx(s){const n=norm(s).replace(/-?feira/,'');if(!n)return -1;const m=n.match(/^([2-7])/);if(m){const i=+m[1]-2;return i<dias().length?i:-1}return dias().findIndex(d=>norm(d).slice(0,3)===n.slice(0,3))}
+function diaDaData(s){if(!s)return -1;const w=new Date(s+'T12:00:00').getDay();if(w===0)return -1;const i=w-1;return i<dias().length?i:-1}
+function aulasSemana(p){let n=0;for(const h of S.horario)if(h.prof===p)for(const x of h.aulas)if(classe(x).k==='aula')n++;return n}
+function turmasDoProf(p){const s=new Set();for(const h of S.horario)if(h.prof===p)for(const x of h.aulas){const c=classe(x);if(c.k==='aula')s.add(c.turma)}return[...s]}
+function minhasTurmas(){if(veTudo())return S.turmas.map(t=>t.nome);return turmasDoProf(ME.nome)}
+const estDaTurma=t=>S.estudantes.filter(e=>e.turma===t).sort((a,b)=>a.nome.localeCompare(b.nome));
+const estPorId=id=>S.estudantes.find(e=>e.id===id);
+const meuNome=()=>ME.nome||(MODO==='local'?'Coordenação':ME.email);
+const podeEditar=d=>isCoord()||MODO==='local'||(d.autorUid&&d.autorUid===ME.uid);
+function selTurma(chg,val,turmas,vazio){return `<select data-chg="${chg}">${vazio?`<option value="">${esc(vazio)}</option>`:''}${turmas.map(t=>`<option${t===val?' selected':''}>${esc(t)}</option>`).join('')}</select>`}
+
+/* ---------- substituições ---------- */
+let G={data:hoje(),turno:0,aus:{},esc:{}};
+function ausenteEm(p,a){const x=G.aus[p];return !!x&&(x.todo||x.aulas.includes(a))}
+function histCont(){const m=new Map(),lim=Date.now()-30*864e5;for(const h of S.historico){if(new Date(h.data+'T12:00:00').getTime()<lim)continue;for(const it of h.itens)if(it.tipo==='prof')m.set(it.sub,(m.get(it.sub)||0)+1)}return m}
+function candidatos(t,d,a){const out=[];for(const p of S.professores){if(ausenteEm(p.nome,a))continue;const c=classe(cel(p.nome,t,d,a));if(c.k!=='tipo')continue;const tp=c.tipo;let rank;
+ if(tp.papel==='prioritario')rank=0;else if(tp.papel==='disponivel')rank=1;else if(tp.papel==='condicional'){let n=0;S.turnos.forEach((_,ti)=>{const l=linha(p.nome,ti,d);if(l)for(const x of l.aulas)if(kT(x)===kT(tp.sigla))n++});if(n>(+tp.limite||0))continue;rank=2}else continue;
+ out.push({nome:p.nome,rank,tipoNome:tp.nome,remanejar:rank===2})}return out}
+function calcular(){const t=G.turno,d=diaDaData(G.data);if(d<0||!S.turnos[t])return{d,itens:[]};const N=nAulas(t),needs=[];
+ for(const p of Object.keys(G.aus))for(let a=0;a<N;a++){if(!ausenteEm(p,a))continue;const c=classe(cel(p,t,d,a));if(c.k==='aula')needs.push({a,turma:c.turma,aus:p})}
+ needs.sort((x,y)=>x.a-y.a||x.turma.localeCompare(y.turma));
+ const hc=histCont(),dia=new Map(),usados={},itens=[];
+ for(const n of needs){const set=usados[n.a]||(usados[n.a]=new Set());const cands=candidatos(t,d,n.a);const key=n.a+'|'+n.turma+'|'+n.aus;let sub,tipo,nota,remanejar=false;
+  if(Object.prototype.hasOwnProperty.call(G.esc,key)){sub=G.esc[key];const c=cands.find(x=>x.nome===sub);if(c){tipo='prof';nota=c.tipoNome;remanejar=c.remanejar}else if(sub&&S.reserva.includes(sub)){tipo='reserva';nota='Último recurso'}else if(sub){tipo='prof';nota='Escolha manual'}else{tipo='sem';nota='Sem substituto'}}
+  else{const ord=cands.filter(c=>!set.has(c.nome)).sort((x,y)=>x.rank-y.rank||(dia.get(x.nome)||0)-(dia.get(y.nome)||0)||(hc.get(x.nome)||0)-(hc.get(y.nome)||0)||x.nome.localeCompare(y.nome));
+   if(ord.length){sub=ord[0].nome;tipo='prof';nota=ord[0].tipoNome;remanejar=ord[0].remanejar}else{const r=S.reserva.find(r=>!set.has(r));if(r){sub=r;tipo='reserva';nota='Último recurso'}else{sub='';tipo='sem';nota='Sem substituto'}}}
+  const conflito=!!sub&&set.has(sub);if(sub)set.add(sub);if(tipo==='prof'&&sub)dia.set(sub,(dia.get(sub)||0)+1);
+  itens.push(Object.assign({},n,{key,sub,tipo,nota,remanejar,cands,conflito}))}
+ return{d,itens}}
+function textoQuadro(data,turno,itens){const hs=horas(turno),aus=[...new Set(itens.map(i=>i.aus))];let s='*Quadro de substituição'+(S.escola?' — '+S.escola:'')+'*\n'+(dias()[diaDaData(data)]||'')+', '+dataBR(data)+' · '+(S.turnos[turno]?.nome||'')+'\nAusentes: '+aus.join(', ')+'\n';
+ for(const i of itens)s+='\n'+(i.a+1)+'ª aula'+(hs[i.a]?' ('+hs[i.a]+')':'')+' · '+i.turma+': '+(i.sub||'SEM SUBSTITUTO')+(i.remanejar?' (remanejar o horário dele no dia)':'');return s}
+
+/* ---------- views ---------- */
+let view='hoje';
+const IC={subst:'<path d="M4 8h14l-3-3M20 16H6l3 3"/>',corretor:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 12l3 3 5-6"/>',prova:'<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 7h6M9 11h6M9 15h3M11 19h2"/>',relatorios:'<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/>',ocorrencias:'<path d="M12 3l9.5 17H2.5z"/><path d="M12 10v4M12 17v.5"/>',config:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',ajuda:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.7M12 17v.5"/>'};
+const svgIc=(k,z)=>`<svg viewBox="0 0 24 24" width="${z||28}" height="${z||28}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
+const MODS=[
+ {k:'subst',n:'Substituições',d:'Quadro do dia, horário e histórico',subs:[['hoje','Quadro do dia','todos'],['horario','Horário','todos'],['historico','Histórico','gestor']]},
+ {k:'corretor',n:'Corretor',d:'Folhas de resposta e correção pela foto',subs:[['corretor','Avaliações','todos']]},
+ {k:'prova',n:'Prova Online',d:'Provas no tablet, com tempo e nota na hora',subs:[['prova','Provas','todos'],['aluno','Tela do estudante','todos']]},
+ {k:'relatorios',n:'Relatórios',d:'Desenvolvimento de cada estudante',subs:[['relatorios','Escrever','todos'],['relver','Relatórios prontos','todos']]},
+ {k:'ocorrencias',n:'Ocorrências',d:'Registro, histórico e pontuação',subs:[['ocnova','Nova ocorrência','todos'],['ochist','Histórico','todos'],['ocpontos','Pontuação','todos']]},
+ {k:'config',n:'Configuração',d:'Estudantes, professores, horários e regras',subs:[['escola','Escola e regras','master'],['cprof','Professores','master'],['cturmas','Turmas','master'],['cest','Estudantes','master'],['chorario','Horário','master'],['importar','Importar planilhas','master'],['acessos','Pessoas e acessos','master'],['backup','Backup','master']]},
+ {k:'ajuda',n:'Ajuda',d:'Tutorial passo a passo',subs:[['tutorial','Tutorial','todos']]}];
+const podeVer=n=>n==='todos'||(n==='gestor'&&gestor())||(n==='master'&&isMaster());
+const subsDe=m=>m.subs.filter(x=>podeVer(x[2])&&!(x[0]==='acessos'&&MODO!=='servidor'));
+const modsVisiveis=()=>MODS.filter(m=>subsDe(m).length);
+const modDe=v=>MODS.find(m=>m.subs.some(x=>x[0]===v));
+function permitido(v){if(v==='inicio')return true;const m=modDe(v);return !!m&&subsDe(m).some(x=>x[0]===v)}
+function saud(){const h=new Date().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}
+function vInicio(){const ms=modsVisiveis(),hq=S.historico.some(q=>q.data===hoje());
+ return `<h1>${saud()}${ME.nome?', '+esc(ME.nome.split(' ')[0]):''}</h1><p class="muted">${esc(S.escola||'Escolha um módulo para começar.')}</p>${hq?'<p><button class="tag t-w" style="border:0;cursor:pointer" data-act="go" data-v="hoje">Há quadro de substituição publicado para hoje</button></p>':''}${isMaster()&&vazio()?`<div class="card"><p><b>Primeiro acesso?</b> O tutorial mostra, passo a passo, como cadastrar a escola.</p><div class="acts"><button class="b p" data-act="go" data-v="tutorial">Abrir o tutorial</button>${MODO==='local'?'<button class="b c" data-act="exemplo">Testar com escola de exemplo</button>':''}</div></div>`:''}
+ <div class="mods">${ms.map(m=>`<button class="mod${m.k==='config'?' cfg':''}" data-act="go" data-v="${subsDe(m)[0][0]}"><span class="ico">${svgIc(m.k)}</span><b>${m.n}</b><span>${m.d}</span></button>`).join('')}</div>`}
+function vazio(){return !S.professores.length||!S.horario.length}
+function semDados(titulo,txt){return `<div class="card empty"><h1>${esc(titulo)}</h1><p style="margin:auto">${esc(txt)}</p><div class="acts" style="justify-content:center">${isMaster()?`<button class="b p" data-act="go" data-v="tutorial">Abrir o tutorial</button>${MODO==='local'?'<button class="b" data-act="exemplo">Testar com escola de exemplo</button>':''}`:''}</div></div>`}
+
+function vHoje(){
+ if(!isCoord())return vHojeLeitura();
+ if(vazio())return semDados('Quadro do dia','Para gerar substituições, o Prumo precisa dos professores e do quadro de horários.');
+ if(!S.turnos[G.turno])G.turno=0;
+ const t=G.turno,d=diaDaData(G.data),N=nAulas(t);
+ let h=`<h1>Quadro do dia</h1><div class="card"><div class="row"><label>Data<input type="date" data-chg="gData" value="${esc(G.data)}"></label><label>Turno<select data-chg="gTurno">${S.turnos.map((x,i)=>`<option value="${i}"${i===t?' selected':''}>${esc(x.nome)}</option>`).join('')}</select></label>${d>=0?`<span class="tag t-b" style="margin-bottom:12px">${esc(dias()[d])}</span>`:''}</div>`;
+ if(d<0)return h+`<p class="muted" style="margin-top:12px">Essa data cai num dia sem aulas configuradas. Escolha outra data.</p></div>`;
+ const profs=S.professores.filter(p=>{for(let a=0;a<N;a++)if(classe(cel(p.nome,t,d,a)).k==='aula')return true;return false});
+ h+=`<h2 style="margin-top:18px">Quem faltou?</h2><p class="muted small">Toque no nome. Se a falta for só em algumas aulas, desmarque as aulas em que o professor estará presente.</p><div class="chips">`;
+ h+=profs.map(p=>{const on=!!G.aus[p.nome];let s=`<div class="prof${on?' on':''}"><button class="tog" aria-pressed="${on}" data-act="aus" data-p="${esc(p.nome)}">${esc(p.nome)}</button><span class="muted small">${esc(p.componente||'')}</span>`;
+  if(on){const x=G.aus[p.nome];for(let a=0;a<N;a++){const c=classe(cel(p.nome,t,d,a));if(c.k!=='aula')continue;const sel=x.todo||x.aulas.includes(a);s+=`<button class="tog a" aria-pressed="${sel}" data-act="ausAula" data-p="${esc(p.nome)}" data-a="${a}">${a+1}ª · ${esc(c.turma)}</button>`}}
+  return s+'</div>'}).join('')||'<p class="muted">Nenhum professor tem aula neste dia e turno.</p>';
+ h+='</div></div>';
+ const r=calcular();
+ if(!r.itens.length)return h+(Object.keys(G.aus).length?'<div class="card"><p>As faltas marcadas não deixam turmas sem professor.</p></div>':'');
+ const hs=horas(t),sem=r.itens.filter(i=>i.tipo==='sem').length,conf=r.itens.filter(i=>i.conflito).length;
+ h+=`<div class="card"><h2>Substituições sugeridas</h2><p class="muted small">Ordem usada: plantão → horário livre → horário condicional (só se o professor tiver poucos no dia) → último recurso. Entre iguais, vai quem substituiu menos hoje e nos últimos 30 dias. Você pode trocar qualquer nome.</p>`;
+ if(sem)h+=`<p class="tag t-c">${sem} aula(s) sem substituto</p> `;if(conf)h+=`<p class="tag t-c">${conf} conflito(s): a mesma pessoa em duas turmas no mesmo horário</p>`;
+ h+=`<div class="scroll"><table class="stack"><thead><tr><th>Aula</th><th>Turma</th><th>Ausente</th><th>Substituto</th><th>Situação</th></tr></thead><tbody>`;
+ h+=r.itens.map(i=>{const opts=[`<option value="">— sem substituto —</option>`].concat(i.cands.map(c=>`<option value="${esc(c.nome)}"${c.nome===i.sub?' selected':''}>${esc(c.nome)} · ${esc(c.tipoNome)}</option>`),S.reserva.map(rv=>`<option value="${esc(rv)}"${rv===i.sub?' selected':''}>${esc(rv)} · último recurso</option>`));
+  if(i.sub&&!i.cands.some(c=>c.nome===i.sub)&&!S.reserva.includes(i.sub))opts.push(`<option selected value="${esc(i.sub)}">${esc(i.sub)}</option>`);
+  const tag=i.conflito?'<span class="tag t-c">Conflito</span>':i.tipo==='sem'?'<span class="tag t-c">Sem substituto</span>':i.tipo==='reserva'?'<span class="tag t-w">Último recurso</span>':i.remanejar?'<span class="tag t-w">Remanejar horário</span>':'<span class="tag t-ok">'+esc(i.nota)+'</span>';
+  return `<tr><td class="nw">${i.a+1}ª${hs[i.a]?' · '+esc(hs[i.a]):''}</td><td>${esc(i.turma)}</td><td>${esc(i.aus)}</td><td><select data-chg="sub" data-k="${esc(i.key)}" aria-label="Substituto">${opts.join('')}</select></td><td>${tag}</td></tr>`}).join('');
+ h+=`</tbody></table></div><div class="acts noprint"><button class="b p" data-act="zap">Copiar para WhatsApp</button><button class="b" data-act="salvarQ">Salvar e publicar</button><button class="b" data-act="limparG">Recomeçar</button></div><p class="small muted">“Salvar e publicar” guarda no histórico${MODO==='servidor'?' e mostra o quadro para todos os professores da escola':''}.</p></div>`;
+ h+=`<div class="card noprint"><h3>Prévia da mensagem</h3><pre class="zap">${esc(textoQuadro(G.data,t,r.itens))}</pre></div>`;
+ return h}
+function vHojeLeitura(){const qs=S.historico.filter(q=>q.data===G.data).sort((a,b)=>a.turno-b.turno);
+ let h=`<h1>Quadro do dia</h1><div class="card"><div class="row"><label>Data<input type="date" data-chg="gData" value="${esc(G.data)}"></label></div></div>`;
+ if(!qs.length)return h+'<div class="card"><p>Nenhum quadro de substituição publicado para esta data.</p></div>';
+ return h+qs.map(q=>`<div class="card"><pre class="zap">${esc(textoQuadro(q.data,q.turno,q.itens))}</pre></div>`).join('')}
+
+let Hv={modo:'prof',item:'',turno:0};
+function vHorario(){
+ if(vazio())return semDados('Horário','Nenhum horário importado ainda.');
+ if(!S.turnos[Hv.turno])Hv.turno=0;
+ const edita=view==='chorario'&&isMaster(),escolhe=veTudo()||edita;if(!escolhe){Hv.modo='prof';Hv.item=ME.nome}
+ const lst=Hv.modo==='prof'?S.professores.map(p=>p.nome):S.turmas.filter(x=>x.turno===Hv.turno).map(x=>x.nome);
+ if(!lst.includes(Hv.item))Hv.item=lst[0]||'';
+ const t=Hv.turno,N=nAulas(t),hs=horas(t),D=dias();
+ let h=`<h1>${edita?'Editar horário':'Horário'}</h1><div class="card"><div class="row">${escolhe?`<label>Ver por<select data-chg="hModo"><option value="prof"${Hv.modo==='prof'?' selected':''}>Professor</option><option value="turma"${Hv.modo==='turma'?' selected':''}>Turma</option></select></label>`:''}<label>Turno<select data-chg="hTurno">${S.turnos.map((x,i)=>`<option value="${i}"${i===t?' selected':''}>${esc(x.nome)}</option>`).join('')}</select></label>${escolhe?`<label>${Hv.modo==='prof'?'Professor':'Turma'}<select data-chg="hItem">${lst.map(n=>`<option${n===Hv.item?' selected':''}>${esc(n)}</option>`).join('')}</select></label>`:`<p><b>${esc(ME.nome||'Seu nome não está ligado a um professor. Peça à coordenação.')}</b></p>`}</div>`;
+ if(!Hv.item)return h+'<p class="muted" style="margin-top:12px">Nada para mostrar.</p></div>';
+ h+=`<div class="scroll" style="margin-top:14px"><table class="grade"><thead><tr><th>Aula</th>${D.map(x=>`<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>`;
+ for(let a=0;a<N;a++){h+=`<tr><td>${a+1}ª${hs[a]?' <span class="muted small">'+esc(hs[a])+'</span>':''}</td>`;
+  for(let d=0;d<D.length;d++){if(Hv.modo==='prof'){const v=cel(Hv.item,t,d,a),c=classe(v),k=c.k==='aula'?'k-aula':c.k==='tipo'?'k-'+c.tipo.papel:c.k==='erro'?'k-erro':'';h+=edita?`<td><input class="${k}" list="dlCel" value="${esc(v)}" data-chg="cel" data-d="${d}" data-a="${a}" aria-label="${esc(D[d])}, ${a+1}ª aula"></td>`:`<td><div class="cellt ${k}">${esc(v)||'&nbsp;'}</div></td>`}
+   else{const ps=S.professores.filter(p=>{const c=classe(cel(p.nome,t,d,a));return c.k==='aula'&&c.turma===Hv.item}).map(p=>p.nome);h+=`<td><div class="cellt ${ps.length===1?'k-aula':ps.length?'k-condicional':'k-erro'}">${ps.length?ps.map(esc).join('<br>'):'sem professor'}</div></td>`}}
+  h+='</tr>'}
+ h+=`</tbody></table></div><datalist id="dlCel">${S.turmas.map(x=>`<option value="${esc(x.nome)}">`).join('')}${S.tipos.map(x=>`<option value="${esc(x.sigla)}">${esc(x.nome)}</option>`).join('')}</datalist>`;
+ h+=`<p class="small muted" style="margin-top:12px">${edita&&Hv.modo==='prof'?'Para corrigir, digite numa casa o nome da turma ou uma sigla. Casa vazia = professor fora da escola. Salva sozinho. ':''}Siglas: ${S.tipos.map(x=>`<b>${esc(x.sigla)}</b> ${esc(x.nome)}`).join(' · ')}.</p></div>`;
+ return h}
+
+/* ---------- CORRETOR ---------- */
+let K={av:null,aba:'notas',novo:false,fotos:[],manual:null,folhas:false};
+function geom(av){const nq=av.nq,na=av.na||4,cols=nq>25?2:1,rows=Math.ceil(nq/cols),sp=Math.min(8,206/rows),r=Math.min(3,sp*0.38),out=[];
+ for(let q=0;q<nq;q++){const c=Math.floor(q/rows),rr=q%rows,x0=cols===1?40:(c===0?28:112),y=62+sp*rr+sp/2;for(let j=0;j<na;j++)out.push({q,j,x:x0+14+j*9,y,r,lx:x0+8})}return out}
+const MARC=[[194,16],[194,281],[16,281],[16,16]];
+function qrSVG(txt,x,y,size){if(!window.qrcode)return `<rect x="${x}" y="${y}" width="${size}" height="${size}" fill="none" stroke="#000" stroke-width=".3"/><text x="${x+2}" y="${y+size/2}" font-size="3">${esc(txt)}</text>`;
+ const q=window.qrcode(0,'M');q.addData(txt);q.make();const n=q.getModuleCount(),c=size/n;let p='';for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))p+=`M${(x+k*c).toFixed(2)} ${(y+r*c).toFixed(2)}h${c.toFixed(2)}v${c.toFixed(2)}h-${c.toFixed(2)}z`;return `<path d="${p}" fill="#000"/>`}
+function folhaSVG(av,e){const G2=geom(av);let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 297" font-family="Arial,sans-serif"><rect width="210" height="297" fill="#fff"/>`;
+ for(const[cx,cy]of MARC)s+=`<rect x="${cx-6}" y="${cy-6}" width="12" height="12" fill="#000"/>`;
+ s+=qrSVG('P1|'+av.id+'|'+e.id,150,24,30);
+ s+=`<text x="28" y="20" font-size="4.2" font-weight="700">${esc(S.escola||'Escola')}</text><text x="28" y="28" font-size="3.8">${esc(av.nome)} · Turma ${esc(av.turma)}${av.data?' · '+dataBR(av.data):''}</text><text x="28" y="37" font-size="4.6" font-weight="700">${esc(e.nome)}</text><text x="28" y="45" font-size="3">Pinte toda a bolinha, com caneta preta ou azul. Uma por questão.</text><text x="28" y="50" font-size="3">Não rasure e não dobre esta folha.</text>`;
+ for(const b of G2){if(b.j===0)s+=`<text x="${b.lx}" y="${b.y+1.2}" font-size="3.6" font-weight="700" text-anchor="end">${b.q+1}</text>`;s+=`<circle cx="${b.x}" cy="${b.y}" r="${b.r}" fill="none" stroke="#000" stroke-width=".3"/><text x="${b.x}" y="${b.y+1}" font-size="${(b.r*0.9).toFixed(2)}" text-anchor="middle" fill="#bbb">${LETRAS[b.j]}</text>`}
+ return s+'</svg>'}
+function notaDe(av,resp){let ac=0;for(let q=0;q<av.nq;q++)if(resp[q]!=null&&resp[q]===av.gab[q])ac++;return{acertos:ac,nota:Math.round(ac/av.nq*(+av.valor||10)*10)/10}}
+function vCorretor(){
+ const turmas=minhasTurmas();
+ if(K.novo)return vAvalForm();
+ const av=S.avaliacoes.find(a=>a.id===K.av);
+ if(!av){const l=S.avaliacoes.filter(a=>veTudo()||turmas.includes(a.turma)||a.autorUid===ME.uid).sort((a,b)=>(b.data||'').localeCompare(a.data||''));
+  return `<h1>Corretor</h1><div class="card"><p>Crie a avaliação, imprima as folhas de resposta (cada uma com o nome do estudante e um QR Code) e corrija pela foto. Também dá para lançar as respostas tocando nas bolinhas.</p><div class="acts"><button class="b p" data-act="avNova"${S.estudantes.length?'':' disabled'}>Nova avaliação</button></div>${S.estudantes.length?'':'<p class="small muted">Cadastre turmas e estudantes primeiro.</p>'}</div>
+  <div class="lista">${l.map(a=>{const cs=S.correcoes.filter(c=>c.av===a.id),tot=estDaTurma(a.turma).length,med=cs.length?cs.reduce((s,c)=>s+c.nota,0)/cs.length:0;return `<div class="item"><h3>${esc(a.nome)}</h3><span class="muted small">Turma ${esc(a.turma)} · ${a.nq} questões · vale ${num(+a.valor)}${a.data?' · '+dataBR(a.data):''}</span><span>${cs.length} de ${tot} corrigidas${cs.length?' · média '+num(med):''}</span><div><button class="b s p" data-act="avAbrir" data-id="${a.id}">Abrir</button></div></div>`}).join('')||'<p class="muted">Nenhuma avaliação ainda.</p>'}</div>`}
+ const ests=estDaTurma(av.turma),cs=S.correcoes.filter(c=>c.av===av.id);
+ let h=`<p><button class="b s" data-act="avVoltar">← Avaliações</button></p><h1>${esc(av.nome)}</h1><p class="muted">Turma ${esc(av.turma)} · ${av.nq} questões · vale ${num(+av.valor)} · gabarito ${av.gab.map(g=>LETRAS[g]).join('')}</p>
+ <div class="subtabs">${[['notas','Notas'],['foto','Corrigir por foto'],['folhas','Folhas de resposta'],['editar','Editar']].map(([k,n])=>`<button class="tog" aria-pressed="${K.aba===k}" data-act="kAba" data-k="${k}">${n}</button>`).join('')}</div>`;
+ if(K.aba==='notas'){
+  if(K.manual){const e=estPorId(K.manual.est);h+=`<div class="card"><h2>${esc(e?.nome||'')}</h2><p class="small muted">Toque na alternativa marcada pelo estudante em cada questão.</p>${Array.from({length:av.nq},(_,q)=>`<div class="qrow"><b>${q+1}</b><div class="bolhas">${Array.from({length:av.na||4},(_,j)=>`<button class="bol${K.manual.resp[q]===j&&j!==av.gab[q]?' errada':''}" aria-pressed="${K.manual.resp[q]===j}" data-act="manBol" data-q="${q}" data-j="${j}">${LETRAS[j]}</button>`).join('')}</div></div>`).join('')}
+   <p><b>${notaDe(av,K.manual.resp).acertos} acertos · nota ${num(notaDe(av,K.manual.resp).nota)}</b></p><div class="acts"><button class="b p" data-act="manSalvar">Salvar</button><button class="b" data-act="manCancel">Cancelar</button></div></div>`;return h}
+  h+=`<div class="card"><div class="scroll"><table class="stack"><thead><tr><th>Estudante</th><th class="n">Acertos</th><th class="n">Nota</th><th>Origem</th><th></th></tr></thead><tbody>${ests.map(e=>{const c=cs.find(x=>x.est===e.id);return `<tr><td>${esc(e.nome)}</td><td class="n">${c?c.acertos+'/'+av.nq:''}</td><td class="n">${c?num(c.nota):''}</td><td>${c?(c.origem==='foto'?'<span class="tag t-b">Foto</span>':'<span class="tag t-ok">Manual</span>'):'<span class="tag t-w">Falta corrigir</span>'}</td><td><button class="b s" data-act="manAbrir" data-id="${e.id}">${c?'Ver/editar':'Lançar'}</button></td></tr>`}).join('')}</tbody></table></div>
+  <div class="acts"><button class="b" data-act="avCopNotas">Copiar notas</button></div></div>`;
+  if(cs.length){const pq=Array.from({length:av.nq},(_,q)=>cs.filter(c=>c.resp[q]===av.gab[q]).length/cs.length);h+=`<div class="card"><h2>Acertos por questão</h2>${pq.map((p,q)=>`<div class="qrow"><b>${q+1}</b><div style="flex:1;background:var(--grey);border-radius:6px;height:14px"><div style="width:${Math.round(p*100)}%;height:14px;border-radius:6px;background:${p<0.5?'var(--coral)':'var(--blue)'}"></div></div><span class="small nw" style="width:44px;text-align:right">${Math.round(p*100)}%</span></div>`).join('')}<p class="small muted">Questões abaixo de 50% de acerto ficam em coral: vale retomar o conteúdo.</p></div>`}
+ }else if(K.aba==='foto'){
+  h+=`<div class="card"><h2>Corrigir por foto</h2><p>Fotografe cada folha de cima, com boa luz, mostrando os 4 quadrados pretos dos cantos. Pode enviar várias fotos de uma vez.</p><div class="acts"><label class="b p">Escolher ou tirar fotos<input class="hid" type="file" accept="image/*" multiple data-chg="fotos"></label></div></div>`;
+  h+=K.fotos.map((f,i)=>{if(f.erro)return `<div class="card"><p class="tag t-c">Foto ${i+1}</p><p>${esc(f.erro)}</p></div>`;const n=notaDe(av,f.resp);const prob=f.st.map((s,q)=>s!=='ok'?(q+1)+(s==='dupla'?' (duas marcadas)':' (em branco)'):null).filter(Boolean);
+   return `<div class="card"><div class="row"><label>Estudante<select data-chg="fotoEst" data-i="${i}">${!f.est?'<option value="">Escolha…</option>':''}${ests.map(e=>`<option value="${e.id}"${e.id===f.est?' selected':''}>${esc(e.nome)}</option>`).join('')}</select></label><span class="tag ${f.qr?'t-ok':'t-w'}" style="margin-bottom:12px">${f.qr?'QR lido':'QR não lido: escolha o nome'}</span></div>
+   ${prob.length?`<p class="tag t-w" style="margin-top:10px">Confira: questão ${esc(prob.join(', '))}</p>`:''}<div style="margin-top:8px">${Array.from({length:av.nq},(_,q)=>`<div class="qrow"><b>${q+1}</b><div class="bolhas">${Array.from({length:av.na||4},(_,j)=>`<button class="bol${f.resp[q]===j&&j!==av.gab[q]?' errada':''}" aria-pressed="${f.resp[q]===j}" data-act="fotoBol" data-i="${i}" data-q="${q}" data-j="${j}">${LETRAS[j]}</button>`).join('')}</div></div>`).join('')}</div>
+   <p><b>${n.acertos} acertos · nota ${num(n.nota)}</b></p><div class="acts"><button class="b p" data-act="fotoSalvar" data-i="${i}"${f.est?'':' disabled'}>Salvar</button><button class="b" data-act="fotoDesc" data-i="${i}">Descartar</button></div></div>`}).join('');
+  if(K.fotos.filter(f=>!f.erro&&f.est).length>1)h+=`<div class="acts"><button class="b c" data-act="fotoTodas">Salvar todas as fotos com estudante</button></div>`;
+ }else if(K.aba==='folhas'){
+  h+=`<div class="card"><h2>Folhas de resposta</h2><p>Uma folha por estudante, com o nome e o QR Code. Imprima em papel A4, sem ajustar à página (tamanho real).</p><div class="acts"><button class="b p" data-act="folhasGerar">${K.folhas?'Atualizar folhas':'Gerar folhas'} (${ests.length})</button>${K.folhas?'<button class="b c" data-act="folhasImp">Imprimir</button>':''}</div>${K.folhas?'<p class="small muted">Se a janela de impressão não abrir aqui, abra o Prumo pelo endereço do site e imprima de lá.</p>':''}</div>`;
+  if(K.folhas)h+=`<div class="lista">${ests.slice(0,4).map(e=>`<div class="item" style="padding:8px">${folhaSVG(av,e)}</div>`).join('')}</div>${ests.length>4?`<p class="muted small">Mostrando 4 de ${ests.length}. Todas saem na impressão.</p>`:''}`;
+ }else{h+=vAvalForm(av)}
+ return h}
+function vAvalForm(av){const novo=!av;av=av||K.rasc||(K.rasc={nome:'',turma:minhasTurmas()[0]||'',data:hoje(),nq:10,na:4,valor:10,gab:Array(10).fill(null)});
+ return `${novo?'<p><button class="b s" data-act="avVoltar">← Avaliações</button></p><h1>Nova avaliação</h1>':''}<div class="card"><div class="row"><label>Nome<input id="avNome" value="${esc(av.nome)}" placeholder="Ex.: Avaliação mensal de Matemática"></label><label>Turma${selTurma('avTurma',av.turma,minhasTurmas())}</label><label>Data<input type="date" id="avData" value="${esc(av.data||'')}"></label></div>
+ <div class="row" style="margin-top:12px"><label>Nº de questões<input type="number" min="1" max="60" data-chg="avNq" value="${av.nq}" style="width:110px"></label><label>Alternativas<select data-chg="avNa"><option value="4"${av.na!==5?' selected':''}>A a D</option><option value="5"${av.na===5?' selected':''}>A a E</option></select></label><label>Valor<input type="number" min="0" step="0.5" id="avValor" value="${esc(av.valor)}" style="width:110px"></label></div>
+ <h3 style="margin-top:16px">Gabarito</h3>${Array.from({length:av.nq},(_,q)=>`<div class="qrow"><b>${q+1}</b><div class="bolhas">${Array.from({length:av.na||4},(_,j)=>`<button class="bol" aria-pressed="${av.gab[q]===j}" data-act="gabBol" data-q="${q}" data-j="${j}">${LETRAS[j]}</button>`).join('')}</div></div>`).join('')}
+ <div class="acts"><button class="b p" data-act="avSalvar">${novo?'Criar avaliação':'Salvar alterações'}</button>${!novo&&podeEditar(av)?'<button class="b" data-act="avApagar">Apagar avaliação</button>':''}</div></div>`}
+function avEdit(){return K.novo?K.rasc:S.avaliacoes.find(a=>a.id===K.av)}
+
+/* ---------- leitura da folha (OMR) ---------- */
+function cinza(id){const g=new Uint8Array(id.width*id.height),d=id.data;for(let i=0,j=0;i<g.length;i++,j+=4)g[i]=(d[j]*77+d[j+1]*150+d[j+2]*29)>>8;return{w:id.width,h:id.height,g}}
+function otsu(g){const h=new Array(256).fill(0);for(let i=0;i<g.length;i++)h[g[i]]++;let tot=g.length,sum=0;for(let i=0;i<256;i++)sum+=i*h[i];let sB=0,wB=0,best=0,thr=127;for(let i=0;i<256;i++){wB+=h[i];if(!wB)continue;const wF=tot-wB;if(!wF)break;sB+=i*h[i];const mB=sB/wB,mF=(sum-sB)/wF,v=wB*wF*(mB-mF)*(mB-mF);if(v>best){best=v;thr=i}}return thr}
+function marcadores(im){const f=Math.max(1,Math.round(Math.max(im.w,im.h)/700)),w=Math.floor(im.w/f),h=Math.floor(im.h/f),s=new Uint8Array(w*h);
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){let a=0;for(let yy=0;yy<f;yy++)for(let xx=0;xx<f;xx++)a+=im.g[(y*f+yy)*im.w+x*f+xx];s[y*w+x]=a/(f*f)}
+ const t=otsu(s),lab=new Int32Array(w*h),bl=[],st=[];let n=0;
+ for(let i=0;i<w*h;i++){if(s[i]>t||lab[i])continue;n++;let area=0,x0=w,x1=0,y0=h,y1=0,sx=0,sy=0;st.push(i);lab[i]=n;
+  while(st.length){const p=st.pop(),x=p%w,y=(p/w)|0;area++;sx+=x;sy+=y;if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;
+   if(x>0&&!lab[p-1]&&s[p-1]<=t){lab[p-1]=n;st.push(p-1)}if(x<w-1&&!lab[p+1]&&s[p+1]<=t){lab[p+1]=n;st.push(p+1)}if(y>0&&!lab[p-w]&&s[p-w]<=t){lab[p-w]=n;st.push(p-w)}if(y<h-1&&!lab[p+w]&&s[p+w]<=t){lab[p+w]=n;st.push(p+w)}}
+  const bw=x1-x0+1,bh=y1-y0+1,fill=area/(bw*bh),asp=bw/bh;if(area>=12&&fill>0.6&&asp>0.6&&asp<1.65&&bw<w*0.2&&bh<h*0.2)bl.push({x:(sx/area+0.5)*f,y:(sy/area+0.5)*f,area})}
+ if(bl.length<4)return null;const maxA=Math.max(...bl.map(b=>b.area)),big=bl.filter(b=>b.area>=maxA*0.45);if(big.length<4)return null;
+ const cs=[[0,0],[im.w,0],[im.w,im.h],[0,im.h]];const pick=cs.map(([cx,cy])=>{let m=null,md=1e18;for(const b of big){const dd=(b.x-cx)**2+(b.y-cy)**2;if(dd<md){md=dd;m=b}}return m});if(new Set(pick).size<4)return null;return pick}
+function resolver(A,b){const n=b.length,M=A.map((r,i)=>r.concat(b[i]));for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(M[r][c])>Math.abs(M[p][c]))p=r;if(Math.abs(M[p][c])<1e-12)return null;const tmp=M[c];M[c]=M[p];M[p]=tmp;for(let r=0;r<n;r++){if(r===c)continue;const k=M[r][c]/M[c][c];for(let j=c;j<=n;j++)M[r][j]-=k*M[c][j]}}return M.map((r,i)=>r[n]/r[i])}
+function homog(src,dst){const A=[],b=[];for(let i=0;i<4;i++){const[X,Y]=src[i],[x,y]=dst[i];A.push([X,Y,1,0,0,0,-x*X,-x*Y]);b.push(x);A.push([0,0,0,X,Y,1,-y*X,-y*Y]);b.push(y)}const h=resolver(A,b);if(!h)return null;return(X,Y)=>{const z=h[6]*X+h[7]*Y+1;return[(h[0]*X+h[1]*Y+h[2])/z,(h[3]*X+h[4]*Y+h[5])/z]}}
+function media(im,cx,cy,r0,r1){let s=0,n=0;const R=Math.ceil(r1);for(let y=Math.floor(cy-R);y<=cy+R;y++)for(let x=Math.floor(cx-R);x<=cx+R;x++){if(x<0||y<0||x>=im.w||y>=im.h)continue;const d=Math.hypot(x-cx,y-cy);if(d>=r0&&d<=r1){s+=im.g[y*im.w+x];n++}}return n?s/n:255}
+function analisar(im,av,qrPt){const m=marcadores(im);if(!m)return{erro:'Não encontrei os 4 quadrados pretos dos cantos. Tire a foto de novo, com a folha inteira aparecendo.'};
+ let k=1;if(qrPt){let md=1e18;m.forEach((p,i)=>{const d=(p.x-qrPt.x)**2+(p.y-qrPt.y)**2;if(d<md){md=d;k=i}})}
+ const dst=[0,1,2,3].map(i=>{const p=m[(k+i)%4];return[p.x,p.y]});const H=homog(MARC,dst);if(!H)return{erro:'Não consegui alinhar a folha. Tire a foto mais de cima.'};
+ const G2=geom(av),val=Array.from({length:av.nq},()=>[]);
+ for(const b of G2){const[cx,cy]=H(b.x,b.y),[ex,ey]=H(b.x+1,b.y),sc=Math.hypot(ex-cx,ey-cy);const dentro=media(im,cx,cy,0,b.r*0.62*sc),anel=media(im,cx,cy,b.r*1.45*sc,b.r*1.65*sc);val[b.q][b.j]=Math.max(0,(anel-dentro)/Math.max(anel,1))}
+ const resp=[],st=[];for(const v of val){const o=v.map((d,j)=>({d,j})).sort((a,b)=>b.d-a.d);if(o[0].d<0.28){resp.push(null);st.push('branco')}else if(o[1]&&o[1].d>=0.28&&o[0].d-o[1].d<0.15){resp.push(null);st.push('dupla')}else{resp.push(o[0].j);st.push('ok')}}
+ return{resp,st}}
+async function lerFoto(file,av){const url=URL.createObjectURL(file);try{const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=url});const max=2000,s=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);const x=c.getContext('2d');x.drawImage(img,0,0,c.width,c.height);const id=x.getImageData(0,0,c.width,c.height);
+ let qr=null,qrPt=null;try{const jsQR=await carregar(LIB_JSQR,'jsQR');const code=jsQR(id.data,id.width,id.height);if(code&&/^P1\|/.test(code.data)){const[,a,e]=code.data.split('|');qr={av:a,est:e};const L=code.location;qrPt={x:(L.topLeftCorner.x+L.bottomRightCorner.x)/2,y:(L.topLeftCorner.y+L.bottomRightCorner.y)/2}}}catch(e){}
+ if(qr&&qr.av!==av.id)return{erro:'Esta folha é de outra avaliação.'};
+ const r=analisar(cinza(id),av,qrPt);if(r.erro)return r;return{resp:r.resp,st:r.st,est:qr?qr.est:'',qr:!!qr}}catch(e){return{erro:'Não consegui abrir esta imagem.'}}finally{URL.revokeObjectURL(url)}}
+
+/* ---------- PROVA ONLINE ---------- */
+let P={id:null,aba:'questoes',lote:''};
+const codigoProva=()=>Array.from({length:7},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
+const pin6=()=>String(Math.floor(100000+Math.random()*900000));
+function vProva(){const turmas=minhasTurmas();const pr=S.provas.find(p=>p.id===P.id);
+ if(!pr){const l=S.provas.filter(p=>veTudo()||turmas.includes(p.turma)||p.autorUid===ME.uid);
+  return `<h1>Prova Online</h1><div class="card"><p>O professor cadastra as questões e o gabarito. O estudante faz a prova no tablet ou no celular, com tempo marcado, entrando com o código da prova e o PIN dele. A nota sai na hora.</p><div class="acts"><button class="b p" data-act="pvNova"${S.estudantes.length?'':' disabled'}>Nova prova</button><button class="b" data-act="go" data-v="aluno">Abrir a tela do estudante neste aparelho</button></div></div>
+  <div class="lista">${l.map(p=>{const tn=S.tentativas.filter(t=>t.prova===p.id).length;return `<div class="item"><h3>${esc(p.nome)}</h3><span class="muted small">Turma ${esc(p.turma)} · ${p.questoes.length} questões · ${p.tempo} min</span><span>${p.aberta?'<span class="tag t-ok">Aberta</span>':'<span class="tag t-w">Fechada</span>'} · código <b>${esc(p.codigo)}</b> · ${tn} entregue(s)</span><div><button class="b s p" data-act="pvAbrir" data-id="${p.id}">Abrir</button></div></div>`}).join('')||'<p class="muted">Nenhuma prova ainda.</p>'}</div>`}
+ const ed=podeEditar(pr),ests=estDaTurma(pr.turma),tns=S.tentativas.filter(t=>t.prova===pr.id);
+ let h=`<p><button class="b s" data-act="pvVoltar">← Provas</button></p><h1>${esc(pr.nome||'Prova sem nome')}</h1><p>${pr.aberta?'<span class="tag t-ok">Aberta para os estudantes</span>':'<span class="tag t-w">Fechada</span>'} Código da prova: <b style="font-size:22px;letter-spacing:2px">${esc(pr.codigo)}</b></p>
+ <div class="subtabs">${[['questoes','Questões'],['pins','PINs dos estudantes'],['result','Resultados ('+tns.length+')']].map(([k,n])=>`<button class="tog" aria-pressed="${P.aba===k}" data-act="pAba" data-k="${k}">${n}</button>`).join('')}</div>`;
+ if(P.aba==='questoes'){
+  h+=`<div class="card"><div class="row"><label>Nome<input data-pv="nome" value="${esc(pr.nome)}"${ed?'':' disabled'}></label><label>Turma<select data-pv="turma"${ed&&!tns.length?'':' disabled'}>${turmas.concat(turmas.includes(pr.turma)?[]:[pr.turma]).map(t=>`<option${t===pr.turma?' selected':''}>${esc(t)}</option>`).join('')}</select></label><label>Tempo (min)<input type="number" min="1" max="300" data-pv="tempo" value="${pr.tempo}" style="width:100px"${ed?'':' disabled'}></label><label>Valor<input type="number" min="0" step="0.5" data-pv="valor" value="${pr.valor}" style="width:100px"${ed?'':' disabled'}></label></div>
+  <label class="ck" style="margin-top:10px"><input type="checkbox" data-pv="embaralhar"${pr.embaralhar?' checked':''}${ed?'':' disabled'}> Embaralhar questões e alternativas para cada estudante</label><label class="ck"><input type="checkbox" data-pv="mostrarNota"${pr.mostrarNota?' checked':''}${ed?'':' disabled'}> Mostrar a nota ao estudante no final</label>
+  ${ed?`<div class="acts"><button class="b ${pr.aberta?'':'c'}" data-act="pvAbrirFechar">${pr.aberta?'Fechar a prova':'Abrir a prova para os estudantes'}</button><button class="b" data-act="pvSalvar">Salvar</button><button class="b" data-act="pvApagar">Apagar prova</button></div>`:''}</div>`;
+  h+=pr.questoes.map((q,i)=>`<div class="quest"><div class="row" style="justify-content:space-between"><b>Questão ${i+1}</b>${ed?`<button class="b s" data-act="qDel" data-i="${i}">Remover</button>`:''}</div><textarea data-q="${i}" data-f="e" style="min-height:80px;margin-top:6px" placeholder="Enunciado"${ed?'':' disabled'}>${esc(q.e)}</textarea>${q.alts.map((a,j)=>`<div class="alt"><input type="radio" name="c${i}" data-q="${i}" data-f="certa" value="${j}"${q.certa===j?' checked':''}${ed?'':' disabled'} aria-label="Alternativa ${LETRAS[j]} é a correta"><b>${LETRAS[j]})</b><input type="text" data-q="${i}" data-f="a${j}" value="${esc(a)}"${ed?'':' disabled'}></div>`).join('')}</div>`).join('');
+  if(ed)h+=`<div class="acts"><button class="b" data-act="qAdd">Adicionar questão</button><button class="b p" data-act="pvSalvar">Salvar questões</button></div>
+  <details style="margin-top:16px"><summary>Colar várias questões de uma vez</summary><p class="small">Separe as questões por uma linha em branco. Escreva o enunciado e depois as alternativas começando com a), b), c)… Coloque * antes da alternativa correta.</p><textarea class="mono" data-inp="lote" placeholder="1) Quanto é 7 × 8?&#10;a) 54&#10;*b) 56&#10;c) 58&#10;d) 64">${esc(P.lote)}</textarea><div class="acts"><button class="b" data-act="loteAdd">Adicionar estas questões</button></div></details>`;
+ }else if(P.aba==='pins'){
+  h+=`<div class="card"><p>Cada estudante entra com o código da prova e o próprio PIN. O PIN vale só para esta prova. Recorte e entregue a cada um, ou leia em voz baixa.</p>${ed?'<div class="acts"><button class="b" data-act="pinsGerar">Gerar PINs que faltam</button><button class="b" data-act="pinsCop">Copiar lista</button></div>':''}
+  <div class="scroll" style="margin-top:12px"><table class="stack"><thead><tr><th>Estudante</th><th>PIN</th><th>Situação</th></tr></thead><tbody>${ests.map(e=>{const t=tns.find(x=>x.est===e.id);return `<tr><td>${esc(e.nome)}</td><td class="nw"><b>${esc(pr.pins[e.id]||'—')}</b></td><td>${t?'<span class="tag t-ok">Entregou</span>':'<span class="tag t-w">Não fez</span>'}</td></tr>`}).join('')}</tbody></table></div></div>`;
+ }else{
+  h+=`<div class="card"><div class="scroll"><table class="stack"><thead><tr><th>Estudante</th><th class="n">Acertos</th><th class="n">Nota</th><th>Entregue</th></tr></thead><tbody>${ests.map(e=>{const t=tns.find(x=>x.est===e.id);return `<tr><td>${esc(e.nome)}</td><td class="n">${t?t.acertos+'/'+t.total:''}</td><td class="n">${t?num(t.nota):''}</td><td>${t?esc(t.fim?new Date(t.fim).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):''):'<span class="tag t-w">Não fez</span>'}</td></tr>`}).join('')}</tbody></table></div><div class="acts"><button class="b" data-act="pvCopNotas">Copiar notas</button>${ed?'<button class="b" data-act="go" data-v="aluno">Abrir a tela do estudante</button>':''}</div></div>`;
+  if(tns.length){const pq=pr.questoes.map((q,i)=>tns.filter(t=>t.resp&&t.resp[i]===q.certa).length/tns.length);h+=`<div class="card"><h2>Acertos por questão</h2>${pq.map((p,q)=>`<div class="qrow"><b>${q+1}</b><div style="flex:1;background:var(--grey);border-radius:6px;height:14px"><div style="width:${Math.round(p*100)}%;height:14px;border-radius:6px;background:${p<0.5?'var(--coral)':'var(--blue)'}"></div></div><span class="small nw" style="width:44px;text-align:right">${Math.round(p*100)}%</span></div>`).join('')}</div>`}
+ }
+ return h}
+function lerProvaForm(pr){document.querySelectorAll('[data-pv]').forEach(el=>{const f=el.dataset.pv;if(el.type==='checkbox')pr[f]=el.checked;else if(f==='tempo')pr[f]=Math.max(1,parseInt(el.value)||30);else if(f==='valor')pr[f]=Math.max(0,parseFloat(el.value)||0);else pr[f]=el.value.trim()});
+ document.querySelectorAll('[data-q][data-f]').forEach(el=>{const q=pr.questoes[+el.dataset.q];if(!q)return;const f=el.dataset.f;if(f==='e')q.e=el.value;else if(f==='certa'){if(el.checked)q.certa=+el.value}else if(f[0]==='a')q.alts[+f.slice(1)]=el.value})}
+function parseLote(txt){const out=[];for(const bloco of String(txt).replace(/\r/g,'').split(/\n\s*\n/)){const ls=bloco.split('\n').map(s=>s.trim()).filter(Boolean);if(!ls.length)continue;const q={e:'',alts:[],certa:null};const en=[];for(const l of ls){const m=l.match(/^(\*?)\s*([a-eA-E])\s*[\)\.\-]\s*(.*)$/);if(m&&(q.alts.length||en.length)){if(m[1])q.certa=q.alts.length;q.alts.push(m[3].replace(/^\*\s*/,''));const lastStar=/\*\s*$/.test(m[3]);if(lastStar){q.certa=q.alts.length-1;q.alts[q.alts.length-1]=q.alts[q.alts.length-1].replace(/\s*\*\s*$/,'')}}else en.push(l)}
+ q.e=en.join('\n').replace(/^\d+\s*[\)\.\-]\s*/,'');if(q.alts.length>=2){while(q.alts.length<4)q.alts.push('');out.push(q)}}return out}
+function embaralhar(arr,seed){let s=0;for(const c of seed)s=(s*31+c.charCodeAt(0))>>>0;const a=arr.slice();for(let i=a.length-1;i>0;i--){s=(s*1103515245+12345)>>>0;const j=s%(i+1);const t=a[i];a[i]=a[j];a[j]=t}return a}
+
+/* modo estudante */
+let AL={fase:'entrar',erro:''};
+const AND='prumo.andamento';
+function vAluno(){document.body.classList.add('aluno');
+ if(AL.fase==='entrar')return `<div class="auth card"><h1>Fazer prova</h1><p>Digite o código da prova e o seu PIN.</p><label>Código da prova<input id="alCod" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase;font-size:22px;letter-spacing:2px"></label><label style="margin-top:12px">Seu PIN<input id="alPin" inputmode="numeric" autocomplete="off" maxlength="6" style="font-size:22px;letter-spacing:4px"></label>${AL.erro?`<p class="rel err">${esc(AL.erro)}</p>`:''}<div class="acts"><button class="b p" data-act="alEntrar">Entrar</button></div>${MODO==='local'||ME.uid?`<p class="small muted" style="margin-top:20px"><button class="b s" data-act="alSair">Voltar ao Prumo (professor)</button></p>`:''}</div>`;
+ if(AL.fase==='confirmar')return `<div class="auth card"><h1>${esc(AL.prova.nome)}</h1><p style="font-size:20px">Você é <b>${esc(AL.est.nome)}</b>?</p><p>São ${AL.prova.questoes.length} questões e você terá <b>${AL.prova.tempo} minutos</b>. O tempo começa quando você tocar em “Começar”. Responda todas as questões antes de enviar.</p><div class="acts"><button class="b p" data-act="alComecar">Sou eu. Começar</button><button class="b" data-act="alNao">Não sou eu</button></div></div>`;
+ if(AL.fase==='fim')return `<div class="auth card"><h1>Prova enviada</h1><p style="font-size:20px">Obrigado, ${esc(AL.est.nome.split(' ')[0])}.</p>${AL.res&&AL.prova.mostrarNota?`<p style="font-size:22px"><b>${AL.res.acertos} de ${AL.res.total} acertos · nota ${num(AL.res.nota)}</b></p>`:''}<div class="acts"><button class="b p" data-act="alNovo">Próximo estudante</button></div></div>`;
+ const pr=AL.prova,ord=AL.ordem,i=AL.atual,q=pr.questoes[ord[i].q],resp=AL.resp,todas=ord.every(o=>resp[o.q]!=null);
+ return `<div class="card"><div class="row" style="justify-content:space-between;align-items:center"><div><b>${esc(AL.est.nome)}</b><div class="muted small">${esc(pr.nome)}</div></div><div class="relogio" id="relogio">--:--</div></div></div>
+ <div class="card"><p class="muted">Questão ${i+1} de ${ord.length}</p><div class="enun">${esc(q.e)}</div>${ord[i].alts.map((j,k)=>q.alts[j]?`<button class="opc" aria-pressed="${resp[ord[i].q]===j}" data-act="alResp" data-j="${j}"><b>${LETRAS[k]})</b> ${esc(q.alts[j])}</button>`:'').join('')}
+ <div class="acts" style="justify-content:space-between"><button class="b" data-act="alIr" data-i="${i-1}"${i?'':' disabled'}>← Anterior</button>${i<ord.length-1?`<button class="b p" data-act="alIr" data-i="${i+1}">Próxima →</button>`:`<button class="b c" data-act="alEnviar"${todas?'':' disabled'}>Enviar prova</button>`}</div></div>
+ <div class="card"><div class="navq">${ord.map((o,k)=>`<button class="${resp[o.q]!=null?'r':''}${k===i?' at':''}" data-act="alIr" data-i="${k}" aria-label="Questão ${k+1}">${k+1}</button>`).join('')}</div>${todas?'':`<p class="small muted" style="margin-top:10px">Faltam ${ord.filter(o=>resp[o.q]==null).length} questão(ões). O botão Enviar fica na última questão.</p>`}</div>`}
+let relT=null;
+function relogio(){clearInterval(relT);if(AL.fase!=='prova')return;const tick=()=>{const rest=Math.max(0,Math.round((AL.fimEm-Date.now())/1000));const el=$('relogio');if(el){el.textContent=String(Math.floor(rest/60)).padStart(2,'0')+':'+String(rest%60).padStart(2,'0');el.classList.toggle('pouco',rest<=120)}if(rest<=0){clearInterval(relT);enviarProva(true)}};tick();relT=setInterval(tick,1000)}
+function guardarAndamento(){try{localStorage.setItem(AND,JSON.stringify({cod:AL.cod,pin:AL.pin,prova:AL.prova,est:AL.est,ordem:AL.ordem,resp:AL.resp,inicio:AL.inicio,fimEm:AL.fimEm,atual:AL.atual,escola:AL.escola}))}catch(e){}}
+function provaPublica(pr){return{id:pr.id,nome:pr.nome,tempo:pr.tempo,embaralhar:pr.embaralhar,mostrarNota:pr.mostrarNota,questoes:pr.questoes.map(q=>({e:q.e,alts:q.alts}))}}
+async function alEntrar(){const cod=($('alCod').value||'').trim().toUpperCase(),pin=($('alPin').value||'').trim();AL.erro='';if(!cod||!pin){AL.erro='Preencha o código e o PIN.';return render()}
+ if(MODO==='local'){const pr=S.provas.find(p=>p.codigo===cod);if(!pr||!pr.aberta){AL.erro='Prova não encontrada ou fechada. Confira o código.';return render()}const eid=Object.keys(pr.pins||{}).find(k=>pr.pins[k]===pin);const e=eid&&estPorId(eid);if(!e){AL.erro='PIN incorreto.';return render()}if(S.tentativas.some(t=>t.prova===pr.id&&t.est===e.id)){AL.erro='Você já entregou esta prova.';return render()}Object.assign(AL,{fase:'confirmar',cod,pin,prova:provaPublica(pr),est:{id:e.id,nome:e.nome}});return render()}
+ try{await clienteSB();const{data,error}=await sb.rpc('prumo_prova_abrir',{p_codigo:cod,p_pin:pin});if(error)throw error;if(data.erro){AL.erro=data.erro;return render()}Object.assign(AL,{fase:'confirmar',cod,pin,prova:data.prova,est:data.estudante,escola:data.escola});render()}catch(e){AL.erro='Sem conexão com o servidor. Tente de novo.';render()}}
+function alComecar(){const pr=AL.prova,idx=pr.questoes.map((_,i)=>i);const seed=AL.est.id+pr.id;const qs=pr.embaralhar?embaralhar(idx,seed):idx;AL.ordem=qs.map(q=>{const al=pr.questoes[q].alts.map((_,j)=>j).filter(j=>pr.questoes[q].alts[j]);return{q,alts:pr.embaralhar?embaralhar(al,seed+q):al}});AL.resp={};AL.atual=0;AL.inicio=new Date().toISOString();AL.fimEm=Date.now()+pr.tempo*60000;AL.fase='prova';guardarAndamento();render()}
+let enviando=false;
+async function enviarProva(auto){if(enviando||AL.fase!=='prova')return;enviando=true;clearInterval(relT);const resp=AL.prova.questoes.map((_,i)=>AL.resp[i]??null);
+ try{if(MODO==='local'){const pr=S.provas.find(p=>p.id===AL.prova.id);let ac=0;pr.questoes.forEach((q,i)=>{if(resp[i]===q.certa)ac++});const nota=Math.round(ac/pr.questoes.length*(+pr.valor||10)*10)/10;S.tentativas.push({id:pr.id+'_'+AL.est.id,prova:pr.id,est:AL.est.id,resp,acertos:ac,total:pr.questoes.length,nota,inicio:AL.inicio,fim:new Date().toISOString(),auto:!!auto});save();AL.res={acertos:ac,total:pr.questoes.length,nota}}
+  else{await clienteSB();const{data,error}=await sb.rpc('prumo_prova_enviar',{p_codigo:AL.cod,p_pin:AL.pin,p_respostas:resp,p_inicio:AL.inicio});if(error)throw error;if(data.erro)throw new Error(data.erro);AL.res=data}
+  try{localStorage.removeItem(AND)}catch(e){}AL.fase='fim';enviando=false;render()}
+ catch(e){enviando=false;toast('Não consegui enviar. Verifique a internet e toque em Enviar de novo.');if(auto){AL.fimEm=Date.now()+60000;relogio()}render()}}
+
+/* ---------- RELATÓRIOS ---------- */
+let R={turma:'',est:'',periodo:'',prof:''};
+const SEC=[['barreiras','Barreiras observadas'],['adaptacoes','Adaptações realizadas'],['acessibilidade','Recursos de acessibilidade'],['intervencoes','Intervenções']];
+function contribs(est,per){return S.relatorios.filter(r=>r.est===est&&r.periodo===per)}
+function textoRelatorio(e,per){const cs=contribs(e.id,per);if(!cs.length)return'';const nome=e.nome,pn=nome.split(' ')[0];const par=[];
+ par.push(`No ${per}, ${nome}, da turma ${e.turma}, foi acompanhado(a) por ${lista(cs.map(c=>c.prof+(c.componente?' ('+c.componente+')':'')))}.`);
+ const uni=k=>[...new Set(cs.flatMap(c=>c.marcados?.[k]||[]))].map(minusc);
+ const b=uni('barreiras');if(b.length)par.push(`Foram observadas as seguintes barreiras à aprendizagem: ${lista(b)}.`);
+ for(const c of cs){const it=Object.entries(c.itens||{});if(!it.length)continue;const g=s=>it.filter(([,v])=>v===s).map(([k])=>'“'+minusc(k)+'”');const fr=[];if(g(SIT[0]).length)fr.push(`já consolidou ${lista(g(SIT[0]))}`);if(g(SIT[1]).length)fr.push(`está consolidando ${lista(g(SIT[1]))}`);if(g(SIT[2]).length)fr.push(`ainda não consolidou ${lista(g(SIT[2]))}`);if(fr.length)par.push(`Em ${c.componente||'sala'}, quanto às aprendizagens do ano, ${pn} ${fr.join('; ')}.`)}
+ const a=uni('adaptacoes');if(a.length)par.push(`Para favorecer a aprendizagem, foram realizadas as seguintes adaptações: ${lista(a)}.`);
+ const ac=uni('acessibilidade');if(ac.length)par.push(`Como recursos de acessibilidade, foram utilizados: ${lista(ac)}.`);
+ if(cs.some(c=>c.aee==='sim'))par.push(`${pn} frequenta o Atendimento Educacional Especializado (AEE).`);
+ const iv=uni('intervencoes');if(iv.length)par.push(`As intervenções realizadas foram: ${lista(iv)}.`);
+ for(const c of cs)if((c.consideracao||'').trim())par.push(`${c.prof}${c.componente?', de '+c.componente:''}, considera: ${c.consideracao.trim()}`);
+ return `RELATÓRIO DE DESENVOLVIMENTO — ${per.toUpperCase()}\n${S.escola||''}\nEstudante: ${nome} · Turma: ${e.turma}\n\n`+par.join('\n\n')}
+function vRelatorios(){const turmas=minhasTurmas();if(!S.estudantes.length)return semDados('Relatórios','Cadastre turmas e estudantes para começar.');
+ if(!turmas.includes(R.turma))R.turma=turmas[0]||'';const ests=estDaTurma(R.turma);if(!ests.some(e=>e.id===R.est))R.est=ests[0]?.id||'';if(!S.periodos.includes(R.periodo))R.periodo=S.periodos[0]||'';
+ if(MODO==='servidor'&&!isCoord())R.prof=ME.nome;else if(!R.prof)R.prof=S.professores[0]?.nome||meuNome();
+ const e=estPorId(R.est);
+ let h=`<h1>Relatórios</h1><div class="card"><div class="row"><label>Turma${selTurma('rTurma',R.turma,turmas)}</label><label>Estudante<select data-chg="rEst">${ests.map(x=>`<option value="${x.id}"${x.id===R.est?' selected':''}>${esc(x.nome)}</option>`).join('')}</select></label><label>Período<select data-chg="rPer">${S.periodos.map(p=>`<option${p===R.periodo?' selected':''}>${esc(p)}</option>`).join('')}</select></label></div></div>`;
+ if(!e)return h+'<p class="muted">Nenhum estudante nesta turma.</p>';
+ const prof=S.professores.find(p=>p.nome===R.prof);const meu=contribs(e.id,R.periodo).find(c=>c.prof===R.prof)||{marcados:{},itens:{},aee:'',consideracao:'',componente:prof?.componente||''};
+ const itens=S.listas.itens[meu.componente]||[];
+ h+=`<div class="card"><h2>Contribuição de ${esc(R.prof||'—')}</h2>${MODO==='local'||isCoord()?`<div class="row"><label>Professor(a)<select data-chg="rProf">${S.professores.map(p=>`<option${p.nome===R.prof?' selected':''}>${esc(p.nome)}</option>`).join('')}</select></label></div>`:''}
+ <div class="row" style="margin-top:10px"><label>Componente<input id="rComp" list="dlComp" value="${esc(meu.componente)}" data-chg="rComp"></label><label>AEE<select id="rAee"><option value="">Não informar</option><option value="sim"${meu.aee==='sim'?' selected':''}>Frequenta o AEE</option><option value="nao"${meu.aee==='nao'?' selected':''}>Não frequenta</option></select></label></div><datalist id="dlComp">${Object.keys(S.listas.itens).map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+ ${SEC.map(([k,n])=>`<h3 style="margin-top:16px">${n}</h3><div class="cols2">${(S.listas[k]||[]).map((op,i)=>`<label class="ck"><input type="checkbox" data-rs="${k}" value="${esc(op)}"${(meu.marcados[k]||[]).includes(op)?' checked':''}>${esc(op)}</label>`).join('')}</div>`).join('')}
+ ${itens.length?`<h3 style="margin-top:16px">Aprendizagens em ${esc(meu.componente)}</h3><div class="scroll"><table class="stack"><thead><tr><th>Aprendizagem</th><th>Situação</th></tr></thead><tbody>${itens.map(it=>`<tr><td>${esc(it)}</td><td><select data-ri="${esc(it)}" aria-label="Situação"><option value="">—</option>${SIT.map(s=>`<option${meu.itens[it]===s?' selected':''}>${s}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table></div>`:`<p class="small muted" style="margin-top:12px">Sem lista de aprendizagens para “${esc(meu.componente||'—')}”. O usuário master pode criar em Configuração → Escola e regras.</p>`}
+ <label style="margin-top:16px">Consideração pessoal<textarea id="rCons" placeholder="O que você quer acrescentar sobre o desenvolvimento do estudante">${esc(meu.consideracao)}</textarea></label>
+ <div class="acts"><button class="b p" data-act="rSalvar">Salvar contribuição</button>${meu.id&&podeEditar(meu)?'<button class="b" data-act="rApagar">Apagar minha contribuição</button>':''}</div></div>`;
+ const txt=textoRelatorio(e,R.periodo),cs=contribs(e.id,R.periodo);
+ h+=`<div class="card"><h2>Relatório consolidado</h2><p class="small muted">${cs.length?`Junta as contribuições de ${cs.length} professor(es), num texto corrido.`:'Ainda não há contribuições para este estudante neste período.'}</p>${txt?`<p class="texto">${esc(txt)}</p><div class="acts"><button class="b p" data-act="rCopiar">Copiar relatório</button></div>`:''}</div>`;
+ const tot=ests.map(x=>contribs(x.id,R.periodo).length);h+=`<div class="card"><h3>Andamento da turma ${esc(R.turma)}</h3><p>${tot.filter(n=>n>0).length} de ${ests.length} estudantes com pelo menos uma contribuição neste período.</p></div>`;
+ return h}
+
+function vRelVer(){const turmas=minhasTurmas();if(!S.estudantes.length)return semDados('Relatórios prontos','Cadastre turmas e estudantes para começar.');if(!turmas.includes(R.turma))R.turma=turmas[0]||'';if(!S.periodos.includes(R.periodo))R.periodo=S.periodos[0]||'';const ests=estDaTurma(R.turma),com=ests.filter(e=>contribs(e.id,R.periodo).length);
+ let h=`<h1>Relatórios prontos</h1><div class="card"><div class="row"><label>Turma${selTurma('rTurma',R.turma,turmas)}</label><label>Período<select data-chg="rPer">${S.periodos.map(p=>`<option${p===R.periodo?' selected':''}>${esc(p)}</option>`).join('')}</select></label></div><p style="margin-top:12px">${com.length} de ${ests.length} estudantes com relatório neste período.</p>${com.length?'<div class="acts"><button class="b p" data-act="rCopTodos">Copiar todos da turma</button></div>':''}</div>`;
+ return h+ests.map(e=>{const n=contribs(e.id,R.periodo).length;return `<details><summary>${esc(e.nome)} · <span class="${n?'':'muted'}">${n?n+' contribuição(ões)':'sem contribuições'}</span></summary>${n?`<p class="texto" style="margin-top:10px">${esc(textoRelatorio(e,R.periodo))}</p><div class="acts"><button class="b s" data-act="rCopEst" data-id="${e.id}">Copiar</button></div>`:''}</details>`}).join('')}
+
+/* ---------- OCORRÊNCIAS ---------- */
+let O={aba:'nova',turma:'',sel:[],edit:null,filtroT:'',filtroE:'',ultimo:null,pontosT:''};
+function textoOcorrencia(o){const es=o.ests.map(id=>estPorId(id)?.nome||'estudante removido');const suj=es.length>1?`os estudantes ${lista(es)} estiveram envolvidos`:`o(a) estudante ${es[0]||''} esteve envolvido(a)`;
+ let s=`Registra-se que, no dia ${dataBR(o.data)}${o.hora?', às '+o.hora:''}, na turma ${o.turma}, ${suj} em ocorrência do tipo “${o.tipo}”. ${(o.descricao||'').trim()}`;if(s&&!/[.!?]$/.test(s.trim()))s=s.trim()+'.';
+ if(o.prov&&o.prov.length)s+=` Como providência, foi realizado: ${lista(o.prov.map(minusc))}.`;s+=` Registro feito por ${o.autor}${S.escola?', '+S.escola:''}.`;return s.replace(/\s+/g,' ').trim()}
+function pontos(eid){const ini=S.ocInicio||'';let p=+S.ocInicial||0;for(const o of S.ocorrencias){if(!o.ests.includes(eid)||(ini&&o.data<ini))continue;const t=S.ocTipos.find(x=>x.nome===o.tipo);if(t)p-=+t.desconto||0}return Math.max(0,Math.round(p*100)/100)}
+function ocVisiveis(){if(veTudo())return S.ocorrencias;const mt=turmasDoProf(ME.nome);return S.ocorrencias.filter(o=>mt.includes(o.turma)||o.autorUid===ME.uid)}
+function vOcorrencias(){if(!S.estudantes.length)return semDados('Ocorrências','Cadastre turmas e estudantes para começar.');
+ const todas=S.turmas.map(t=>t.nome);let h=`<h1>${O.aba==='nova'?(O.edit?'Editar ocorrência':'Nova ocorrência'):O.aba==='hist'?'Histórico de ocorrências':'Pontuação de comportamento'}</h1>`;
+ if(O.aba==='nova'){const ed=O.edit?S.ocorrencias.find(o=>o.id===O.edit):null;const base=ed||{data:hoje(),hora:agoraHM(),turma:O.turma||todas[0],tipo:S.ocTipos[0]?.nome,descricao:'',prov:[]};if(!O.turma)O.turma=base.turma;const ests=estDaTurma(O.turma);
+  if(O.ultimo){const u=S.ocorrencias.find(o=>o.id===O.ultimo);if(u)h+=`<div class="card"><h2>Ocorrência registrada</h2><p class="texto">${esc(textoOcorrencia(u))}</p><div class="acts"><button class="b p" data-act="oCopiar" data-id="${u.id}">Copiar texto</button><button class="b" data-act="oOutra">Registrar outra</button></div></div>`;return h}
+  h+=`<div class="card"><p class="small muted">Qualquer professor pode registrar ocorrência em qualquer turma (por exemplo, numa substituição).</p><div class="row"><label>Data<input type="date" id="oData" value="${esc(base.data)}"></label><label>Hora<input type="time" id="oHora" value="${esc(base.hora||'')}"></label><label>Turma${selTurma('oTurma',O.turma,todas)}</label></div>
+  <h3 style="margin-top:16px">Estudante(s)</h3><div class="cols2">${ests.map(e=>`<label class="ck"><input type="checkbox" data-oe="${e.id}"${O.sel.includes(e.id)?' checked':''}>${esc(e.nome)} <span class="muted small">· ${num(pontos(e.id))} pts</span></label>`).join('')}</div>
+  <div class="row" style="margin-top:16px"><label style="flex:1">Tipo<select id="oTipo">${S.ocTipos.map(t=>`<option${t.nome===base.tipo?' selected':''}>${esc(t.nome)}</option>`).join('')}</select></label></div>
+  <label style="margin-top:12px">O que aconteceu<textarea id="oDesc" placeholder="Descreva os fatos com objetividade">${esc(base.descricao)}</textarea></label>
+  <h3 style="margin-top:16px">Providências</h3><div class="cols2">${S.ocProvidencias.map(p=>`<label class="ck"><input type="checkbox" data-op value="${esc(p)}"${(base.prov||[]).includes(p)?' checked':''}>${esc(p)}</label>`).join('')}</div>
+  ${MODO==='local'?`<label style="margin-top:12px">Registrado por<select id="oAutor"><option>Coordenação</option>${S.professores.map(p=>`<option${ed&&ed.autor===p.nome?' selected':''}>${esc(p.nome)}</option>`).join('')}</select></label>`:''}
+  <div class="acts"><button class="b p" data-act="oSalvar">${ed?'Salvar alterações':'Registrar ocorrência'}</button>${ed?'<button class="b" data-act="oCancel">Cancelar</button>':''}</div></div>`}
+ else if(O.aba==='hist'){const vis=ocVisiveis(),tv=[...new Set(vis.map(o=>o.turma))].sort();const l=vis.filter(o=>(!O.filtroT||o.turma===O.filtroT)&&(!O.filtroE||o.ests.includes(O.filtroE))).sort((a,b)=>(b.data+b.hora).localeCompare(a.data+a.hora));
+  h+=`<div class="card"><div class="row"><label>Turma${selTurma('oFT',O.filtroT,tv,'Todas')}</label>${O.filtroT?`<label>Estudante<select data-chg="oFE"><option value="">Todos</option>${estDaTurma(O.filtroT).map(e=>`<option value="${e.id}"${e.id===O.filtroE?' selected':''}>${esc(e.nome)}</option>`).join('')}</select></label>`:''}</div><p class="small muted" style="margin-top:10px">${l.length} ocorrência(s).${veTudo()?'':' Você vê as das suas turmas e as que registrou.'}</p></div>`;
+  h+=l.slice(0,200).map(o=>`<div class="card"><p class="small muted">${dataBR(o.data)} ${esc(o.hora||'')} · ${esc(o.turma)} · ${esc(o.tipo)}</p><p>${esc(textoOcorrencia(o))}</p><div class="acts"><button class="b s" data-act="oCopiar" data-id="${o.id}">Copiar</button>${podeEditar(o)?`<button class="b s" data-act="oEditar" data-id="${o.id}">Editar</button><button class="b s" data-act="oApagar" data-id="${o.id}">Apagar</button>`:''}</div></div>`).join('')}
+ else{const tv=minhasTurmas();if(!tv.includes(O.pontosT))O.pontosT=tv[0]||'';const ests=estDaTurma(O.pontosT);
+  h+=`<div class="card"><p>Cada estudante começa o período com ${num(+S.ocInicial)} pontos. Cada ocorrência desconta conforme o tipo${S.ocInicio?', contando a partir de '+dataBR(S.ocInicio):''}.</p><div class="row"><label>Turma${selTurma('oPT',O.pontosT,tv)}</label></div>
+  <div class="scroll" style="margin-top:12px"><table class="stack"><thead><tr><th>Estudante</th><th class="n">Ocorrências</th><th class="n">Pontos</th></tr></thead><tbody>${ests.map(e=>({e,p:pontos(e.id),n:S.ocorrencias.filter(o=>o.ests.includes(e.id)&&(!S.ocInicio||o.data>=S.ocInicio)).length})).sort((a,b)=>a.p-b.p||a.e.nome.localeCompare(b.e.nome)).map(x=>`<tr><td>${esc(x.e.nome)}</td><td class="n">${x.n}</td><td class="n"><span class="tag ${x.p>=(+S.ocInicial)*0.8?'t-ok':x.p>=(+S.ocInicial)*0.5?'t-w':'t-c'}">${num(x.p)}</span></td></tr>`).join('')}</tbody></table></div></div>`}
+ return h}
+
+/* ---------- CADASTROS ---------- */
+let Cv={aba:'prof',turma:'',busca:''};
+function vCadastros(){
+ let h=`<h1>${{prof:'Professores',turmas:'Turmas',est:'Estudantes'}[Cv.aba]} <span class="muted" style="font-size:.6em">(${{prof:S.professores,turmas:S.turmas,est:S.estudantes}[Cv.aba].length})</span></h1><p class="small muted">Para cadastrar muitos de uma vez, use Importar planilhas.</p><div class="card">`;
+ if(Cv.aba==='prof'){
+  h+=`<div class="row"><label>Nome<input id="nP"></label><label>Componente<input id="nC"></label><label>Telefone (opcional)<input id="nT" inputmode="tel"></label><button class="b p" data-act="addProf">Adicionar</button></div>`;
+  h+=S.professores.length?`<div class="scroll" style="margin-top:14px"><table class="stack"><thead><tr><th>Nome</th><th>Componente</th><th>Telefone</th><th class="n">Aulas/semana</th><th></th></tr></thead><tbody>${S.professores.map((p,i)=>`<tr><td>${esc(p.nome)}</td><td>${esc(p.componente)}</td><td class="nw">${esc(p.telefone)}</td><td class="n">${aulasSemana(p.nome)}</td><td><button class="b s" data-act="delProf" data-i="${i}">Remover</button></td></tr>`).join('')}</tbody></table></div>`:'<p class="muted" style="margin-top:12px">Nenhum professor. Importe a planilha ou adicione acima.</p>';
+ }else if(Cv.aba==='turmas'){
+  h+=`<div class="row"><label>Turma<input id="nTu" placeholder="Ex.: 6A"></label><label>Turno<select id="nTt">${S.turnos.map((x,i)=>`<option value="${i}">${esc(x.nome)}</option>`).join('')}</select></label><button class="b p" data-act="addTurma">Adicionar</button></div>`;
+  h+=S.turmas.length?`<div class="scroll" style="margin-top:14px"><table class="stack"><thead><tr><th>Turma</th><th>Turno</th><th class="n">Estudantes</th><th></th></tr></thead><tbody>${S.turmas.map((x,i)=>`<tr><td>${esc(x.nome)}</td><td>${esc(S.turnos[x.turno]?.nome||'?')}</td><td class="n">${S.estudantes.filter(e=>e.turma===x.nome).length}</td><td><button class="b s" data-act="delTurma" data-i="${i}">Remover</button></td></tr>`).join('')}</tbody></table></div>`:'<p class="muted" style="margin-top:12px">Nenhuma turma.</p>';
+ }else{
+  if(Cv.turma&&!S.turmas.some(x=>x.nome===Cv.turma))Cv.turma='';
+  h+=`<div class="row"><label>Nome do estudante<input id="nE"></label><label>Turma<select id="nEt">${S.turmas.map(x=>`<option${x.nome===Cv.turma?' selected':''}>${esc(x.nome)}</option>`).join('')}</select></label><button class="b p" data-act="addEst"${S.turmas.length?'':' disabled'}>Adicionar</button></div>`;
+  h+=`<div class="row" style="margin-top:14px"><label>Filtrar turma${selTurma('cTurma',Cv.turma,S.turmas.map(t=>t.nome),'Todas')}</label><label>Buscar nome<input data-inp="cBusca" value="${esc(Cv.busca)}"></label></div>`;
+  const b=norm(Cv.busca);const l=S.estudantes.map((e,i)=>({e,i})).filter(o=>(!Cv.turma||o.e.turma===Cv.turma)&&(!b||norm(o.e.nome).includes(b)));
+  h+=`<div id="listaEst">${listaEst(l)}</div>`;
+ }
+ return h+'</div>'}
+function listaEst(l){return l.length?`<div class="scroll" style="margin-top:14px"><table class="stack"><thead><tr><th>Estudante</th><th>Turma</th><th></th></tr></thead><tbody>${l.slice(0,400).map(o=>`<tr><td>${esc(o.e.nome)}</td><td>${esc(o.e.turma)}</td><td><button class="b s" data-act="delEst" data-i="${o.i}">Remover</button></td></tr>`).join('')}</tbody></table>${l.length>400?'<p class="muted small">Mostrando 400 de '+l.length+'. Use o filtro.</p>':''}</div>`:'<p class="muted" style="margin-top:12px">Nenhum estudante encontrado.</p>'}
+
+/* ---------- IMPORTAÇÃO ---------- */
+const IMP={
+ prof:{t:'1. Professores',cols:()=>['Nome','Componente','Telefone (opcional)'],ex:()=>[['Maria Exemplo','Matemática','(31) 99999-0000'],['José Exemplo','Língua Portuguesa','']],
+  ajuda:'Uma linha por professor. O nome precisa ser escrito do mesmo jeito na planilha de horário.'},
+ est:{t:'2. Turmas e estudantes',cols:()=>['Nome do estudante','Turma','Turno'],ex:()=>[['Ana Exemplo','6A',S.turnos[0]?.nome||'Manhã'],['Caio Exemplo','6B',S.turnos[0]?.nome||'Manhã']],
+  ajuda:'Uma linha por estudante. As turmas são criadas a partir desta lista. Reimportar mantém o histórico de quem já estava (o nome e a turma precisam ser os mesmos).'},
+ hor:{t:'3. Quadro de horários',cols:()=>{const N=Math.max(...S.turnos.map((_,i)=>nAulas(i)));return['Professor','Turno','Dia'].concat(Array.from({length:N},(_,i)=>String(i+1)))},
+  ex:()=>{const tn=S.turnos[0]?.nome||'Manhã',s=S.tipos.map(x=>x.sigla);return[['Maria Exemplo',tn,'Segunda','6A','6A',s[0]||'','6B',s[1]||''],['Maria Exemplo',tn,'Terça',s[2]||'','7A','7A','','6B']]},
+  ajuda:'Uma linha por professor, por turno e por dia. Nas colunas 1, 2, 3… escreva em cada aula: o nome da turma (quando o professor dá aula), uma sigla (PLT, LIV, PLAN…) ou deixe vazio (professor não está na escola).'}};
+let Iv={prof:{txt:'',rel:null},est:{txt:'',rel:null},hor:{txt:'',rel:null}};
+function modelo(k){const m=IMP[k];return [m.cols()].concat(m.ex()).map(r=>r.map(x=>String(x).trim()).join('\t')).join('\n')}
+function vImportar(){
+ let h=`<h1>Importar planilhas</h1><p>Faça na ordem: professores, depois turmas e estudantes, depois o horário. Em cada bloco: copie o modelo, cole no Excel ou no Google Planilhas, preencha, selecione as linhas preenchidas, copie e cole aqui. Também dá para enviar um arquivo .xlsx ou .csv.</p>`;
+ for(const k of ['prof','est','hor']){const m=IMP[k],st=Iv[k];
+  h+=`<div class="card"><h2>${m.t}</h2><p class="small">${esc(m.ajuda)}</p><div class="scroll"><table class="small"><thead><tr>${m.cols().map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${m.ex().map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+  <div class="acts"><button class="b" data-act="copModelo" data-k="${k}">Copiar modelo</button><button class="b" data-act="baixModelo" data-k="${k}">Baixar modelo (.csv)</button><label class="b">Enviar arquivo<input class="hid" type="file" accept=".csv,.txt,.tsv,.xlsx,.xls" data-chg="arq" data-k="${k}"></label></div>
+  <label style="margin-top:12px">Cole aqui as linhas da planilha<textarea class="mono" data-inp="impTxt" data-k="${k}" placeholder="Cole aqui (com ou sem a linha de títulos)">${esc(st.txt)}</textarea></label>
+  <div class="acts"><button class="b p" data-act="impVer" data-k="${k}">Verificar</button>${st.rel&&!st.rel.erros.length?`<button class="b c" data-act="impOk" data-k="${k}">Confirmar importação</button>`:''}</div>${st.rel?relHTML(st.rel):''}</div>`}
+ return h}
+function relHTML(r){const lim=a=>a.slice(0,25).map(x=>`<li>${esc(x)}</li>`).join('')+(a.length>25?`<li>… e mais ${a.length-25}</li>`:'');
+ let h='';if(r.erros.length)h+=`<div class="rel err"><b>${r.erros.length} erro(s) — corrija na planilha e cole de novo:</b><ul>${lim(r.erros)}</ul></div>`;
+ if(r.alertas.length)h+=`<div class="rel w"><b>Atenção:</b><ul>${lim(r.alertas)}</ul></div>`;
+ if(!r.erros.length)h+=`<div class="rel ok"><b>Tudo certo para importar:</b> ${esc(r.resumo)}. A importação substitui o que já existe neste bloco.</div>`;return h}
+function parse(txt){txt=String(txt||'').replace(/^﻿/,'');const first=txt.split(/\r?\n/)[0]||'';const del=first.includes('\t')?'\t':((first.match(/;/g)||[]).length>=(first.match(/,/g)||[]).length?';':',');
+ const rows=[];let row=[],f='',q=false;for(let i=0;i<txt.length;i++){const c=txt[i];if(q){if(c==='"'){if(txt[i+1]==='"'){f+='"';i++}else q=false}else f+=c}else if(c==='"'&&f==='')q=true;else if(c===del){row.push(f);f=''}else if(c==='\n'||c==='\r'){if(c==='\r'&&txt[i+1]==='\n')i++;row.push(f);rows.push(row);row=[];f=''}else f+=c}
+ row.push(f);rows.push(row);return rows.map(r=>r.map(x=>x.trim()))}
+function linhas(txt){const rows=parse(txt);let off=1;if(rows.length&&/nome|professor|estudante/.test(norm(rows[0][0]))){rows.shift();off=2}return rows.map((r,i)=>({r,ln:i+off})).filter(o=>o.r.some(x=>x))}
+function valProf(txt){const erros=[],alertas=[],out=[],vis=new Set();for(const{r,ln}of linhas(txt)){const nome=r[0]?.replace(/\s+/g,' ');if(!nome){erros.push(`Linha ${ln}: falta o nome.`);continue}if(vis.has(norm(nome))){erros.push(`Linha ${ln}: “${nome}” aparece duas vezes.`);continue}vis.add(norm(nome));out.push({nome,componente:r[1]||'',telefone:r[2]||''})}
+ if(!out.length&&!erros.length)erros.push('Não encontrei nenhuma linha preenchida.');
+ const sai=[...new Set(S.horario.map(h=>h.prof))].filter(p=>!vis.has(norm(p)));if(sai.length)alertas.push('Estes professores não estão na nova lista e o horário deles será apagado: '+sai.join(', '));
+ return{erros,alertas,resumo:out.length+' professor(es)',aplicar(){for(const p of out){const ant=S.professores.find(x=>norm(x.nome)===norm(p.nome));if(ant)p.id=ant.id}const ren=new Map();for(const p of out){const ant=S.horario.find(h=>norm(h.prof)===norm(p.nome));if(ant)ren.set(ant.prof,p.nome)}S.horario=S.horario.filter(h=>ren.has(h.prof)).map(h=>Object.assign(h,{prof:ren.get(h.prof)}));S.professores=out}}}
+function valEst(txt){const erros=[],alertas=[],out=[],tur=new Map();for(const t of S.turmas)tur.set(kT(t.nome),{nome:t.nome,turno:t.turno,id:t.id});
+ for(const{r,ln}of linhas(txt)){const nome=(r[0]||'').replace(/\s+/g,' '),tn=r[1]||'';if(!nome||!tn){erros.push(`Linha ${ln}: falta ${!nome?'o nome':'a turma'}.`);continue}const t=turnoIdx(r[2]);if(t<0){erros.push(`Linha ${ln}: turno “${r[2]||''}” não existe (turnos: ${S.turnos.map(x=>x.nome).join(', ')}).`);continue}
+  if(tipoPorSigla(tn)){erros.push(`Linha ${ln}: a turma “${tn}” tem o mesmo nome de uma sigla. Mude o nome da turma ou da sigla.`);continue}
+  const k=kT(tn),ex=tur.get(k);if(ex&&ex.turno!==t){erros.push(`Linha ${ln}: a turma ${tn} aparece em dois turnos.`);continue}if(!ex)tur.set(k,{nome:tn,turno:t,nova:true});out.push({nome,turma:(ex||tur.get(k)).nome})}
+ if(!out.length&&!erros.length)erros.push('Não encontrei nenhuma linha preenchida.');
+ const novas=[...tur.values()].filter(x=>x.nova);if(novas.length)alertas.push('Turmas novas: '+novas.map(x=>x.nome).join(', '));
+ return{erros,alertas,resumo:out.length+' estudante(s) em '+new Set(out.map(o=>o.turma)).size+' turma(s)',aplicar(){for(const e of out){const ant=S.estudantes.find(x=>norm(x.nome)===norm(e.nome)&&x.turma===e.turma);if(ant)e.id=ant.id}S.turmas=[...tur.values()].map(x=>({id:x.id,nome:x.nome,turno:x.turno}));S.estudantes=out}}}
+function valHor(txt){const erros=[],alertas=[],out=[],vis=new Set(),novas=new Map(),slot=new Map();
+ if(!S.professores.length)return{erros:['Importe primeiro os professores (bloco 1).'],alertas,resumo:''};
+ const sig=S.tipos.map(x=>x.sigla).join(', ');
+ const turmaK=c=>{const tu=turmaPor(c);if(tu)return{nome:tu.nome,turno:tu.turno};return novas.get(kT(c))};
+ for(const{r,ln}of linhas(txt)){const[pn,tn,dn,...cs]=r;const p=S.professores.find(x=>norm(x.nome)===norm(pn));if(!p){erros.push(`Linha ${ln}: o professor “${pn||''}” não está cadastrado. Confira se o nome está igual ao da lista de professores.`);continue}
+  const t=turnoIdx(tn);if(t<0){erros.push(`Linha ${ln}: turno “${tn||''}” não existe.`);continue}const d=diaIdx(dn);if(d<0){erros.push(`Linha ${ln}: dia “${dn||''}” não reconhecido (use Segunda, Terça…).`);continue}
+  const key=p.nome+'|'+t+'|'+d;if(vis.has(key)){erros.push(`Linha ${ln}: ${p.nome} aparece duas vezes em ${S.turnos[t].nome}, ${dias()[d]}.`);continue}vis.add(key);
+  const n=nAulas(t),aulas=Array(n).fill('');
+  cs.forEach((c,ci)=>{c=String(c||'').trim();if(!c)return;if(ci>=n){erros.push(`Linha ${ln}: há algo na ${ci+1}ª aula, mas o turno ${S.turnos[t].nome} tem ${n} aulas.`);return}
+   let cl=classe(c);if(cl.k==='erro'){if(/\d/.test(c)){const ex=novas.get(kT(c));if(!ex)novas.set(kT(c),{nome:c,turno:t});else if(ex.turno!==t){erros.push(`Linha ${ln}: a turma ${c} aparece em dois turnos.`);return}}else{erros.push(`Linha ${ln}, ${ci+1}ª aula: “${c}” não é turma nem sigla. Siglas válidas: ${sig}.`);return}}
+   const tk=turmaK(c);if(tk){if(tk.turno!==t){erros.push(`Linha ${ln}: a turma ${tk.nome} é do turno ${S.turnos[tk.turno]?.nome}, não de ${S.turnos[t].nome}.`);return}const sk=t+'|'+d+'|'+ci+'|'+kT(tk.nome);slot.set(sk,(slot.get(sk)||[]).concat(p.nome))}
+   aulas[ci]=c});
+  const ant=linha(p.nome,t,d);out.push({id:ant?.id,prof:p.nome,turno:t,dia:d,aulas})}
+ if(!out.length&&!erros.length)erros.push('Não encontrei nenhuma linha preenchida.');
+ for(const[k,ps]of slot)if(ps.length>1){const[t,d,a,tk]=k.split('|');alertas.push(`${dias()[+d]}, ${+a+1}ª aula: ${ps.join(' e ')} na mesma turma (${(turmaK(tk)||{}).nome||tk}). Se não for aula compartilhada, corrija.`)}
+ const todas=S.turmas.map(x=>({nome:x.nome,turno:x.turno})).concat([...novas.values()]);
+ for(const tu of todas){let falta=0,tem=0;for(let d=0;d<dias().length;d++)for(let a=0;a<nAulas(tu.turno);a++){if(slot.has(tu.turno+'|'+d+'|'+a+'|'+kT(tu.nome)))tem++;else falta++}
+  if(!tem)alertas.push(`A turma ${tu.nome} não aparece no horário.`);else if(falta)alertas.push(`Turma ${tu.nome}: ${falta} horário(s) sem professor no quadro.`)}
+ if(novas.size)alertas.push('Turmas que não estavam cadastradas e serão criadas: '+[...novas.values()].map(x=>x.nome).join(', '));
+ const sem=S.professores.filter(p=>!out.some(o=>o.prof===p.nome)).map(p=>p.nome);if(sem.length&&out.length)alertas.push('Professores sem nenhuma linha de horário: '+sem.join(', '));
+ return{erros,alertas,resumo:out.length+' linha(s) de horário de '+new Set(out.map(o=>o.prof)).size+' professor(es)',aplicar(){for(const x of novas.values())S.turmas.push(x);S.horario=out.map(o=>{if(!o.id)delete o.id;return o})}}}
+const VAL={prof:valProf,est:valEst,hor:valHor};
+function lerTexto(f,cod){return new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(String(r.result||''));r.onerror=()=>ok('');r.readAsText(f,cod)})}
+async function lerArquivo(f){if(/\.xlsx?$/i.test(f.name)){const X=await carregar(LIB_XLSX,'XLSX');const wb=X.read(await f.arrayBuffer(),{type:'array'});return X.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]],{FS:'\t',blankrows:false})}
+ let t=await lerTexto(f,'utf-8');if(t.includes(String.fromCharCode(65533)))t=await lerTexto(f,'windows-1252');return t}
+
+/* ---------- REGRAS ---------- */
+function vRegras(){const L=S.listas;
+ let h=`<h1>Escola e regras</h1>`;
+ h+=`<div class="card"><h2>Escola</h2><label>Nome da escola<input id="rEscola" value="${esc(S.escola)}" placeholder="Ex.: Escola Municipal …"></label></div>`;
+ h+=`<div class="card"><h2>Turnos e aulas</h2><p class="small muted">Horários de início de cada aula, separados por vírgula (opcional, aparecem na mensagem).</p><div class="scroll"><table class="stack"><thead><tr><th>Turno</th><th>Nº de aulas</th><th>Início das aulas</th><th></th></tr></thead><tbody>${S.turnos.map((x,i)=>`<tr><td><input data-tf="nome" data-i="${i}" value="${esc(x.nome)}" aria-label="Nome do turno"></td><td><input type="number" min="1" max="12" data-tf="aulas" data-i="${i}" value="${esc(x.aulas)}" style="width:90px" aria-label="Número de aulas"></td><td><input data-tf="horas" data-i="${i}" value="${esc(x.horas)}" aria-label="Horários"></td><td>${S.turnos.length>1?`<button class="b s" data-act="delTurno" data-i="${i}">Remover</button>`:''}</td></tr>`).join('')}</tbody></table></div>
+ <div class="acts"><button class="b" data-act="addTurno">Adicionar turno</button><label class="ck"><input type="checkbox" id="rSab"${S.sabado?' checked':''}> A escola tem aulas aos sábados</label></div></div>`;
+ h+=`<div class="card"><h2>Siglas do horário</h2><p class="small">Cada sigla diz se o professor pode ou não substituir naquele horário. O tipo <b>condicional</b> serve para casos como planejamento: o professor só é chamado se tiver até o limite desse tipo no dia (o horário dele é remanejado). Quem tem o dia todo nesse tipo não é chamado.</p><div class="scroll"><table class="stack"><thead><tr><th>Sigla</th><th>Significado</th><th>Regra</th><th>Limite no dia</th><th></th></tr></thead><tbody>${S.tipos.map((x,i)=>`<tr><td><input data-pf="sigla" data-i="${i}" value="${esc(x.sigla)}" style="width:100px" aria-label="Sigla"></td><td><input data-pf="nome" data-i="${i}" value="${esc(x.nome)}" aria-label="Significado"></td><td><select data-pf="papel" data-i="${i}" aria-label="Regra">${Object.entries(PAPEIS).map(([k,n])=>`<option value="${k}"${k===x.papel?' selected':''}>${n}</option>`).join('')}</select></td><td><input type="number" min="0" max="12" data-pf="limite" data-i="${i}" value="${esc(x.limite||0)}" style="width:80px" aria-label="Limite"></td><td><button class="b s" data-act="delTipo" data-i="${i}">Remover</button></td></tr>`).join('')}</tbody></table></div><div class="acts"><button class="b" data-act="addTipo">Adicionar sigla</button></div>
+ <h3 style="margin-top:16px">Último recurso</h3><p class="small">Quem pode entrar em sala quando não houver substituto (ex.: coordenação). Um nome por linha, na ordem de preferência.</p><textarea id="rRes" style="min-height:90px">${esc(S.reserva.join('\n'))}</textarea></div>`;
+ h+=`<div class="card"><h2>Relatórios</h2><label>Períodos (um por linha)<textarea id="rPeriodos" style="min-height:90px">${esc(S.periodos.join('\n'))}</textarea></label>
+ <div class="cols2" style="margin-top:12px">${SEC.map(([k,n])=>`<label>${n} (um por linha)<textarea data-lst="${k}">${esc((L[k]||[]).join('\n'))}</textarea></label>`).join('')}</div>
+ <label style="margin-top:12px">Aprendizagens por componente (escreva “Componente: aprendizagem”, uma por linha)<textarea class="mono" id="rItens" style="min-height:200px">${esc(Object.entries(L.itens).flatMap(([c,a])=>a.map(x=>c+': '+x)).join('\n'))}</textarea></label></div>`;
+ h+=`<div class="card"><h2>Ocorrências</h2><div class="row"><label>Pontos iniciais<input type="number" step="0.25" min="0" id="rOcIni" value="${esc(S.ocInicial)}" style="width:110px"></label><label>Contar a partir de<input type="date" id="rOcData" value="${esc(S.ocInicio)}"></label></div>
+ <label style="margin-top:12px">Tipos e desconto (escreva “tipo ; desconto”, um por linha)<textarea class="mono" id="rOcTipos">${esc(S.ocTipos.map(t=>t.nome+' ; '+t.desconto).join('\n'))}</textarea></label>
+ <label style="margin-top:12px">Providências (uma por linha)<textarea id="rOcProv" style="min-height:100px">${esc(S.ocProvidencias.join('\n'))}</textarea></label>
+ <div class="acts"><button class="b p" data-act="salvarRegras">Salvar todas as regras</button></div></div>`;
+ return h}
+function vBackup(){let h=`<h1>Backup</h1>`;
+ h+=`<div class="card"><h2>Backup</h2><p class="small">${MODO==='local'?'Neste modo, os dados ficam só neste aparelho e neste navegador. Faça backup toda semana.':'Os dados estão no servidor. O backup é uma cópia extra de segurança.'}</p><div class="acts"><button class="b p" data-act="bkCopiar">Copiar backup</button><button class="b" data-act="bkBaixar">Baixar backup</button></div>
+ <label style="margin-top:14px">Restaurar: cole aqui um backup<textarea class="mono" id="bkTxt" placeholder="Cole o texto do backup"></textarea></label><div class="acts"><label class="b">Abrir arquivo de backup<input class="hid" type="file" accept=".json,.txt" data-chg="bkArq"></label><button class="b" data-act="bkRest">Restaurar</button></div></div>`;
+ h+=`<div class="card"><h2>Recomeçar</h2><div class="acts">${MODO==='local'?'<button class="b" data-act="exemplo">Carregar escola de exemplo</button>':''}<button class="b" data-act="apagar">Apagar todos os dados da escola</button></div></div>`;
+ return h}
+function vAcessos(){return `<h1>Pessoas e acessos</h1>`+vMembros()}
+function vMembros(){return `<div class="card"><h2>Pessoas com acesso</h2><p>Código de convite da escola: <b style="font-size:22px;letter-spacing:2px">${esc(ESCOLA_COD)}</b></p><p class="small">Os professores criam a conta no Prumo e entram com este código. Depois, aqui, ligue cada pessoa ao nome dela no cadastro de professores e defina o papel. O papel Master pode tudo, inclusive esta Configuração; Coordenação vê tudo e gera substituições, mas não altera cadastros. Só quem tem o código entra na sua escola, e ninguém de outra escola vê os seus dados.</p>
+ <div class="scroll"><table class="stack"><thead><tr><th>E-mail</th><th>Nome no cadastro</th><th>Papel</th><th></th></tr></thead><tbody>${MEMBROS.map((m,i)=>`<tr><td>${esc(m.email||'')}</td><td><select data-chg="mNome" data-i="${i}"><option value="">— escolher —</option>${S.professores.map(p=>`<option${p.nome===m.nome?' selected':''}>${esc(p.nome)}</option>`).join('')}${m.nome&&!S.professores.some(p=>p.nome===m.nome)?`<option selected>${esc(m.nome)}</option>`:''}</select></td><td><select data-chg="mPapel" data-i="${i}"${m.user_id===ME.uid?' disabled':''}>${Object.entries(NOMEPAPEL).map(([k,n])=>`<option value="${k}"${k===m.papel?' selected':''}>${n}</option>`).join('')}</select></td><td>${m.user_id===ME.uid?'<span class="small muted">você</span>':`<button class="b s" data-act="mRemover" data-i="${i}">Remover</button>`}</td></tr>`).join('')}</tbody></table></div></div>`}
+function lerRegras(){const n=JSON.parse(JSON.stringify(S));const v=id=>($(id)?.value??'');
+ n.escola=v('rEscola').trim();
+ document.querySelectorAll('[data-tf]').forEach(el=>{const t=n.turnos[+el.dataset.i];if(t)t[el.dataset.tf]=el.dataset.tf==='aulas'?Math.max(1,Math.min(12,parseInt(el.value)||1)):el.value.trim()});
+ document.querySelectorAll('[data-pf]').forEach(el=>{const t=n.tipos[+el.dataset.i];if(t)t[el.dataset.pf]=el.dataset.pf==='limite'?Math.max(0,parseInt(el.value)||0):el.value.trim()});
+ n.sabado=!!$('rSab')?.checked;const ls=s=>String(s).split('\n').map(x=>x.trim()).filter(Boolean);
+ n.reserva=ls(v('rRes'));if($('rPeriodos'))n.periodos=ls(v('rPeriodos'));
+ document.querySelectorAll('[data-lst]').forEach(el=>{n.listas[el.dataset.lst]=ls(el.value)});
+ if($('rItens')){const it={};for(const l of ls(v('rItens'))){const i=l.indexOf(':');if(i<1)continue;const c=l.slice(0,i).trim(),a=l.slice(i+1).trim();if(a)(it[c]||(it[c]=[])).push(a)}n.listas.itens=it}
+ if($('rOcIni'))n.ocInicial=Math.max(0,parseFloat(v('rOcIni'))||0);if($('rOcData'))n.ocInicio=v('rOcData');
+ if($('rOcTipos'))n.ocTipos=ls(v('rOcTipos')).map(l=>{const p=l.split(';');return{nome:p[0].trim(),desconto:Math.max(0,parseFloat((p[1]||'0').replace(',','.'))||0)}}).filter(t=>t.nome);
+ if($('rOcProv'))n.ocProvidencias=ls(v('rOcProv'));return n}
+function validaRegras(n){const e=[];if(n.turnos.some(t=>!t.nome))e.push('Todo turno precisa de nome.');const sg=n.tipos.map(t=>kT(t.sigla));if(sg.some(s=>!s))e.push('Toda sigla precisa ser preenchida.');if(new Set(sg).size!==sg.length)e.push('Há siglas repetidas.');
+ const tk=new Set(n.turmas.map(t=>kT(t.nome)));const bate=n.tipos.filter(t=>tk.has(kT(t.sigla)));if(bate.length)e.push('Sigla igual ao nome de uma turma: '+bate.map(t=>t.sigla).join(', '));if(!n.periodos.length)e.push('Informe pelo menos um período.');if(!n.ocTipos.length)e.push('Informe pelo menos um tipo de ocorrência.');return e}
+
+/* ---------- HISTÓRICO ---------- */
+let Hh={mes:''};
+function vHistorico(){const meses=[...new Set(S.historico.map(h=>h.data.slice(0,7)))].sort().reverse();if(Hh.mes&&!meses.includes(Hh.mes))Hh.mes='';
+ const l=S.historico.filter(h=>!Hh.mes||h.data.startsWith(Hh.mes)).sort((a,b)=>b.data.localeCompare(a.data)||a.turno-b.turno);
+ let h=`<h1>Histórico de substituições</h1><div class="card"><div class="row"><label>Mês<select data-chg="hMes"><option value="">Todos</option>${meses.map(m=>`<option value="${m}"${m===Hh.mes?' selected':''}>${m.split('-').reverse().join('/')}</option>`).join('')}</select></label></div>`;
+ if(!l.length)return h+'<p class="muted" style="margin-top:12px">Nenhum quadro salvo ainda.</p></div>';
+ const sub=new Map(),fal=new Map();for(const q of l){for(const it of q.itens){if(it.sub)sub.set(it.sub,(sub.get(it.sub)||0)+1)}for(const a of new Set(q.itens.map(i=>i.aus)))fal.set(a,(fal.get(a)||0)+1)}
+ const nomes=[...new Set([...sub.keys(),...fal.keys()])].sort((a,b)=>(sub.get(b)||0)-(sub.get(a)||0)||a.localeCompare(b));
+ h+=`<h2 style="margin-top:16px">Resumo do período</h2><div class="scroll"><table class="stack" id="tResumo"><thead><tr><th>Nome</th><th class="n">Substituições feitas</th><th class="n">Dias com falta</th></tr></thead><tbody>${nomes.map(n=>`<tr><td>${esc(n)}</td><td class="n">${sub.get(n)||0}</td><td class="n">${fal.get(n)||0}</td></tr>`).join('')}</tbody></table></div><div class="acts"><button class="b" data-act="copResumo">Copiar resumo</button></div></div>`;
+ h+=l.map(q=>`<details><summary>${dataBR(q.data)} · ${esc(S.turnos[q.turno]?.nome||'')} · ${q.itens.length} substituição(ões)</summary><div class="scroll"><table class="stack small" style="margin-top:8px"><thead><tr><th>Aula</th><th>Turma</th><th>Ausente</th><th>Substituto</th></tr></thead><tbody>${q.itens.map(i=>`<tr><td>${i.a+1}ª</td><td>${esc(i.turma)}</td><td>${esc(i.aus)}</td><td>${esc(i.sub||'sem substituto')}</td></tr>`).join('')}</tbody></table></div><div class="acts"><button class="b s" data-act="delHist" data-id="${q.id}">Apagar este quadro</button></div></details>`).join('');
+ return h}
+
+/* ---------- TUTORIAL ---------- */
+function vTutorial(){const ok=[!!S.escola,S.professores.length>0,S.estudantes.length>0,S.horario.length>0,S.historico.length>0,S.avaliacoes.length>0,S.provas.length>0,S.relatorios.length>0,S.ocorrencias.length>0];
+ const passos=[
+ ['Configure a escola','Em Configuração → Escola e regras, escreva o nome da escola, os turnos, quantas aulas tem cada turno e o horário de início. Confira as siglas do horário: elas dizem quem pode substituir. As que já vêm prontas são PLT (plantão, chamado primeiro), LIV (horário livre), PLAN (planejamento: só chamado se tiver no máximo 1 no dia) e IND (não pode substituir). Mude os nomes para os que a sua escola usa. Ali também ficam as listas dos relatórios e os tipos de ocorrência.','escola','Abrir Escola e regras'],
+ ['Cadastre os professores','Em Configuração → Importar planilhas, bloco 1: clique em “Copiar modelo”, cole numa planilha nova do Excel ou do Google Planilhas e preencha uma linha por professor. Selecione as linhas preenchidas, copie, volte ao Prumo, cole no campo e clique em “Verificar”. Se aparecer tudo certo, clique em “Confirmar importação”.','importar','Importar professores'],
+ ['Cadastre turmas e estudantes','Bloco 2, do mesmo jeito: uma linha por estudante, com a turma e o turno.','importar','Importar estudantes'],
+ ['Importe o quadro de horários','Bloco 3. Cada linha é um professor num dia: Professor, Turno, Dia e uma coluna para cada aula (1, 2, 3…). Em cada aula escreva a turma (ex.: 6A), uma sigla (ex.: PLT) ou deixe em branco. O Prumo avisa nomes digitados errado, turmas com dois professores ao mesmo tempo e horários sem professor. O horário também diz ao Prumo quais turmas cada professor pode ver.','importar','Importar horário'],
+ ['Gere o quadro do dia','Em Substituições → Quadro do dia, escolha a data e o turno e toque nos professores que faltaram. O Prumo sugere os substitutos seguindo as regras, sem repetir a mesma pessoa no mesmo horário e dividindo o trabalho entre quem substituiu menos. Troque qualquer nome se precisar, copie a mensagem para o WhatsApp e salve.','hoje','Abrir Quadro do dia'],
+ ['Corrija provas pela foto','No Corretor, crie a avaliação e marque o gabarito. Em “Folhas de resposta”, imprima uma folha por estudante (cada uma tem o nome e um QR Code). Depois da prova, em “Corrigir por foto”, fotografe as folhas de cima, mostrando os 4 quadrados pretos. Confira as questões que o Prumo marcar em amarelo e salve.','corretor','Abrir Corretor'],
+ ['Aplique uma prova online','Na Prova Online, crie a prova, escreva as questões (ou cole várias de uma vez) e marque a correta. Em “PINs dos estudantes”, gere os PINs. Abra a prova. No tablet, o estudante abre o Prumo, toca em “Sou estudante — fazer prova”, digita o código e o PIN. A nota cai nos Resultados na hora.','prova','Abrir Prova Online'],
+ ['Escreva os relatórios','Em Relatórios, escolha a turma, o estudante e o período. Cada professor marca o que observou e escreve a consideração dele. O Prumo junta tudo num relatório único, em texto corrido, pronto para copiar.','relatorios','Abrir Relatórios'],
+ ['Registre ocorrências','Em Ocorrências, escolha a turma, marque o(s) estudante(s), o tipo e escreva o que aconteceu. O Prumo gera o texto do registro e desconta os pontos de comportamento conforme o tipo.','ocnova','Abrir Ocorrências']];
+ return `<h1>Tutorial</h1><div class="card"><p><b>O Prumo organiza o dia a dia da escola num lugar só:</b> substituições, correção de provas, prova online, relatórios e ocorrências. Você cadastra tudo uma vez, por planilha.</p><p class="small muted">${MODO==='local'?'Você está no modo demonstração: os dados ficam só neste aparelho.':'Cada escola tem o próprio espaço no servidor. Só quem entrou com o código da sua escola vê os dados dela.'}</p>${MODO==='local'?'<div class="acts"><button class="b c" data-act="exemplo">Testar com escola de exemplo</button><button class="b" data-act="go" data-v="escola">Começar com a minha escola</button></div>':''}</div>
+ <ol class="steps">${passos.map((p,i)=>`<li class="${ok[i]?'feito':''}"><h3>${esc(p[0])}</h3><p>${esc(p[1])}</p><button class="b s" data-act="go" data-v="${p[2]}">${esc(p[3])}</button></li>`).join('')}</ol>
+ <div class="card" style="margin-top:18px"><h2>Perguntas comuns</h2>
+ <details><summary>O nome do professor está igual, mas dá erro.</summary><p>Confira espaços extras e abreviações. “Maria S. Lima” e “Maria Silva Lima” são nomes diferentes para o Prumo. Acentos e maiúsculas não importam.</p></details>
+ <details><summary>A foto da folha não foi lida.</summary><p>Fotografe de cima, com a folha inteira e os 4 quadrados pretos aparecendo, sem sombra forte. Se o QR não for lido, escolha o nome do estudante na lista; as respostas continuam sendo lidas. Sempre confira as questões em amarelo.</p></details>
+ <details><summary>O tablet desligou no meio da prova.</summary><p>Abra o Prumo de novo no mesmo tablet: a prova continua de onde parou, com o tempo que restava.</p></details>
+ <details><summary>Professor não vê uma turma.</summary><p>O professor vê as turmas em que tem aula no quadro de horários. Confira o horário e se a conta dele está ligada ao nome certo em Configuração → Pessoas e acessos.</p></details>
+ <details><summary>A planilha está em Excel (.xlsx).</summary><p>Use “Enviar arquivo”. O Prumo lê a primeira aba do arquivo, que precisa estar no mesmo formato do modelo.</p></details></div>`}
+
+/* ---------- LOGIN (servidor) ---------- */
+let AU={modo:'entrar',erro:''};
+async function clienteSB(){if(sb)return sb;const lib=await carregar(LIB_SB,'supabase');sb=lib.createClient(SERVIDOR.url,SERVIDOR.chave,{auth:{persistSession:true,autoRefreshToken:true}});return sb}
+function vEntrar(){const cad=AU.modo==='criar';return `<div class="auth"><div class="card"><h1>${cad?'Criar conta':'Entrar'}</h1><label>E-mail<input id="auEmail" type="email" autocomplete="email"></label><label style="margin-top:12px">Senha<input id="auSenha" type="password" autocomplete="${cad?'new-password':'current-password'}"></label>${cad?'<p class="small muted">Use pelo menos 8 caracteres.</p>':''}${AU.erro?`<p class="rel err">${esc(AU.erro)}</p>`:''}
+ <div class="acts"><button class="b p" data-act="auOk">${cad?'Criar conta':'Entrar'}</button><button class="b" data-act="auTroca">${cad?'Já tenho conta':'Criar conta'}</button></div>${cad?'':'<p class="small" style="margin-top:12px"><button class="b s" data-act="auEsqueci">Esqueci a senha</button></p>'}</div>
+ <div class="card"><h2>É estudante?</h2><div class="acts"><button class="b c" data-act="go" data-v="aluno">Sou estudante — fazer prova</button></div></div></div>`}
+function vEscolher(){return `<div class="auth"><div class="card"><h1>Sua escola</h1><p>Sua conta ainda não está em nenhuma escola.</p><h2>Entrar numa escola</h2><label>Código de convite (peça à coordenação)<input id="esCod" style="text-transform:uppercase;letter-spacing:2px"></label><label style="margin-top:12px">Seu nome completo<input id="esNome"></label><div class="acts"><button class="b p" data-act="esEntrar">Entrar na escola</button></div></div>
+ <div class="card"><h2>Cadastrar uma escola nova</h2><p class="small">Só para a coordenação ou direção. Você será o usuário master da escola (com o módulo Configuração) e receberá o código de convite para os professores.</p><label>Nome da escola<input id="esEscola"></label><label style="margin-top:12px">Seu nome completo<input id="esNome2"></label><div class="acts"><button class="b" data-act="esCriar">Cadastrar escola</button></div>${AU.erro?`<p class="rel err">${esc(AU.erro)}</p>`:''}</div><p><button class="b s" data-act="sair">Sair da conta</button></p></div>`}
+async function iniciarServidor(){try{await clienteSB();const{data:{session}}=await sb.auth.getSession();if(!session){view=location.hash.slice(1)==='aluno'?'aluno':'entrar';return render()}
+ ME.uid=session.user.id;ME.email=session.user.email;const{data:ms,error}=await sb.from('membros').select('escola_id,papel,nome,escolas(nome,codigo)').eq('user_id',ME.uid);if(error)throw error;
+ if(!ms.length){view=location.hash.slice(1)==='aluno'?'aluno':'escolher';return render()}
+ const m=ms[0];ESCOLA=m.escola_id;ESCOLA_COD=m.escolas?.codigo||'';ME.papel=m.papel;ME.nome=m.nome||'';setSync('Carregando…');await carregarServidor();if(isMaster())await carregarMembros();setSync('Salvo');pronto=true;
+ const v=location.hash.slice(1);view=permitido(v)||v==='aluno'?v:'inicio';render()}
+ catch(e){$('app').innerHTML=`<div class="card auth"><h1>Sem conexão</h1><p>Não consegui falar com o servidor do Prumo. Verifique a internet e recarregue a página.</p><p class="small muted">${esc(e.message||e)}</p></div>`}}
+async function carregarMembros(){const{data,error}=await sb.from('membros').select('user_id,papel,nome,email').eq('escola_id',ESCOLA);if(!error)MEMBROS=data||[]}
+
+/* ---------- render ---------- */
+const views={inicio:vInicio,hoje:vHoje,horario:vHorario,chorario:vHorario,corretor:vCorretor,prova:vProva,relatorios:vRelatorios,relver:vRelVer,ocnova:()=>{O.aba='nova';return vOcorrencias()},ochist:()=>{O.aba='hist';O.edit=null;O.ultimo=null;return vOcorrencias()},ocpontos:()=>{O.aba='pontos';O.edit=null;O.ultimo=null;return vOcorrencias()},cprof:()=>{Cv.aba='prof';return vCadastros()},cturmas:()=>{Cv.aba='turmas';return vCadastros()},cest:()=>{Cv.aba='est';return vCadastros()},importar:vImportar,escola:vRegras,acessos:vAcessos,backup:vBackup,historico:vHistorico,tutorial:vTutorial,aluno:vAluno,entrar:vEntrar,escolher:vEscolher};
+const ESPECIAIS=['aluno','entrar','escolher'];
+function render(){if(view!=='aluno')document.body.classList.remove('aluno');
+ if(pronto&&!ESPECIAIS.includes(view)&&!permitido(view))view='inicio';
+ const m=modDe(view),ss=m?subsDe(m):[];
+ $('tabs').innerHTML=pronto&&m&&!ESPECIAIS.includes(view)?`<div class="modbar"><button class="voltar" data-v="inicio">← Início</button><span class="mt">${svgIc(m.k,22)}${m.n}</span></div>${ss.length>1?`<div class="subs" role="tablist">${ss.map(([v,n])=>`<button data-v="${v}"${v===view?' aria-current="page"':''}>${n}</button>`).join('')}</div>`:''}`:'';
+ $('quem').innerHTML=(MODO==='servidor'&&ME.uid?`<span class="sync" id="sync">Salvo</span><span>${esc(ME.nome||ME.email)} · ${NOMEPAPEL[ME.papel]||''}</span><button data-act="sair">Sair</button>`:MODO==='local'?'<span class="sync">Modo demonstração · dados neste aparelho</span>':'');
+ $('escolaNome').textContent=S.escola||'Gestão escolar';
+ $('app').innerHTML=views[view]();if(view==='aluno'&&AL.fase==='prova')relogio()}
+function go(v){if(!views[v])v='inicio';if(v==='aluno'&&view!=='aluno'){AL={fase:'entrar',erro:''};retomarProva()}if(location.hash.slice(1)!==v){try{history.replaceState(null,'','#'+v)}catch(e){try{location.hash=v}catch(e2){}}}view=v;render();window.scrollTo(0,0)}
+
+/* ---------- exemplo (dados fictícios) ---------- */
+function exemplo(){const P2=[['Ana Ribeiro','Língua Portuguesa'],['Bruno Costa','Matemática'],['Carla Mendes','Ciências'],['Diego Alves','História'],['Elaine Souza','Geografia'],['Fábio Lima','Inglês'],['Gisele Rocha','Arte'],['Hugo Martins','Educação Física'],['Isabela Nunes','Língua Portuguesa'],['João Pereira','Matemática']];
+ const T=['6A','6B','7A','7B','8A','9A'],livre=['PLT','LIV','PLAN',''];const n=padrao();n.escola='Escola Exemplo (fictícia)';n.reserva=['Coordenação — Marta','Coordenação — Rui'];
+ n.professores=P2.map(([nome,c])=>({id:uid(),nome,componente:c,telefone:''}));n.turmas=T.map(nome=>({id:uid(),nome,turno:0}));
+ for(let i=0;i<P2.length;i++)for(let d=0;d<5;d++){const aulas=[];for(let a=0;a<5;a++){const k=(i+d*3+a*7)%10;aulas.push(k<6?T[k]:livre[(i+d+a)%4])}n.horario.push({id:uid(),prof:P2[i][0],turno:0,dia:d,aulas})}
+ const N1=['Alice','Arthur','Beatriz','Bernardo','Cecília','Davi','Eduarda','Enzo','Gabriel','Helena','Isaac','Júlia','Laura','Lucas','Manuela','Miguel','Nicolas','Olívia','Pedro','Rafaela','Samuel','Sofia','Théo','Valentina'],N2=['Almeida','Barbosa','Cardoso','Dias','Ferreira','Gomes','Lopes','Moreira','Oliveira','Ramos','Santos','Teixeira'];
+ T.forEach((t,ti)=>{for(let j=0;j<20;j++)n.estudantes.push({id:uid(),nome:N1[(j*5+ti*7)%N1.length]+' '+N2[(j*7+ti)%N2.length]+' '+N2[(j+ti*5+3)%N2.length],turma:t})});
+ const e6=n.estudantes.filter(e=>e.turma==='6A');
+ const av={id:uid(),nome:'Avaliação mensal de Matemática',turma:'6A',data:hoje(),nq:10,na:4,valor:10,gab:[0,2,1,3,0,1,2,3,1,0],autor:'Bruno Costa'};n.avaliacoes.push(av);
+ e6.slice(0,12).forEach((e,i)=>{const resp=av.gab.map((g,q)=>((i+q)%4===0?(g+1)%4:g));const nt=(()=>{let ac=0;resp.forEach((r,q)=>{if(r===av.gab[q])ac++});return{acertos:ac,nota:ac}})();n.correcoes.push({id:av.id+'_'+e.id,av:av.id,est:e.id,resp,acertos:nt.acertos,nota:nt.nota,origem:i%3?'foto':'manual'})});
+ const pins={};e6.forEach(e=>pins[e.id]=pin6());n.provas.push({id:uid(),nome:'Frações — prova online',turma:'6A',tempo:20,valor:5,embaralhar:true,mostrarNota:true,aberta:true,codigo:'TESTE6A',pins,autor:'Bruno Costa',
+  questoes:[{e:'Quanto é 1/2 + 1/4?',alts:['2/6','3/4','1/6','2/4'],certa:1},{e:'Qual fração é maior?',alts:['1/3','1/5','1/2','1/8'],certa:2},{e:'Uma pizza foi dividida em 8 partes iguais e Ana comeu 3. Que fração da pizza sobrou?',alts:['3/8','5/8','8/5','1/8'],certa:1}]});
+ n.ocorrencias.push({id:uid(),data:hoje(),hora:'08:20',turma:'7B',ests:[n.estudantes.find(e=>e.turma==='7B').id],tipo:'Uso indevido do celular',descricao:'Durante a explicação, o estudante usou o celular para jogar e não guardou após o primeiro pedido.',prov:['Conversa com o estudante'],autor:'Ana Ribeiro'});
+ n.relatorios.push({id:uid(),est:e6[0].id,periodo:'1º trimestre',prof:'Bruno Costa',componente:'Matemática',marcados:{barreiras:['Dificuldade de concentração e atenção'],adaptacoes:['Uso de material concreto'],acessibilidade:[],intervencoes:['Atendimento em pequeno grupo']},itens:{'Resolve as operações adequadas ao ano':'Em consolidação','Compreende o sistema de numeração':'Consolidado'},aee:'',consideracao:'Participa bem quando trabalha em dupla e avançou muito no cálculo mental.'});
+ S=n;save();G={data:proxDiaUtil(),turno:0,aus:{},esc:{}};toast('Escola de exemplo carregada. Todos os nomes são fictícios.');go('inicio')}
+function proxDiaUtil(){const d=new Date();while(d.getDay()===0||d.getDay()===6)d.setDate(d.getDate()+1);return iso(d)}
+
+/* ---------- ações ---------- */
+const A={
+ go:b=>go(b.dataset.v),exemplo,
+ aus:b=>{const p=b.dataset.p;if(G.aus[p])delete G.aus[p];else G.aus[p]={todo:true,aulas:[]};render()},
+ ausAula:b=>{const p=b.dataset.p,a=+b.dataset.a,x=G.aus[p];if(!x)return;const t=G.turno,d=diaDaData(G.data);if(x.todo){x.todo=false;x.aulas=[];for(let i=0;i<nAulas(t);i++)if(i!==a&&classe(cel(p,t,d,i)).k==='aula')x.aulas.push(i)}else if(x.aulas.includes(a))x.aulas=x.aulas.filter(i=>i!==a);else x.aulas.push(a);if(!x.todo&&!x.aulas.length)delete G.aus[p];render()},
+ zap:()=>copiar(textoQuadro(G.data,G.turno,calcular().itens)),
+ limparG:()=>{G.aus={};G.esc={};render()},
+ salvarQ:()=>{const r=calcular();if(!r.itens.length)return;const t=G.turno,i=S.historico.findIndex(h=>h.data===G.data&&h.turno===t);const q={id:i>=0?S.historico[i].id:uid(),data:G.data,turno:t,itens:r.itens.map(i=>({a:i.a,turma:i.turma,aus:i.aus,sub:i.sub,tipo:i.tipo,remanejar:i.remanejar}))};if(i>=0)S.historico[i]=q;else S.historico.push(q);if(save())toast(i>=0?'Quadro do dia atualizado.':'Quadro salvo.')},
+ cAba:b=>{Cv.aba=b.dataset.k;render()},
+ addProf:()=>{const nome=$('nP').value.trim().replace(/\s+/g,' ');if(!nome)return toast('Escreva o nome.');if(S.professores.some(p=>norm(p.nome)===norm(nome)))return toast('Esse nome já existe.');S.professores.push({id:uid(),nome,componente:$('nC').value.trim(),telefone:$('nT').value.trim()});save();render()},
+ delProf:b=>{const p=S.professores[+b.dataset.i];if(!p||!confirma(b,'p'+p.id))return;S.professores.splice(+b.dataset.i,1);S.horario=S.horario.filter(h=>h.prof!==p.nome);save();render()},
+ addTurma:()=>{const nome=$('nTu').value.trim();if(!nome)return toast('Escreva o nome da turma.');if(turmaPor(nome))return toast('Essa turma já existe.');if(tipoPorSigla(nome))return toast('Esse nome é igual a uma sigla.');S.turmas.push({id:uid(),nome,turno:+$('nTt').value});save();render()},
+ delTurma:b=>{const x=S.turmas[+b.dataset.i];if(!x||!confirma(b,'t'+x.id))return;S.turmas.splice(+b.dataset.i,1);S.estudantes=S.estudantes.filter(e=>e.turma!==x.nome);save();toast('Turma removida. Se ela estava no horário, aquelas casas ficarão em vermelho.');render()},
+ addEst:()=>{const nome=$('nE').value.trim().replace(/\s+/g,' ');if(!nome)return toast('Escreva o nome.');const turma=$('nEt').value;S.estudantes.push({id:uid(),nome,turma});Cv.turma=turma;save();render()},
+ delEst:b=>{const e=S.estudantes[+b.dataset.i];if(!e||!confirma(b,'e'+e.id))return;S.estudantes.splice(+b.dataset.i,1);save();render()},
+ copModelo:b=>copiar(modelo(b.dataset.k)),
+ baixModelo:b=>baixar('prumo-modelo-'+b.dataset.k+'.csv','﻿'+modelo(b.dataset.k).split('\n').map(l=>l.split('\t').map(c=>/[;"\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c).join(';')).join('\r\n'),'text/csv;charset=utf-8'),
+ impVer:b=>{const k=b.dataset.k;Iv[k].rel=VAL[k](Iv[k].txt);render();toast(Iv[k].rel.erros.length?'Encontrei erros. Veja a lista.':'Verificado.')},
+ impOk:b=>{const k=b.dataset.k,r=VAL[k](Iv[k].txt);if(r.erros.length){Iv[k].rel=r;return render()}r.aplicar();if(save()){Iv[k]={txt:'',rel:null};toast('Importado.')}render()},
+ addTurno:()=>{S=lerRegras();S.turnos.push({nome:'Tarde',aulas:5,horas:''});render()},
+ delTurno:b=>{const i=+b.dataset.i;if(!confirma(b,'turno'+i))return;S=lerRegras();S.turnos.splice(i,1);S.horario=S.horario.filter(h=>h.turno!==i).map(h=>h.turno>i?Object.assign(h,{turno:h.turno-1}):h);const fora=new Set(S.turmas.filter(t=>t.turno===i).map(t=>t.nome));S.turmas=S.turmas.filter(t=>t.turno!==i).map(t=>t.turno>i?Object.assign(t,{turno:t.turno-1}):t);S.estudantes=S.estudantes.filter(e=>!fora.has(e.turma));save();render()},
+ addTipo:()=>{S=lerRegras();S.tipos.push({sigla:'',nome:'',papel:'disponivel',limite:0});render()},
+ delTipo:b=>{const i=+b.dataset.i;if(!confirma(b,'tipo'+i))return;S=lerRegras();S.tipos.splice(i,1);save();render()},
+ salvarRegras:()=>{const n=lerRegras(),e=validaRegras(n);if(e.length)return toast(e[0]);S=n;if(save())toast('Regras salvas.');render()},
+ bkCopiar:()=>copiar(JSON.stringify(S)),
+ bkBaixar:()=>baixar('prumo-backup-'+hoje()+'.json',JSON.stringify(S),'application/json'),
+ bkRest:b=>{let o;try{o=JSON.parse($('bkTxt').value)}catch(e){return toast('Esse texto não é um backup válido.')}if(!o||!Array.isArray(o.professores)||!Array.isArray(o.horario))return toast('Esse texto não é um backup do Prumo.');if(!confirma(b,'rest'))return;S=Object.assign(padrao(),o);save();toast('Backup restaurado.');go('hoje')},
+ apagar:b=>{if(!confirma(b,'apagar'))return;const n=padrao();if(MODO==='servidor')n.escola=S.escola;S=n;G={data:hoje(),turno:0,aus:{},esc:{}};if(MODO==='local'){try{localStorage.removeItem(KEY)}catch(e){}}else save();toast('Dados apagados.');go('tutorial')},
+ delHist:b=>{if(!confirma(b,'h'+b.dataset.id))return;S.historico=S.historico.filter(h=>String(h.id)!==b.dataset.id);save();render()},
+ copResumo:()=>{const t=$('tResumo');if(t)copiar([...t.rows].map(r=>[...r.cells].map(c=>c.textContent).join('\t')).join('\n'))},
+ /* corretor */
+ avNova:()=>{K.novo=true;K.rasc=null;render()},
+ avVoltar:()=>{K={av:null,aba:'notas',novo:false,fotos:[],manual:null,folhas:false};render()},
+ avAbrir:b=>{K={av:b.dataset.id,aba:'notas',novo:false,fotos:[],manual:null,folhas:false};render()},
+ kAba:b=>{K.aba=b.dataset.k;K.manual=null;render()},
+ gabBol:b=>{const av=avEdit();av.gab[+b.dataset.q]=+b.dataset.j;if(!K.novo)save();render()},
+ avSalvar:()=>{const av=avEdit();av.nome=$('avNome').value.trim()||'Avaliação';av.data=$('avData').value;av.valor=Math.max(0,parseFloat($('avValor').value)||10);const falta=av.gab.findIndex(g=>g==null);if(falta>=0)return toast('Marque o gabarito da questão '+(falta+1)+'.');
+  if(K.novo){av.id=uid();av.autor=meuNome();av.autorUid=ME.uid;S.avaliacoes.push(av);K={av:av.id,aba:'folhas',novo:false,fotos:[],manual:null,folhas:false}}else{for(const c of S.correcoes.filter(c=>c.av===av.id))Object.assign(c,notaDe(av,c.resp))}save();toast('Avaliação salva.');render()},
+ avApagar:b=>{if(!confirma(b,'av'))return;S.correcoes=S.correcoes.filter(c=>c.av!==K.av);S.avaliacoes=S.avaliacoes.filter(a=>a.id!==K.av);save();A.avVoltar()},
+ manAbrir:b=>{const av=avEdit(),c=S.correcoes.find(x=>x.av===av.id&&x.est===b.dataset.id);K.manual={est:b.dataset.id,resp:c?c.resp.slice():Array(av.nq).fill(null)};render()},
+ manBol:b=>{const q=+b.dataset.q,j=+b.dataset.j;K.manual.resp[q]=K.manual.resp[q]===j?null:j;render()},
+ manCancel:()=>{K.manual=null;render()},
+ manSalvar:()=>{const av=avEdit();gravarCorrecao(av,K.manual.est,K.manual.resp,'manual');K.manual=null;save();toast('Salvo.');render()},
+ avCopNotas:()=>{const av=avEdit();copiar(['Estudante\tAcertos\tNota'].concat(estDaTurma(av.turma).map(e=>{const c=S.correcoes.find(x=>x.av===av.id&&x.est===e.id);return e.nome+'\t'+(c?c.acertos:'')+'\t'+(c?String(c.nota).replace('.',','):'')})).join('\n'))},
+ fotoBol:b=>{const f=K.fotos[+b.dataset.i],q=+b.dataset.q,j=+b.dataset.j;f.resp[q]=f.resp[q]===j?null:j;f.st[q]='ok';render()},
+ fotoSalvar:b=>{const i=+b.dataset.i,f=K.fotos[i];if(!f.est)return;gravarCorrecao(avEdit(),f.est,f.resp,'foto');K.fotos.splice(i,1);save();toast('Correção salva.');render()},
+ fotoDesc:b=>{K.fotos.splice(+b.dataset.i,1);render()},
+ fotoTodas:()=>{const av=avEdit();let n=0;K.fotos=K.fotos.filter(f=>{if(!f.erro&&f.est){gravarCorrecao(av,f.est,f.resp,'foto');n++;return false}return true});save();toast(n+' correção(ões) salvas.');render()},
+ folhasGerar:async()=>{try{await carregar(LIB_QR,'qrcode')}catch(e){toast('Não consegui carregar o gerador de QR Code. As folhas saem sem QR.')}K.folhas=true;render()},
+ folhasImp:()=>{const av=avEdit();$('folhas').innerHTML=estDaTurma(av.turma).map(e=>folhaSVG(av,e)).join('');document.body.classList.add('imprimindo');try{window.print()}catch(e){}setTimeout(()=>document.body.classList.remove('imprimindo'),1000)},
+ /* prova */
+ pvNova:()=>{const t=minhasTurmas()[0]||'';const pr={id:uid(),nome:'',turma:t,tempo:30,valor:10,embaralhar:true,mostrarNota:true,aberta:false,codigo:codigoProva(),pins:{},questoes:[{e:'',alts:['','','',''],certa:0}],autor:meuNome(),autorUid:ME.uid};estDaTurma(t).forEach(e=>pr.pins[e.id]=pin6());S.provas.push(pr);save();P={id:pr.id,aba:'questoes',lote:''};render()},
+ pvAbrir:b=>{P={id:b.dataset.id,aba:'questoes',lote:''};render()},
+ pvVoltar:()=>{P={id:null,aba:'questoes',lote:''};render()},
+ pAba:b=>{const pr=S.provas.find(p=>p.id===P.id);if(pr&&podeEditar(pr)&&P.aba==='questoes'){lerProvaForm(pr);save()}P.aba=b.dataset.k;render()},
+ pvSalvar:()=>{const pr=S.provas.find(p=>p.id===P.id);lerProvaForm(pr);save();toast('Prova salva.');render()},
+ pvAbrirFechar:()=>{const pr=S.provas.find(p=>p.id===P.id);lerProvaForm(pr);if(!pr.aberta){const ruim=pr.questoes.findIndex(q=>!q.e.trim()||q.alts.filter(a=>a.trim()).length<2||!q.alts[q.certa]?.trim());if(!pr.questoes.length)return toast('Adicione questões.');if(ruim>=0)return toast('Complete a questão '+(ruim+1)+': enunciado, pelo menos 2 alternativas e a correta marcada.');estDaTurma(pr.turma).forEach(e=>{if(!pr.pins[e.id])pr.pins[e.id]=pin6()})}pr.aberta=!pr.aberta;save();toast(pr.aberta?'Prova aberta. Código: '+pr.codigo:'Prova fechada.');render()},
+ pvApagar:b=>{if(!confirma(b,'pv'))return;S.tentativas=S.tentativas.filter(t=>t.prova!==P.id);S.provas=S.provas.filter(p=>p.id!==P.id);save();A.pvVoltar()},
+ qAdd:()=>{const pr=S.provas.find(p=>p.id===P.id);lerProvaForm(pr);pr.questoes.push({e:'',alts:['','','',''],certa:0});save();render()},
+ qDel:b=>{const pr=S.provas.find(p=>p.id===P.id);lerProvaForm(pr);pr.questoes.splice(+b.dataset.i,1);save();render()},
+ loteAdd:()=>{const pr=S.provas.find(p=>p.id===P.id);lerProvaForm(pr);const qs=parseLote(P.lote);if(!qs.length)return toast('Não reconheci nenhuma questão. Veja o exemplo.');const semC=qs.filter(q=>q.certa==null).length;qs.forEach(q=>{if(q.certa==null)q.certa=0});pr.questoes=pr.questoes.filter(q=>q.e.trim()||q.alts.some(a=>a.trim())).concat(qs);P.lote='';save();toast(qs.length+' questão(ões) adicionadas.'+(semC?' Confira a correta de '+semC+' delas.':''));render()},
+ pinsGerar:()=>{const pr=S.provas.find(p=>p.id===P.id);estDaTurma(pr.turma).forEach(e=>{if(!pr.pins[e.id])pr.pins[e.id]=pin6()});save();render()},
+ pinsCop:()=>{const pr=S.provas.find(p=>p.id===P.id);copiar(`${pr.nome} · código ${pr.codigo}\n`+estDaTurma(pr.turma).map(e=>e.nome+'\t'+(pr.pins[e.id]||'')).join('\n'))},
+ pvCopNotas:()=>{const pr=S.provas.find(p=>p.id===P.id);copiar(['Estudante\tAcertos\tNota'].concat(estDaTurma(pr.turma).map(e=>{const t=S.tentativas.find(x=>x.prova===pr.id&&x.est===e.id);return e.nome+'\t'+(t?t.acertos:'')+'\t'+(t?String(t.nota).replace('.',','):'')})).join('\n'))},
+ alEntrar,alComecar,
+ alNao:()=>{AL={fase:'entrar',erro:''};render()},
+ alResp:b=>{AL.resp[AL.ordem[AL.atual].q]=+b.dataset.j;guardarAndamento();render()},
+ alIr:b=>{const i=+b.dataset.i;if(i<0||i>=AL.ordem.length)return;AL.atual=i;guardarAndamento();render();window.scrollTo(0,0)},
+ alEnviar:()=>enviarProva(false),
+ alNovo:()=>{AL={fase:'entrar',erro:''};render()},
+ alSair:()=>{document.body.classList.remove('aluno');go(MODO==='servidor'&&!ESCOLA?'entrar':'prova')},
+ /* relatórios */
+ rSalvar:()=>{const e=estPorId(R.est);if(!e)return;let c=contribs(e.id,R.periodo).find(x=>x.prof===R.prof);if(c&&!podeEditar(c))return toast('Só quem escreveu pode alterar esta contribuição.');if(!c){c={id:uid(),est:e.id,periodo:R.periodo,prof:R.prof,autorUid:ME.uid};S.relatorios.push(c)}
+  c.componente=$('rComp').value.trim();c.aee=$('rAee').value;c.consideracao=$('rCons').value;c.marcados={};for(const[k]of SEC)c.marcados[k]=[...document.querySelectorAll(`[data-rs="${k}"]:checked`)].map(x=>x.value);c.itens={};document.querySelectorAll('[data-ri]').forEach(s=>{if(s.value)c.itens[s.dataset.ri]=s.value});save();toast('Contribuição salva.');render()},
+ rApagar:b=>{if(!confirma(b,'rel'))return;S.relatorios=S.relatorios.filter(x=>!(x.est===R.est&&x.periodo===R.periodo&&x.prof===R.prof));save();render()},
+ rCopiar:()=>{const e=estPorId(R.est);if(e)copiar(textoRelatorio(e,R.periodo))},
+ rCopEst:b=>{const e=estPorId(b.dataset.id);if(e)copiar(textoRelatorio(e,R.periodo))},
+ rCopTodos:()=>copiar(estDaTurma(R.turma).map(e=>textoRelatorio(e,R.periodo)).filter(Boolean).join('\n\n----------------------------------------\n\n')),
+ /* ocorrências */
+ oAba:b=>{O.aba=b.dataset.k;if(O.aba!=='nova'){O.edit=null;O.ultimo=null}render()},
+ oSalvar:()=>{const sel=[...document.querySelectorAll('[data-oe]:checked')].map(x=>x.dataset.oe);if(!sel.length)return toast('Marque pelo menos um estudante.');const desc=$('oDesc').value.trim();if(!desc)return toast('Descreva o que aconteceu.');
+  let o=O.edit?S.ocorrencias.find(x=>x.id===O.edit):null;if(!o){o={id:uid(),autorUid:ME.uid,autor:MODO==='local'?($('oAutor')?.value||'Coordenação'):meuNome()};S.ocorrencias.push(o)}else if(MODO==='local'&&$('oAutor'))o.autor=$('oAutor').value;
+  Object.assign(o,{data:$('oData').value||hoje(),hora:$('oHora').value,turma:O.turma,ests:sel,tipo:$('oTipo').value,descricao:desc,prov:[...document.querySelectorAll('[data-op]:checked')].map(x=>x.value)});save();O.ultimo=o.id;O.edit=null;O.sel=[];toast('Ocorrência registrada.');render()},
+ oOutra:()=>{O.ultimo=null;O.sel=[];render()},
+ oCancel:()=>{O.edit=null;O.sel=[];go('ochist')},
+ oCopiar:b=>{const o=S.ocorrencias.find(x=>x.id===b.dataset.id);if(o)copiar(textoOcorrencia(o))},
+ oEditar:b=>{const o=S.ocorrencias.find(x=>x.id===b.dataset.id);if(!o)return;O.edit=o.id;O.turma=o.turma;O.sel=o.ests.slice();O.ultimo=null;go('ocnova')},
+ oApagar:b=>{if(!confirma(b,'oc'+b.dataset.id))return;S.ocorrencias=S.ocorrencias.filter(o=>o.id!==b.dataset.id);save();render()},
+ /* login */
+ auTroca:()=>{AU.modo=AU.modo==='criar'?'entrar':'criar';AU.erro='';render()},
+ auOk:async()=>{const email=$('auEmail').value.trim(),senha=$('auSenha').value;if(!email||!senha){AU.erro='Preencha e-mail e senha.';return render()}await clienteSB();
+  const r=AU.modo==='criar'?await sb.auth.signUp({email,password:senha}):await sb.auth.signInWithPassword({email,password:senha});
+  if(r.error){AU.erro=AU.modo==='criar'?'Não consegui criar a conta: '+r.error.message:'E-mail ou senha incorretos.';return render()}
+  if(AU.modo==='criar'&&!r.data.session){AU.modo='entrar';AU.erro='';toast('Conta criada. Confirme pelo link enviado ao seu e-mail e depois entre.');return render()}AU.erro='';iniciarServidor()},
+ auEsqueci:async()=>{const email=$('auEmail').value.trim();if(!email)return toast('Escreva o seu e-mail acima.');await clienteSB();await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});toast('Se o e-mail estiver cadastrado, você vai receber um link.')},
+ esEntrar:async()=>{const cod=$('esCod').value.trim().toUpperCase(),nome=$('esNome').value.trim();if(!cod||!nome){AU.erro='Preencha o código e o seu nome.';return render()}const{data,error}=await sb.rpc('prumo_entrar_escola',{p_codigo:cod,p_nome:nome});if(error||!data){AU.erro='Código não encontrado.';return render()}iniciarServidor()},
+ esCriar:async()=>{const esc2=$('esEscola').value.trim(),nome=$('esNome2').value.trim();if(!esc2||!nome){AU.erro='Preencha o nome da escola e o seu nome.';return render()}const{error}=await sb.rpc('prumo_criar_escola',{p_nome:esc2,p_meu_nome:nome});if(error){AU.erro='Não consegui cadastrar: '+error.message;return render()}S.escola=esc2;await iniciarServidor();save()},
+ sair:async()=>{if(sb)await sb.auth.signOut();location.hash='';location.reload()},
+ mRemover:async b=>{const m=MEMBROS[+b.dataset.i];if(!m||!confirma(b,'m'+m.user_id))return;const{error}=await sb.from('membros').delete().eq('escola_id',ESCOLA).eq('user_id',m.user_id);if(error)return toast('Não consegui remover.');await carregarMembros();render()}};
+function gravarCorrecao(av,est,resp,origem){const n=notaDe(av,resp);const id=av.id+'_'+est;const c=S.correcoes.find(x=>x.id===id);const d={id,av:av.id,est,resp:resp.slice(),acertos:n.acertos,nota:n.nota,origem,autorUid:ME.uid};if(c)Object.assign(c,d);else S.correcoes.push(d)}
+function retomarProva(){try{const a=JSON.parse(localStorage.getItem(AND)||'null');if(a&&a.fimEm>Date.now()-5*60000){AL=Object.assign({fase:'prova',erro:''},a);if(AL.fimEm<Date.now())AL.fimEm=Date.now()+15000}}catch(e){}}
+const C={
+ gData:el=>{G.data=el.value;G.aus={};G.esc={};render()},
+ gTurno:el=>{G.turno=+el.value;G.aus={};G.esc={};render()},
+ sub:el=>{G.esc[el.dataset.k]=el.value;render()},
+ hModo:el=>{Hv.modo=el.value;Hv.item='';render()},hTurno:el=>{Hv.turno=+el.value;render()},hItem:el=>{Hv.item=el.value;render()},
+ cel:el=>{const t=Hv.turno,d=+el.dataset.d,a=+el.dataset.a,v=el.value.trim();let l=linha(Hv.item,t,d);if(!l){l={id:uid(),prof:Hv.item,turno:t,dia:d,aulas:Array(nAulas(t)).fill('')};S.horario.push(l)}while(l.aulas.length<nAulas(t))l.aulas.push('');l.aulas[a]=v;const c=classe(v);save();render();if(c.k==='erro')toast(`“${v}” não é turma nem sigla.`)},
+ cTurma:el=>{Cv.turma=el.value;render()},
+ hMes:el=>{Hh.mes=el.value;render()},
+ arq:async el=>{const f=el.files&&el.files[0],k=el.dataset.k;if(!f)return;try{Iv[k].txt=await lerArquivo(f);Iv[k].rel=VAL[k](Iv[k].txt);render()}catch(e){toast('Não consegui ler esse arquivo. Copie e cole as linhas.')}},
+ bkArq:async el=>{const f=el.files&&el.files[0];if(!f)return;$('bkTxt').value=await lerTexto(f,'utf-8');toast('Arquivo lido. Clique em Restaurar.')},
+ avTurma:el=>{const av=avEdit();av.turma=el.value},
+ avNq:el=>{const av=avEdit();const n=Math.max(1,Math.min(60,parseInt(el.value)||1));av.nq=n;av.gab=Array.from({length:n},(_,i)=>av.gab[i]??null);if(!K.novo)save();render()},
+ avNa:el=>{const av=avEdit();av.na=+el.value;av.gab=av.gab.map(g=>g!=null&&g>=av.na?null:g);if(!K.novo)save();render()},
+ fotos:async el=>{const av=avEdit();const fs=[...(el.files||[])];if(!fs.length)return;toast('Lendo '+fs.length+' foto(s)…');for(const f of fs){const r=await lerFoto(f,av);if(!r.erro&&r.est&&!estPorId(r.est))r.est='';K.fotos.push(r)}render()},
+ fotoEst:el=>{K.fotos[+el.dataset.i].est=el.value;render()},
+ rTurma:el=>{R.turma=el.value;R.est='';render()},rEst:el=>{R.est=el.value;render()},rPer:el=>{R.periodo=el.value;render()},rProf:el=>{R.prof=el.value;render()},
+ rComp:()=>{const e=estPorId(R.est);if(!e)return;let c=contribs(e.id,R.periodo).find(x=>x.prof===R.prof);const comp=$('rComp').value.trim();if(c){if(!podeEditar(c))return;c.componente=comp}else{c={id:uid(),est:e.id,periodo:R.periodo,prof:R.prof,autorUid:ME.uid,componente:comp,marcados:{},itens:{},aee:'',consideracao:''};S.relatorios.push(c)}save();render()},
+ oTurma:el=>{O.turma=el.value;O.sel=[];render()},
+ oFT:el=>{O.filtroT=el.value;O.filtroE='';render()},oFE:el=>{O.filtroE=el.value;render()},oPT:el=>{O.pontosT=el.value;render()},
+ mNome:async el=>{const m=MEMBROS[+el.dataset.i];const{error}=await sb.from('membros').update({nome:el.value}).eq('escola_id',ESCOLA).eq('user_id',m.user_id);if(error)toast('Não consegui salvar.');else{m.nome=el.value;toast('Salvo.')}},
+ mPapel:async el=>{const m=MEMBROS[+el.dataset.i];const{error}=await sb.from('membros').update({papel:el.value}).eq('escola_id',ESCOLA).eq('user_id',m.user_id);if(error)toast('Não consegui salvar.');else{m.papel=el.value;toast('Papel alterado.')}}};
+const I={
+ impTxt:el=>{Iv[el.dataset.k].txt=el.value;Iv[el.dataset.k].rel=null},
+ lote:el=>{P.lote=el.value},
+ cBusca:el=>{Cv.busca=el.value;const b=norm(el.value);$('listaEst').innerHTML=listaEst(S.estudantes.map((e,i)=>({e,i})).filter(o=>(!Cv.turma||o.e.turma===Cv.turma)&&(!b||norm(o.e.nome).includes(b))))}};
+document.addEventListener('click',e=>{const t=e.target.closest('#tabs button[data-v]');if(t)return go(t.dataset.v);const b=e.target.closest('[data-act]');if(b&&A[b.dataset.act]&&!b.disabled)A[b.dataset.act](b,e)});
+$('app').addEventListener('change',e=>{const el=e.target.closest('[data-chg]');if(el&&C[el.dataset.chg])C[el.dataset.chg](el,e);const oe=e.target.closest('[data-oe]');if(oe){O.sel=[...document.querySelectorAll('[data-oe]:checked')].map(x=>x.dataset.oe)}});
+$('app').addEventListener('input',e=>{const el=e.target.closest('[data-inp]');if(el&&I[el.dataset.inp])I[el.dataset.inp](el,e)});
+window.addEventListener('hashchange',()=>{const v=location.hash.slice(1);if(views[v]&&v!==view){if(v==='aluno'){AL={fase:'entrar',erro:''};retomarProva()}view=v;render()}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)atualizarDoServidor()});
+setInterval(atualizarDoServidor,60000);
+window.__prumo={geom,analisar,MARC,parseLote,textoRelatorio,textoOcorrencia,pontos,get S(){return S}};
+/* início */
+{const v=location.hash.slice(1);if(v==='aluno')retomarProva();
+ if(MODO==='local'){try{const t=localStorage.getItem(KEY);if(t)S=Object.assign(padrao(),JSON.parse(t))}catch(e){}ids();view=views[v]&&!['entrar','escolher'].includes(v)?v:'inicio';render()}
+ else{$('app').innerHTML='<div class="card auth"><p>Carregando…</p></div>';if(v==='aluno'){view='aluno';render()}else iniciarServidor()}}
+}
+</script>
+</body>
+</html>
