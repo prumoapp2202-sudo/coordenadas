@@ -4,49 +4,50 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Prumo — gestão escolar</title>
-<meta name="theme-color" content="#1f3fb0">
+<meta name="theme-color" content="#1F5C6B">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Sofia+Sans+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* VOICE: calmo, prático, de secretaria escolar organizada; frases curtas.
+/* Identidade visual do super app EMFAL: azul-petróleo #1F5C6B, terracota #C8613D, areia #F5F1E8, fonte Inter.
+   VOICE: calmo, prático, de secretaria escolar organizada; frases curtas.
    IDEA: o quadro de horários da sala dos professores — grade de dias × aulas.
    PICTURE: a própria ferramenta; no topo, uma faixa com a grade e casas trocadas em coral.
-   COLOUR and TYPE: azul-caderno dominante, papel branco, coral de acento; Sofia Sans Condensed nos títulos, Atkinson Hyperlegible no texto.
+   COLOUR and TYPE: azul-petróleo dominante, fundo areia, terracota de acento; Inter em tudo.
    LAYOUT: faixa azul com nome e abas; conteúdo em uma coluna de até 1100px; tabelas viram cartões no celular. */
 :root{color-scheme:light dark;
---bg:light-dark(#f6f7fb,#0f131b);--paper:light-dark(#ffffff,#171d28);--ink:light-dark(#151c2e,#e9edf5);--muted:light-dark(#566078,#9ba7bb);
---line:light-dark(#dbe0ea,#2a3344);--blue:light-dark(#1f3fb0,#86a2ff);--blueBg:light-dark(#1f3fb0,#16245a);--blueSoft:light-dark(#e9eeff,#1c2747);
---coral:light-dark(#d9432a,#ff8b72);--coralSoft:light-dark(#fdece7,#3a2019);--ok:light-dark(#18734a,#62d39d);--okSoft:light-dark(#e3f4ea,#15301f);
---warn:light-dark(#8a5a00,#f0c162);--warnSoft:light-dark(#fff4d8,#362c12);--grey:light-dark(#eef0f4,#222a38)}
+--bg:light-dark(#F5F1E8,#10181b);--paper:light-dark(#ffffff,#172227);--ink:light-dark(#16202E,#ECEFF1);--muted:light-dark(#4A5565,#9FB0B6);
+--line:light-dark(#D5DBE3,#2B3A40);--blue:light-dark(#1F5C6B,#7FC0CF);--blueBg:light-dark(#1F5C6B,#143B45);--blueSoft:light-dark(#E3EFF1,#1A3238);
+--coral:light-dark(#B5532F,#E58A66);--coralSoft:light-dark(#F6E1D8,#3A2219);--ok:light-dark(#1B7F4B,#62d39d);--okSoft:light-dark(#E2F2E9,#15301f);
+--warn:light-dark(#8a5a00,#f0c162);--warnSoft:light-dark(#FBF0D9,#362c12);--grey:light-dark(#EEF0F3,#222c31)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Atkinson Hyperlegible",system-ui,sans-serif;overflow-x:clip}
-h1,h2,h3{font-family:"Sofia Sans Condensed","Arial Narrow",sans-serif;line-height:1.05;margin:0 0 .4em;text-wrap:balance}
-h1{font-size:clamp(32px,5vw,44px);font-weight:800}h2{font-size:26px;font-weight:800}h3{font-size:20px;font-weight:700}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Inter,system-ui,sans-serif;line-height:1.1;letter-spacing:-.5px;margin:0 0 .4em;text-wrap:balance}
+h1{font-size:clamp(28px,4.4vw,38px);font-weight:800}h2{font-size:22px;font-weight:700}h3{font-size:18px;font-weight:700}
 p{margin:.3em 0 .8em;max-width:70ch}
 a{color:var(--blue)}
 .top{background:var(--blueBg);color:#fff;padding:18px max(4vw,16px) 0}
 .topin{max-width:1100px;margin:auto;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-.brand b{font:800 36px/1 "Sofia Sans Condensed",sans-serif;letter-spacing:.5px}
+.brand b{font:800 30px/1 Inter,system-ui,sans-serif;letter-spacing:-.5px;display:flex;align-items:center;gap:10px}.brand b::before{content:"";width:30px;height:30px;border-radius:9px;background:#fff;box-shadow:inset 0 -6px 0 #C8613D;flex:none}
 .brand span{opacity:.85;font-size:15px}
 .quem{display:flex;gap:10px;align-items:center;font-size:14px;flex-wrap:wrap}
-.quem button{background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:8px;padding:6px 10px;font:700 14px "Atkinson Hyperlegible",sans-serif;cursor:pointer;min-height:36px}
+.quem button{background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:8px;padding:6px 10px;font:700 14px Inter,system-ui,sans-serif;cursor:pointer;min-height:36px}
 .sync{opacity:.85}
 nav.tabs{max-width:1100px;margin:0 auto}nav.tabs:empty{height:16px}
 .modbar{display:flex;align-items:center;gap:12px;padding:12px 0 10px}
-.modbar .voltar{background:rgba(255,255,255,.16);color:#fff;border:0;border-radius:10px;padding:8px 14px;font:700 15px "Atkinson Hyperlegible",sans-serif;cursor:pointer;min-height:40px}
-.modbar .mt{display:flex;align-items:center;gap:8px;font:800 24px/1 "Sofia Sans Condensed",sans-serif}
+.modbar .voltar{background:rgba(255,255,255,.16);color:#fff;border:0;border-radius:10px;padding:8px 14px;font:700 15px Inter,system-ui,sans-serif;cursor:pointer;min-height:40px}
+.modbar .mt{display:flex;align-items:center;gap:8px;font:700 21px/1 Inter,system-ui,sans-serif}
 .subs{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:12px}
-.subs button{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:999px;padding:10px 14px;font:700 15px "Atkinson Hyperlegible",sans-serif;cursor:pointer;min-height:44px}
+.subs button{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:999px;padding:10px 14px;font:700 15px Inter,system-ui,sans-serif;cursor:pointer;min-height:44px}
 .subs button[aria-current=page]{background:var(--bg);color:var(--ink)}
 nav.tabs button:focus-visible{outline:3px solid #ffd2c7;outline-offset:-3px}
 .brand b{cursor:pointer}
 .mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:18px}
-.mod{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;cursor:pointer;color:var(--ink);font:15px/1.4 "Atkinson Hyperlegible",sans-serif;min-height:150px;transition:border-color .15s,transform .15s}
+.mod{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;cursor:pointer;color:var(--ink);font:15px/1.4 Inter,system-ui,sans-serif;min-height:150px;transition:border-color .15s,transform .15s}
 .mod:hover{border-color:var(--blue);transform:translateY(-2px)}
-.mod b{font:800 24px/1.1 "Sofia Sans Condensed",sans-serif}
+.mod b{font:700 20px/1.15 Inter,system-ui,sans-serif;letter-spacing:-.3px}
 .mod span:last-child{color:var(--muted)}
 .mod .ico{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:var(--blueSoft);color:var(--blue);margin-bottom:4px}
 .mod.cfg .ico{background:var(--coralSoft);color:var(--coral)}
@@ -58,11 +59,11 @@ main{max-width:1100px;margin:auto;padding:24px max(4vw,16px) 40px}
 label{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:14px}
 label.ck{flex-direction:row;align-items:center;gap:8px;font-weight:400;font-size:15px;min-height:36px}
 label.ck input{min-height:auto;width:20px;height:20px;flex:none}
-input,select,textarea{font:16px "Atkinson Hyperlegible",sans-serif;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px}
+input,select,textarea{font:16px Inter,system-ui,sans-serif;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px}
 textarea{width:100%;min-height:120px}
 textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;min-height:140px}
 input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:1px}
-button.b,label.b{font:700 15px "Atkinson Hyperlegible",sans-serif;border-radius:10px;padding:10px 16px;min-height:44px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink);position:relative}
+button.b,label.b{font:700 15px Inter,system-ui,sans-serif;border-radius:10px;padding:10px 16px;min-height:44px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink);position:relative}
 button.b.p{background:var(--blue);border-color:var(--blue);color:light-dark(#fff,#0f131b)}
 button.b.c{background:var(--coral);border-color:var(--coral);color:light-dark(#fff,#0f131b)}
 button.b.s{padding:6px 10px;min-height:36px;font-size:14px}
@@ -74,7 +75,7 @@ button.b:disabled{opacity:.45;cursor:not-allowed}
 .chips{display:flex;flex-direction:column;gap:8px}
 .prof{border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .prof.on{border-color:var(--coral);background:var(--coralSoft)}
-.tog{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:8px 14px;min-height:40px;font:700 15px "Atkinson Hyperlegible",sans-serif;cursor:pointer}
+.tog{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:8px 14px;min-height:40px;font:700 15px Inter,system-ui,sans-serif;cursor:pointer}
 .tog[aria-pressed=true]{background:var(--coral);border-color:var(--coral);color:light-dark(#fff,#0f131b)}
 .tog.a{padding:4px 10px;min-height:34px;font-size:14px}
 .cols2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px 18px}
@@ -95,7 +96,7 @@ pre.zap{white-space:pre-wrap;background:var(--grey);border-radius:12px;padding:1
 .cellt{border-radius:8px;padding:6px;font-size:14px}
 .steps{counter-reset:s;list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}
 .steps li{counter-increment:s;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 16px 16px 64px;position:relative}
-.steps li::before{content:counter(s);position:absolute;left:16px;top:14px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--blueSoft);color:var(--blue);font:800 20px "Sofia Sans Condensed",sans-serif}
+.steps li::before{content:counter(s);position:absolute;left:16px;top:14px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--blueSoft);color:var(--blue);font:800 20px Inter,system-ui,sans-serif}
 .steps li.feito::before{content:"✓";background:var(--ok);color:#fff}
 .rel{margin-top:12px;border-radius:12px;padding:12px 14px}
 .rel ul{margin:.3em 0;padding-left:1.2em}
@@ -109,7 +110,7 @@ summary{cursor:pointer;font-weight:700}
 .item{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px}
 .item h3{margin:0}
 .bolhas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.bol{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);background:var(--paper);color:var(--ink);font:700 15px "Atkinson Hyperlegible",sans-serif;cursor:pointer}
+.bol{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);background:var(--paper);color:var(--ink);font:700 15px Inter,system-ui,sans-serif;cursor:pointer}
 .bol[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:light-dark(#fff,#0f131b)}
 .bol.errada[aria-pressed=true]{background:var(--coral);border-color:var(--coral)}
 .qrow{display:flex;gap:10px;align-items:center;padding:4px 0;border-bottom:1px solid var(--line)}
@@ -120,12 +121,12 @@ summary{cursor:pointer;font-weight:700}
 .alt input[type=radio]{width:22px;height:22px;min-height:auto;flex:none}
 /* modo estudante */
 body.aluno .top nav,body.aluno .quem,body.aluno footer{display:none}
-.relogio{font:800 40px/1 "Sofia Sans Condensed",sans-serif;font-variant-numeric:tabular-nums}
+.relogio{font:800 40px/1 Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums}
 .relogio.pouco{color:var(--coral)}
-.opc{display:block;width:100%;text-align:left;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:14px;padding:14px 16px;margin:10px 0;font:17px/1.4 "Atkinson Hyperlegible",sans-serif;cursor:pointer;min-height:56px}
+.opc{display:block;width:100%;text-align:left;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:14px;padding:14px 16px;margin:10px 0;font:17px/1.4 Inter,system-ui,sans-serif;cursor:pointer;min-height:56px}
 .opc[aria-pressed=true]{border-color:var(--blue);background:var(--blueSoft)}
 .navq{display:flex;flex-wrap:wrap;gap:6px}
-.navq button{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:700 15px "Atkinson Hyperlegible",sans-serif;cursor:pointer}
+.navq button{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:700 15px Inter,system-ui,sans-serif;cursor:pointer}
 .navq button.r{background:var(--okSoft);border-color:var(--ok)}
 .navq button.at{outline:3px solid var(--blue)}
 .enun{font-size:19px;line-height:1.5;white-space:pre-wrap}
@@ -154,6 +155,437 @@ footer{text-align:center;padding:10px 16px 40px;color:var(--muted);font-size:14p
 <footer id="rodape">Desenvolvido por <a href="https://www.instagram.com/pedror_motta/" target="_blank" rel="noopener">Pedro Motta</a></footer>
 <div id="toast" role="status" aria-live="polite"></div>
 <script>
+/* Núcleo do Corretor (mesmo motor do Corretor EMFAL): layout da folha, geração do PDF e leitura da foto.
+   Funciona no navegador (window.OMR) e no Node (module.exports) para testes. */
+(function (root) {
+  'use strict';
+
+  // ===== Layout da folha (milímetros, A4 retrato) =====
+  var L = {
+    W: 210, H: 297,
+    mk: { s: 9, c: [[14, 14], [196, 14], [196, 283], [14, 283]] }, // TL, TR, BR, BL
+    rows: 25, colX0: 24, colW: 43, rowY0: 100, rowH: 7.0, numW: 9, gap: 6.6, r: 2.5,
+    qr: { x: 160, y: 21, s: 28 },
+    maxQ: 100
+  };
+  var LETRAS = 'ABCDE';
+
+  /* Duas versões de layout da grade:
+     1 = folhas antigas (colunas fixas de 25 questões, alinhadas à esquerda);
+     2 = folha atual (colunas equilibradas e distribuídas na largura, em quadros).
+     O QR Code das folhas novas diz que é a versão 2; folhas antigas continuam sendo lidas como versão 1. */
+  function grade(n, alt, lay) {
+    var cols = Math.max(1, Math.ceil(n / L.rows));
+    if (lay !== 2) return { cols: cols, rows: L.rows, x0: function (k) { return L.colX0 + k * L.colW; } };
+    if (n > 10 && cols < 2) cols = 2;
+    var rows = Math.ceil(n / cols), larg = L.numW + 2 * L.r + (alt - 1) * L.gap + 1, area = 170, esp = (area - cols * larg) / cols;
+    return { cols: cols, rows: rows, larg: larg, x0: function (k) { return 20 + esp / 2 + k * (larg + esp) - 0.5; } };
+  }
+  function bolinha(q, a, G) {
+    G = G || grade(L.maxQ, 5, 1);
+    var col = Math.floor(q / G.rows), row = q % G.rows;
+    return [G.x0(col) + L.numW + L.r + a * L.gap, L.rowY0 + row * L.rowH];
+  }
+
+  // ===== Geração do PDF das folhas =====
+  // prova: {id,nome,tipo,questoes,alternativas,valor}; estudantes: [{id,nome,turma}]
+  // modo: '' (prova igual para todos), 'Q' (questões e alternativas embaralhadas), 'A' (só alternativas embaralhadas)
+  function gerarPDF(prova, estudantes, jsPDF, qrcode, modo, cab) {
+    var doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true });
+    var n = prova.questoes, alt = prova.alternativas, G = grade(n, alt, 2);
+    function rotulo(t, x, y) { doc.setFont('helvetica', 'bold'); doc.setFontSize(6); doc.setTextColor(95); doc.text(t, x, y); doc.setTextColor(0); }
+    function campo(t, x, y, w, tam, negrito) { doc.setFont('helvetica', negrito ? 'bold' : 'normal'); doc.setFontSize(tam); doc.text(cortar(doc, t, w), x, y); }
+    estudantes.forEach(function (e, idx) {
+      if (idx > 0) doc.addPage();
+      doc.setTextColor(0); doc.setDrawColor(0); doc.setFillColor(0); doc.setLineWidth(0.3);
+      // Marcas de canto (não mudar: a leitura da foto depende delas)
+      L.mk.c.forEach(function (c) { doc.rect(c[0] - L.mk.s / 2, c[1] - L.mk.s / 2, L.mk.s, L.mk.s, 'F'); });
+
+      // Cabeçalho institucional
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5);
+      (cab && cab.length ? cab : ['ESCOLA']).slice(0, 4).forEach(function (t, i) { doc.text(cortar(doc, String(t).toUpperCase(), 132), 22, 24 + i * 3.4); });
+      doc.setFontSize(14); doc.text('FOLHA DE RESPOSTAS', 22, 41.5);
+      doc.setFontSize(9); doc.text(cortar(doc, String(prova.tipo || '').toUpperCase(), 60), 154, 41.5, { align: 'right' });
+
+      // Quadro de identificação
+      doc.setDrawColor(0); doc.setLineWidth(0.35); doc.rect(22, 44, 132, 25.5);
+      doc.setLineWidth(0.2); doc.setDrawColor(110);
+      doc.line(22, 52.5, 154, 52.5); doc.line(22, 61, 154, 61);
+      doc.line(124, 44, 124, 52.5); doc.line(60, 61, 60, 69.5); doc.line(88, 61, 88, 69.5); doc.line(116, 61, 116, 69.5);
+      rotulo('AVALIAÇÃO', 24, 46.6); campo(prova.nome, 24, 50.9, 98, 9.5);
+      rotulo('TURMA', 126, 46.6); campo(e.turma || '', 126, 50.9, 26, 9.5, true);
+      rotulo('ESTUDANTE', 24, 55.1); campo(e.nome, 24, 59.6, 128, 11, true);
+      rotulo('DATA', 24, 63.6); campo('____/____/______', 24, 68, 34, 9);
+      rotulo('VALOR', 62, 63.6); campo(fmt(prova.valor) + ' pontos', 62, 68, 24, 9.5);
+      rotulo('QUESTÕES', 90, 63.6); campo(String(n) + ' (A a ' + LETRAS[alt - 1] + ')', 90, 68, 24, 9.5);
+      rotulo('VERSÃO DA PROVA', 118, 63.6); campo(modo ? 'Individual' : 'Única', 118, 68, 34, 9.5, !!modo);
+
+      // QR Code (identifica prova, estudante e versão; não mudar a posição)
+      doc.setFillColor(0);
+      var q = qrcode(0, 'M'); q.addData(codigoQR(prova.id, e.id, modo, 2)); q.make();
+      var m = q.getModuleCount(), ms = L.qr.s / m;
+      for (var r = 0; r < m; r++) for (var c = 0; c < m; c++)
+        if (q.isDark(r, c)) doc.rect(L.qr.x + c * ms, L.qr.y + r * ms, ms + 0.02, ms + 0.02, 'F');
+
+      // Quadro do professor (ao lado da identificação, abaixo do QR Code)
+      doc.setDrawColor(0); doc.setLineWidth(0.35); doc.rect(158, 52.5, 32, 17);
+      doc.setLineWidth(0.2); doc.setDrawColor(110); doc.line(158, 61, 190, 61);
+      rotulo('ACERTOS', 160, 55.1); rotulo('NOTA', 160, 63.6);
+
+      // Assinatura
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.text('ASSINATURA DO(A) ESTUDANTE:', 22, 74);
+      doc.setDrawColor(0); doc.setLineWidth(0.2); doc.setLineDashPattern([0.6, 0.6], 0); doc.line(67, 74.3, 190, 74.3); doc.setLineDashPattern([], 0);
+
+      // Instruções e exemplo de preenchimento
+      doc.setFillColor(225); doc.rect(22, 76.5, 168, 4, 'F');
+      doc.setDrawColor(0); doc.setLineWidth(0.35); doc.rect(22, 76.5, 168, 13.5);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(6.8); doc.setTextColor(0);
+      doc.text('INSTRUÇÕES PARA O PREENCHIMENTO', 24, 79.4); doc.text('EXEMPLO DE PREENCHIMENTO', 141, 79.4);
+      var ins = [['Use caneta azul ou preta e pinte a bolinha inteira. Marque só UMA alternativa por questão.', false],
+        modo ? ['PROVA INDIVIDUAL: marque na ordem da SUA prova. Duas marcações anulam a questão.', true]
+          : ['Duas marcações ou rasura na mesma questão anulam a questão.', false],
+        ['Não dobre a folha e não escreva perto dos quadrados pretos nem do QR Code.', false]];
+      doc.setFontSize(6.6);
+      ins.forEach(function (t, i) { doc.setFont('helvetica', t[1] ? 'bold' : 'normal'); doc.text(cortar(doc, (i + 1) + '. ' + t[0], 112), 24, 83.4 + i * 2.8); });
+      doc.setDrawColor(110); doc.setLineWidth(0.2); doc.line(138, 80.5, 138, 90);
+      var ye = 85.6;
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(6.2); doc.text('Certo', 141, ye + 0.8);
+      doc.setFillColor(0); doc.setDrawColor(0); doc.setLineWidth(0.25); doc.circle(151, ye, 1.5, 'F');
+      doc.text('Errado', 156, ye + 0.8);
+      [166.5, 172.5, 178.5, 184.5].forEach(function (x) { doc.circle(x, ye, 1.5, 'S'); });
+      doc.setLineWidth(0.35);
+      doc.line(165.7, ye + 0.1, 166.3, ye + 0.8); doc.line(166.3, ye + 0.8, 167.5, ye - 1);  // tique
+      doc.line(171.7, ye - 0.8, 173.3, ye + 0.8); doc.line(173.3, ye - 0.8, 171.7, ye + 0.8); // xis
+      doc.circle(178.5, ye, 0.45, 'F');                                                     // ponto
+      doc.triangle(183.1, ye, 185.9, ye, 184.5, ye - 1.45, 'F');                            // meia bolinha
+
+      // Grade de bolinhas, em quadros (um por coluna), com linha a cada 5 questões
+      var top = L.rowY0 - 9, faixa = L.rowY0 - 3.6;
+      for (var k = 0; k < G.cols; k++) {
+        var x0 = G.x0(k), ini = k * G.rows, qtd = Math.min(G.rows, n - ini);
+        if (qtd <= 0) break;
+        var bx = x0 + 0.5, bw = G.larg, fundo = L.rowY0 + (qtd - 0.5) * L.rowH + 0.4;
+        var xn = x0 + L.numW - 0.3; // divisória entre número e bolinhas
+        doc.setFillColor(225); doc.rect(bx, top, bw, faixa - top, 'F');
+        doc.setFillColor(242); doc.rect(bx, faixa, xn - bx, fundo - faixa, 'F');
+        doc.setDrawColor(0); doc.setLineWidth(0.35); doc.rect(bx, top, bw, fundo - top);
+        doc.setLineWidth(0.2); doc.setDrawColor(110);
+        doc.line(bx, faixa, bx + bw, faixa); doc.line(xn, faixa, xn, fundo);
+        doc.setDrawColor(170);
+        for (var g = 5; g < qtd; g += 5) { var yg = L.rowY0 + (g - 0.5) * L.rowH; doc.line(bx, yg, bx + bw, yg); }
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(0);
+        doc.text('Nº', x0 + L.numW - 3.6, faixa - 1.5, { align: 'center' });
+        for (var a = 0; a < alt; a++) { var p = bolinha(ini, a, G); doc.text(LETRAS[a], p[0], faixa - 1.5, { align: 'center' }); }
+      }
+      doc.setDrawColor(0); doc.setLineWidth(0.3);
+      for (var i = 0; i < n; i++) {
+        var p0 = bolinha(i, 0, G);
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
+        doc.text(String(i + 1), p0[0] - L.r - 1.8, p0[1] + 1.1, { align: 'right' });
+        for (var b = 0; b < alt; b++) { var pb = bolinha(i, b, G); doc.circle(pb[0], pb[1], L.r, 'S'); }
+      }
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); doc.setTextColor(120);
+      doc.text('Prumo  |  ' + prova.id + '  |  ' + e.id + (modo ? '  |  versão ' + modo : ''), 105, 290, { align: 'center' });
+    });
+    return doc;
+  }
+  function cortar(doc, t, w) { while (t.length > 4 && doc.getTextWidth(t) > w) t = t.slice(0, -2); return t; }
+  function fmt(v) { return String(Math.round(v * 100) / 100).replace('.', ','); }
+  // Folhas antigas: EMFAL;prova;estudante[;modo]. Folhas atuais: EMFAL;prova;estudante;modo;2 (modo pode ser vazio).
+  function codigoQR(p, e, modo, lay) { return 'PRUMO;' + p + ';' + e + (lay === 2 ? ';' + (modo || '') + ';2' : (modo ? ';' + modo : '')); }
+  function lerCodigo(t) {
+    var s = String(t || '').split(';');
+    if (s[0] !== 'PRUMO') return null;
+    if (s.length === 3) return { provaId: s[1], estudanteId: s[2], modo: '', lay: 1 };
+    if (s.length === 4 && (s[3] === 'Q' || s[3] === 'A')) return { provaId: s[1], estudanteId: s[2], modo: s[3], lay: 1 };
+    if (s.length === 5 && (s[3] === '' || s[3] === 'Q' || s[3] === 'A') && s[4] === '2') return { provaId: s[1], estudanteId: s[2], modo: s[3], lay: 2 };
+    return null;
+  }
+
+  // ===== Prova embaralhada por estudante =====
+  // A ordem de cada estudante sai sempre igual (semente = prova + estudante), então não precisa ser guardada:
+  // na correção, o QR Code diz a prova, o estudante e o modo, e o app refaz a mesma ordem.
+  function semente(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function sorteio(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function misturar(v, r) { for (var i = v.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), x = v[i]; v[i] = v[j]; v[j] = x; } return v; }
+  // ordem[j] = questão original que aparece na posição j; alt[j][k] = alternativa original que aparece na letra k
+  function versao(prova, estId, modo) {
+    var n = prova.questoes, na = prova.alternativas, r = sorteio(semente(prova.id + '|' + estId)), ordem = [], alt = [], j, k;
+    for (j = 0; j < n; j++) ordem.push(j);
+    if (modo === 'Q') misturar(ordem, r);
+    for (j = 0; j < n; j++) { var a = []; for (k = 0; k < na; k++) a.push(k); if (modo === 'Q' || modo === 'A') misturar(a, r); alt.push(a); }
+    return { modo: modo || '', ordem: ordem, alt: alt };
+  }
+  // gabarito na ordem em que o estudante vê a prova
+  function gabaritoVersao(gab, v) {
+    return v.ordem.map(function (o, j) { var g = gab[o]; if (LETRAS.indexOf(g) < 0) return g; return LETRAS[v.alt[j].indexOf(LETRAS.indexOf(g))]; }).join('');
+  }
+  // respostas da folha (ordem do estudante) -> ordem original da prova, para salvar e comparar com a turma
+  function paraOriginal(resp, v) {
+    var out = [];
+    v.ordem.forEach(function (o, j) { var x = resp[j], k = LETRAS.indexOf(x); out[o] = k >= 0 && k < v.alt[j].length ? LETRAS[v.alt[j][k]] : (x || '-'); });
+    for (var i = 0; i < out.length; i++) if (!out[i]) out[i] = '-';
+    return out.join('');
+  }
+
+  // ===== Leitura da imagem =====
+  function cinza(d, w, h) {
+    var g = new Uint8Array(w * h);
+    for (var i = 0, j = 0; i < g.length; i++, j += 4) g[i] = (d[j] * 299 + d[j + 1] * 587 + d[j + 2] * 114) / 1000;
+    return g;
+  }
+  // Limiar adaptativo (Bradley): tolera sombra e luz desigual
+  function binarizar(g, w, h) {
+    var I = new Uint32Array((w + 1) * (h + 1)), W1 = w + 1, x, y;
+    for (y = 0; y < h; y++) {
+      var s = 0;
+      for (x = 0; x < w; x++) { s += g[y * w + x]; I[(y + 1) * W1 + x + 1] = I[y * W1 + x + 1] + s; }
+    }
+    var S = Math.max(16, Math.floor(Math.max(w, h) / 8)) >> 1, b = new Uint8Array(w * h);
+    for (y = 0; y < h; y++) {
+      var y1 = Math.max(0, y - S), y2 = Math.min(h - 1, y + S);
+      for (x = 0; x < w; x++) {
+        var x1 = Math.max(0, x - S), x2 = Math.min(w - 1, x + S);
+        var cnt = (x2 - x1 + 1) * (y2 - y1 + 1);
+        var sum = I[(y2 + 1) * W1 + x2 + 1] - I[y1 * W1 + x2 + 1] - I[(y2 + 1) * W1 + x1] + I[y1 * W1 + x1];
+        b[y * w + x] = g[y * w + x] * cnt <= sum * 0.82 ? 1 : 0;
+      }
+    }
+    return b;
+  }
+  function componentes(b, w, h, minArea) {
+    var lab = new Int32Array(w * h), out = [], st = new Int32Array(w * h), id = 0;
+    for (var i = 0; i < b.length; i++) {
+      if (!b[i] || lab[i]) continue;
+      id++; var sp = 0; st[sp++] = i; lab[i] = id;
+      var area = 0, sx = 0, sy = 0, x0 = w, x1 = 0, y0 = h, y1 = 0;
+      while (sp) {
+        var p = st[--sp], px = p % w, py = (p - px) / w;
+        area++; sx += px; sy += py;
+        if (px < x0) x0 = px; if (px > x1) x1 = px; if (py < y0) y0 = py; if (py > y1) y1 = py;
+        if (px > 0 && b[p - 1] && !lab[p - 1]) { lab[p - 1] = id; st[sp++] = p - 1; }
+        if (px < w - 1 && b[p + 1] && !lab[p + 1]) { lab[p + 1] = id; st[sp++] = p + 1; }
+        if (py > 0 && b[p - w] && !lab[p - w]) { lab[p - w] = id; st[sp++] = p - w; }
+        if (py < h - 1 && b[p + w] && !lab[p + w]) { lab[p + w] = id; st[sp++] = p + w; }
+      }
+      if (area >= minArea) out.push({ area: area, cx: sx / area, cy: sy / area, bw: x1 - x0 + 1, bh: y1 - y0 + 1 });
+    }
+    return out;
+  }
+  // área com sinal: positiva só quando os cantos seguem a ordem TL, TR, BR, BL (sentido horário na imagem).
+  // Sem o sinal, com poucas marcas na folha, a ordem dos cantos podia sair trocada.
+  function areaQuad(p) {
+    var s = 0;
+    for (var i = 0; i < 4; i++) { var a = p[i], b = p[(i + 1) % 4]; s += a.cx * b.cy - b.cx * a.cy; }
+    return s / 2;
+  }
+  function acharMarcas(b, w, h) {
+    var M = Math.max(w, h), minLado = 0.012 * M;
+    var cand = componentes(b, w, h, minLado * minLado * 0.6).filter(function (c) {
+      var ar = c.bw / c.bh, fill = c.area / (c.bw * c.bh);
+      return ar > 0.6 && ar < 1.67 && fill > 0.55 && c.bw < 0.12 * M && c.bw > minLado;
+    });
+    if (cand.length < 4) return null;
+    var fs = [function (c) { return -(c.cx + c.cy); }, function (c) { return c.cx - c.cy; },
+      function (c) { return c.cx + c.cy; }, function (c) { return c.cy - c.cx; }];
+    var tops = fs.map(function (f) { return cand.slice().sort(function (a, b) { return f(b) - f(a); }).slice(0, 4); });
+    var best = null, bestA = 0;
+    tops[0].forEach(function (a) { tops[1].forEach(function (b) { tops[2].forEach(function (c) { tops[3].forEach(function (d) {
+      var q = [a, b, c, d];
+      if (new Set(q).size < 4) return;
+      var ars = q.map(function (x) { return x.area; });
+      if (Math.max.apply(0, ars) > 3.5 * Math.min.apply(0, ars)) return;
+      var A = areaQuad(q);
+      if (A > bestA) { bestA = A; best = q; }
+    }); }); }); });
+    if (!best || bestA < 0.15 * w * h) return null;
+    return best.map(function (c) { return [c.cx, c.cy]; });
+  }
+  // Homografia (origem -> destino) com 4 pares de pontos
+  function homografia(src, dst) {
+    var A = [], i;
+    for (i = 0; i < 4; i++) {
+      var x = src[i][0], y = src[i][1], u = dst[i][0], v = dst[i][1];
+      A.push([x, y, 1, 0, 0, 0, -u * x, -u * y, u]);
+      A.push([0, 0, 0, x, y, 1, -v * x, -v * y, v]);
+    }
+    for (var c = 0; c < 8; c++) {
+      var piv = c;
+      for (var r = c + 1; r < 8; r++) if (Math.abs(A[r][c]) > Math.abs(A[piv][c])) piv = r;
+      var t = A[c]; A[c] = A[piv]; A[piv] = t;
+      if (Math.abs(A[c][c]) < 1e-12) return null;
+      for (r = 0; r < 8; r++) if (r !== c) {
+        var f = A[r][c] / A[c][c];
+        for (var k = c; k < 9; k++) A[r][k] -= f * A[c][k];
+      }
+    }
+    var hh = [];
+    for (i = 0; i < 8; i++) hh.push(A[i][8] / A[i][i]);
+    hh.push(1);
+    return hh;
+  }
+  function aplicar(H, x, y) {
+    var z = H[6] * x + H[7] * y + 1;
+    return [(H[0] * x + H[1] * y + H[2]) / z, (H[3] * x + H[4] * y + H[5]) / z];
+  }
+  function preenchimento(b, w, h, H, xm, ym) {
+    var c = aplicar(H, xm, ym), e = aplicar(H, xm + L.r * 0.55, ym), f = aplicar(H, xm, ym + L.r * 0.55);
+    var rr = (Math.hypot(e[0] - c[0], e[1] - c[1]) + Math.hypot(f[0] - c[0], f[1] - c[1])) / 2;
+    var tot = 0, esc = 0, r2 = rr * rr;
+    for (var y = Math.floor(c[1] - rr); y <= Math.ceil(c[1] + rr); y++)
+      for (var x = Math.floor(c[0] - rr); x <= Math.ceil(c[0] + rr); x++) {
+        if ((x - c[0]) * (x - c[0]) + (y - c[1]) * (y - c[1]) > r2) continue;
+        tot++;
+        if (x >= 0 && y >= 0 && x < w && y < h && b[y * w + x]) esc++;
+      }
+    return tot ? esc / tot : 0;
+  }
+
+  function preparar(img) {
+    var w = img.width, h = img.height, b = binarizar(cinza(img.data, w, h), w, h);
+    return { b: b, w: w, h: h, marcas: acharMarcas(b, w, h) };
+  }
+  // As 4 posições possíveis da folha na foto (foto girada 0, 90, 180 ou 270 graus)
+  function homografias(marcas) {
+    return [0, 1, 2, 3].map(function (k) { return homografia(L.mk.c, [0, 1, 2, 3].map(function (j) { return marcas[(j + k) % 4]; })); });
+  }
+  // Quanto da área do QR Code está escura (o QR tem ~50% de preto; o resto da folha, bem menos)
+  function manchaQR(P, H) {
+    if (!H) return 0;
+    var n = 0, esc = 0, s = L.qr.s - 2;
+    for (var i = 0; i < 16; i++) for (var j = 0; j < 16; j++) {
+      var p = aplicar(H, L.qr.x + 1 + (i + 0.5) * s / 16, L.qr.y + 1 + (j + 0.5) * s / 16), x = Math.round(p[0]), y = Math.round(p[1]);
+      n++; if (x >= 0 && y >= 0 && x < P.w && y < P.h && P.b[y * P.w + x]) esc++;
+    }
+    return esc / n;
+  }
+  // Recorte "endireitado" da área do QR Code, com contraste reforçado, para uma segunda tentativa de leitura
+  function recorteQR(img, H, tam) {
+    var w = img.width, h = img.height, d = img.data, mg = 5, x0 = L.qr.x - mg, y0 = L.qr.y - mg, s = L.qr.s + 2 * mg;
+    var g = new Float32Array(tam * tam), i, j;
+    for (j = 0; j < tam; j++) for (i = 0; i < tam; i++) {
+      var p = aplicar(H, x0 + (i + 0.5) * s / tam, y0 + (j + 0.5) * s / tam), x = p[0] - 0.5, y = p[1] - 0.5;
+      var xi = Math.floor(x), yi = Math.floor(y), fx = x - xi, fy = y - yi, v = 255;
+      if (xi >= 0 && yi >= 0 && xi < w - 1 && yi < h - 1) {
+        var k = (yi * w + xi) * 4;
+        var c00 = d[k] * 0.299 + d[k + 1] * 0.587 + d[k + 2] * 0.114, c10 = d[k + 4] * 0.299 + d[k + 5] * 0.587 + d[k + 6] * 0.114;
+        k += w * 4;
+        var c01 = d[k] * 0.299 + d[k + 1] * 0.587 + d[k + 2] * 0.114, c11 = d[k + 4] * 0.299 + d[k + 5] * 0.587 + d[k + 6] * 0.114;
+        v = (c00 * (1 - fx) + c10 * fx) * (1 - fy) + (c01 * (1 - fx) + c11 * fx) * fy;
+      }
+      g[j * tam + i] = v;
+    }
+    var ord = Array.prototype.slice.call(g).sort(function (a, b) { return a - b; });
+    var lo = ord[Math.floor(ord.length * 0.05)], hi = ord[Math.floor(ord.length * 0.95)], amp = Math.max(1, hi - lo);
+    var out = new Uint8ClampedArray(tam * tam * 4);
+    for (i = 0; i < g.length; i++) { var t = (g[i] - lo) / amp * 255; out[i * 4] = out[i * 4 + 1] = out[i * 4 + 2] = t; out[i * 4 + 3] = 255; }
+    return out;
+  }
+  function lerBolinhas(P, H, prova, lay) {
+    var resp = [], alertas = [], niveis = [], G = grade(prova.questoes, prova.alternativas, lay);
+    for (var q = 0; q < prova.questoes; q++) {
+      var v = [];
+      for (var a = 0; a < prova.alternativas; a++) { var p = bolinha(q, a, G); v.push(preenchimento(P.b, P.w, P.h, H, p[0], p[1])); }
+      var ord = v.map(function (x, i) { return [x, i]; }).sort(function (x, y) { return y[0] - x[0]; });
+      var t = ord[0][0], s = ord[1][0], r;
+      // Só vai para "conferir" o que não teve letra lida: branco ou dupla marcação (anulada). Letra lida não pede conferência.
+      if (t < 0.3) { r = '-'; alertas.push(q); }
+      else if (s >= 0.3 && s >= 0.5 * t) { r = '*'; alertas.push(q); }
+      else { r = LETRAS[ord[0][1]]; }
+      resp.push(r); niveis.push(v.map(function (x) { return Math.round(x * 100) / 100; }));
+    }
+    return { respostas: resp, alertas: alertas, niveis: niveis };
+  }
+
+  /* Lê uma foto. img = {data (RGBA), width, height}; jsQR = função da biblioteca;
+     buscarProva(provaId) devolve {questoes, alternativas} ou null.
+     Se o QR Code não for lido na foto inteira, tenta de novo num recorte endireitado da área do QR (pelos 4 quadrados pretos).
+     Retorna {ok, erro, semQR, provaId, estudanteId, respostas:[ 'A'..'E' | '-' branco | '*' dupla ], alertas:[índices]} */
+  function lerFolha(img, jsQR, buscarProva) {
+    var w = img.width, h = img.height, P = null, kQR = -1;
+    var qr = jsQR(img.data, w, h, { inversionAttempts: 'attemptBoth' });
+    if (!qr) {
+      P = preparar(img);
+      if (!P.marcas) return { ok: false, semQR: true, erro: 'Não encontrei o QR Code nem os 4 quadrados pretos dos cantos. Fotografe a folha inteira, de frente e com boa luz.' };
+      var Hs = homografias(P.marcas), ordem = [0, 1, 2, 3].map(function (k) { return [manchaQR(P, Hs[k]), k]; }).sort(function (x, y) { return y[0] - x[0]; });
+      for (var o = 0; o < 4 && !qr; o++) {
+        var k = ordem[o][1];
+        if (!Hs[k]) continue;
+        [360, 240].forEach(function (tam) {
+          if (qr) return;
+          var q2 = jsQR(recorteQR(img, Hs[k], tam), tam, tam, { inversionAttempts: 'attemptBoth' });
+          if (q2 && lerCodigo(q2.data)) { qr = q2; kQR = k; }
+        });
+      }
+      if (!qr) return { ok: false, semQR: true, erro: 'Não consegui ler o QR Code desta folha.' };
+    }
+    var cod = lerCodigo(qr.data);
+    if (!cod) return { ok: false, erro: 'Este QR Code não é de uma folha do Prumo.' };
+    var prova = buscarProva(cod.provaId);
+    if (!prova) return { ok: false, erro: 'Esta folha é de outra avaliação.', provaId: cod.provaId, estudanteId: cod.estudanteId };
+    if (!P) P = preparar(img);
+    var marcas = P.marcas;
+    if (!marcas) return { ok: false, erro: 'Não encontrei os 4 quadrados pretos dos cantos. Fotografe a folha inteira, sobre uma mesa clara.', provaId: cod.provaId, estudanteId: cod.estudanteId };
+    var H = null;
+    if (kQR >= 0) H = homografias(marcas)[kQR];
+    else {
+      var loc = qr.location, qc = [(loc.topLeftCorner.x + loc.bottomRightCorner.x + loc.topRightCorner.x + loc.bottomLeftCorner.x) / 4,
+        (loc.topLeftCorner.y + loc.bottomRightCorner.y + loc.topRightCorner.y + loc.bottomLeftCorner.y) / 4];
+      var menor = Infinity;
+      homografias(marcas).forEach(function (Hk) {
+        if (!Hk) return;
+        var pq = aplicar(Hk, L.qr.x + L.qr.s / 2, L.qr.y + L.qr.s / 2), d = Math.hypot(pq[0] - qc[0], pq[1] - qc[1]);
+        if (d < menor) { menor = d; H = Hk; }
+      });
+      var escala = Math.hypot(marcas[0][0] - marcas[2][0], marcas[0][1] - marcas[2][1]) / Math.hypot(182, 269);
+      if (!H || menor > 12 * escala) return { ok: false, erro: 'A folha parece dobrada ou muito inclinada. Tente outra foto, de frente.', provaId: cod.provaId, estudanteId: cod.estudanteId };
+    }
+    var r = lerBolinhas(P, H, prova, cod.lay);
+    return { ok: true, provaId: cod.provaId, estudanteId: cod.estudanteId, modo: cod.modo, respostas: r.respostas, alertas: r.alertas, niveis: r.niveis };
+  }
+
+  // Fração escura no anel do contorno das bolinhas (alta quando a grade da versão bate com a folha)
+  function contorno(P, H, prova, lay) {
+    var G = grade(prova.questoes, prova.alternativas, lay), n = 0, esc = 0;
+    for (var q = 0; q < prova.questoes; q++) for (var a = 0; a < prova.alternativas; a++) {
+      var c = bolinha(q, a, G);
+      for (var t = 0; t < 12; t++) {
+        n++;
+        for (var d = -0.25; d <= 0.26; d += 0.25) {
+          var p = aplicar(H, c[0] + (L.r + d) * Math.cos(t * Math.PI / 6), c[1] + (L.r + d) * Math.sin(t * Math.PI / 6)), x = Math.round(p[0]), y = Math.round(p[1]);
+          if (x >= 0 && y >= 0 && x < P.w && y < P.h && P.b[y * P.w + x]) { esc++; break; }
+        }
+      }
+    }
+    return n ? esc / n : 0;
+  }
+
+  /* Lê as bolinhas de uma folha já identificada à mão (sem QR Code), usando só os 4 quadrados pretos.
+     A posição da folha (foto girada) é descoberta pela mancha escura do QR Code, mesmo ilegível. */
+  function lerSemQR(img, prova) {
+    var P = preparar(img);
+    if (!P.marcas) return { ok: false, erro: 'Não encontrei os 4 quadrados pretos dos cantos nesta foto.' };
+    var Hs = homografias(P.marcas), best = -1, m = -1;
+    Hs.forEach(function (H, k) { var v = manchaQR(P, H); if (v > m) { m = v; best = k; } });
+    if (m < 0.25) return { ok: false, erro: 'Não consegui saber a posição da folha na foto.' };
+    // Sem o QR Code, descobre se é folha antiga ou atual pelo contorno impresso das bolinhas
+    var lay = contorno(P, Hs[best], prova, 2) > contorno(P, Hs[best], prova, 1) ? 2 : 1;
+    var r = lerBolinhas(P, Hs[best], prova, lay);
+    return { ok: true, respostas: r.respostas, alertas: r.alertas, niveis: r.niveis };
+  }
+
+  // gabarito: string; '*' no gabarito = questão anulada (todos ganham o ponto)
+  function corrigir(respostas, gabarito, valor) {
+    var n = gabarito.length, ac = 0;
+    for (var i = 0; i < n; i++) if (gabarito[i] === '*' || respostas[i] === gabarito[i]) ac++;
+    return { acertos: ac, nota: Math.round(ac * valor / n * 100) / 100 };
+  }
+
+  var api = { L: L, LETRAS: LETRAS, grade: grade, bolinha: bolinha, gerarPDF: gerarPDF, lerFolha: lerFolha, lerSemQR: lerSemQR, corrigir: corrigir, codigoQR: codigoQR, lerCodigo: lerCodigo, versao: versao, gabaritoVersao: gabaritoVersao, paraOriginal: paraOriginal };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.OMR = api;
+})(this);
+</script>
+<script>
 {
 /* =====================================================================
    CONFIGURAÇÃO DO SERVIDOR CENTRAL (Supabase)
@@ -163,7 +595,7 @@ const SERVIDOR={url:'https://dqiczyjjbjperoagswgp.supabase.co',chave:'sb_publish
 
 const KEY='prumo.v2';
 const COLS=['professores','turmas','estudantes','horario','historico','avaliacoes','correcoes','provas','tentativas','ocorrencias','relatorios'];
-const CFG=['escola','turnos','sabado','tipos','reserva','listas','periodos','ocTipos','ocInicial','ocInicio','ocProvidencias'];
+const CFG=['escola','cabecalho','turnos','sabado','tipos','reserva','listas','periodos','ocTipos','ocInicial','ocInicio','ocProvidencias'];
 const PROF_ESCREVE=['avaliacoes','correcoes','provas','ocorrencias','relatorios'];
 const CAD=['config','professores','turmas','estudantes','horario'];
 const PAPEIS={prioritario:'Plantão — usar primeiro',disponivel:'Livre — pode substituir',condicional:'Condicional — só se tiver poucos no dia',indisponivel:'Não pode substituir'};
@@ -172,7 +604,7 @@ const DIAS5=['Segunda','Terça','Quarta','Quinta','Sexta'];
 const SIT=['Consolidado','Em consolidação','Não consolidado'];
 const LETRAS='ABCDE';
 const uid=()=>Date.now().toString(36).slice(-5)+Math.random().toString(36).slice(2,7);
-function padrao(){return{escola:'',turnos:[{nome:'Manhã',aulas:5,horas:'07:00, 07:50, 08:40, 09:50, 10:40'}],sabado:false,
+function padrao(){return{escola:'',cabecalho:[],turnos:[{nome:'Manhã',aulas:5,horas:'07:00, 07:50, 08:40, 09:50, 10:40'}],sabado:false,
  tipos:[{sigla:'PLT',nome:'Plantão de substituição',papel:'prioritario',limite:0},{sigla:'LIV',nome:'Horário livre (janela)',papel:'disponivel',limite:0},{sigla:'PLAN',nome:'Planejamento',papel:'condicional',limite:1},{sigla:'IND',nome:'Indisponível',papel:'indisponivel',limite:0}],
  reserva:[],periodos:['1º trimestre','2º trimestre','3º trimestre'],
  listas:{barreiras:['Dificuldade de concentração e atenção','Dificuldade na leitura e na escrita','Dificuldade no raciocínio matemático','Faltas frequentes','Dificuldade de interação com os colegas','Pouca autonomia nas atividades','Comportamento que interfere na aprendizagem'],
@@ -213,7 +645,8 @@ const libs={};
 function carregar(url,glob){if(window[glob])return Promise.resolve(window[glob]);return libs[url]||(libs[url]=new Promise((ok,no)=>{const s=document.createElement('script');s.src=url;s.onload=()=>window[glob]?ok(window[glob]):no(new Error('lib'));s.onerror=()=>{delete libs[url];no(new Error('lib'))};document.head.appendChild(s)}))}
 const LIB_SB='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
 const LIB_QR='https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';
-const LIB_JSQR='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js';
+const LIB_JSQR='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';
+const LIB_JSPDF='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
 const LIB_XLSX='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
 
 /* ---------- persistência ---------- */
@@ -224,7 +657,7 @@ function docsAtuais(){const m=new Map();const cfg={};for(const k of CFG)cfg[k]=S
 function save(){ids();if(MODO==='local'){try{localStorage.setItem(KEY,JSON.stringify(S));return true}catch(e){toast('Não consegui salvar neste navegador. Faça um backup agora.');return false}}agendarSync();return true}
 let syncT,syncando=false,pend=false;
 function setSync(t){const el=$('sync');if(el)el.textContent=t}
-function agendarSync(){pend=true;setSync('Salvando…');clearTimeout(syncT);syncT=setTimeout(sync,600)}
+function agendarSync(){if(!ESCOLA)return;pend=true;setSync('Salvando…');clearTimeout(syncT);syncT=setTimeout(sync,600)}
 async function sync(){if(syncando){syncT=setTimeout(sync,600);return}syncando=true;pend=false;const atual=docsAtuais();const up=[],del={};
  for(const[k,v]of atual)if(snap.get(k)!==v)up.push(k);
  for(const k of snap.keys()){const c=k.split('|')[0];if(!atual.has(k)&&podeColecao(c)){const d=k.slice(c.length+1);const own=!isCoord()?S[c]?.some(x=>x.id===d):false;if(!own&&(isCoord()||JSON.parse(snap.get(k)).autorUid===ME.uid))(del[c]||(del[c]=[])).push(d)}}
@@ -349,18 +782,7 @@ function vHorario(){
  return h}
 
 /* ---------- CORRETOR ---------- */
-let K={av:null,aba:'notas',novo:false,fotos:[],manual:null,folhas:false};
-function geom(av){const nq=av.nq,na=av.na||4,cols=nq>25?2:1,rows=Math.ceil(nq/cols),sp=Math.min(8,206/rows),r=Math.min(3,sp*0.38),out=[];
- for(let q=0;q<nq;q++){const c=Math.floor(q/rows),rr=q%rows,x0=cols===1?40:(c===0?28:112),y=62+sp*rr+sp/2;for(let j=0;j<na;j++)out.push({q,j,x:x0+14+j*9,y,r,lx:x0+8})}return out}
-const MARC=[[194,16],[194,281],[16,281],[16,16]];
-function qrSVG(txt,x,y,size){if(!window.qrcode)return `<rect x="${x}" y="${y}" width="${size}" height="${size}" fill="none" stroke="#000" stroke-width=".3"/><text x="${x+2}" y="${y+size/2}" font-size="3">${esc(txt)}</text>`;
- const q=window.qrcode(0,'M');q.addData(txt);q.make();const n=q.getModuleCount(),c=size/n;let p='';for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))p+=`M${(x+k*c).toFixed(2)} ${(y+r*c).toFixed(2)}h${c.toFixed(2)}v${c.toFixed(2)}h-${c.toFixed(2)}z`;return `<path d="${p}" fill="#000"/>`}
-function folhaSVG(av,e){const G2=geom(av);let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 297" font-family="Arial,sans-serif"><rect width="210" height="297" fill="#fff"/>`;
- for(const[cx,cy]of MARC)s+=`<rect x="${cx-6}" y="${cy-6}" width="12" height="12" fill="#000"/>`;
- s+=qrSVG('P1|'+av.id+'|'+e.id,150,24,30);
- s+=`<text x="28" y="20" font-size="4.2" font-weight="700">${esc(S.escola||'Escola')}</text><text x="28" y="28" font-size="3.8">${esc(av.nome)} · Turma ${esc(av.turma)}${av.data?' · '+dataBR(av.data):''}</text><text x="28" y="37" font-size="4.6" font-weight="700">${esc(e.nome)}</text><text x="28" y="45" font-size="3">Pinte toda a bolinha, com caneta preta ou azul. Uma por questão.</text><text x="28" y="50" font-size="3">Não rasure e não dobre esta folha.</text>`;
- for(const b of G2){if(b.j===0)s+=`<text x="${b.lx}" y="${b.y+1.2}" font-size="3.6" font-weight="700" text-anchor="end">${b.q+1}</text>`;s+=`<circle cx="${b.x}" cy="${b.y}" r="${b.r}" fill="none" stroke="#000" stroke-width=".3"/><text x="${b.x}" y="${b.y+1}" font-size="${(b.r*0.9).toFixed(2)}" text-anchor="middle" fill="#bbb">${LETRAS[b.j]}</text>`}
- return s+'</svg>'}
+let K={av:null,aba:'notas',novo:false,fotos:[],manual:null,pdf:null};
 function notaDe(av,resp){let ac=0;for(let q=0;q<av.nq;q++)if(resp[q]!=null&&resp[q]===av.gab[q])ac++;return{acertos:ac,nota:Math.round(ac/av.nq*(+av.valor||10)*10)/10}}
 function vCorretor(){
  const turmas=minhasTurmas();
@@ -386,43 +808,31 @@ function vCorretor(){
    <p><b>${n.acertos} acertos · nota ${num(n.nota)}</b></p><div class="acts"><button class="b p" data-act="fotoSalvar" data-i="${i}"${f.est?'':' disabled'}>Salvar</button><button class="b" data-act="fotoDesc" data-i="${i}">Descartar</button></div></div>`}).join('');
   if(K.fotos.filter(f=>!f.erro&&f.est).length>1)h+=`<div class="acts"><button class="b c" data-act="fotoTodas">Salvar todas as fotos com estudante</button></div>`;
  }else if(K.aba==='folhas'){
-  h+=`<div class="card"><h2>Folhas de resposta</h2><p>Uma folha por estudante, com o nome e o QR Code. Imprima em papel A4, sem ajustar à página (tamanho real).</p><div class="acts"><button class="b p" data-act="folhasGerar">${K.folhas?'Atualizar folhas':'Gerar folhas'} (${ests.length})</button>${K.folhas?'<button class="b c" data-act="folhasImp">Imprimir</button>':''}</div>${K.folhas?'<p class="small muted">Se a janela de impressão não abrir aqui, abra o Prumo pelo endereço do site e imprima de lá.</p>':''}</div>`;
-  if(K.folhas)h+=`<div class="lista">${ests.slice(0,4).map(e=>`<div class="item" style="padding:8px">${folhaSVG(av,e)}</div>`).join('')}</div>${ests.length>4?`<p class="muted small">Mostrando 4 de ${ests.length}. Todas saem na impressão.</p>`:''}`;
+  h+=`<div class="card"><h2>Folhas de respostas</h2><p>Uma folha por estudante, no mesmo modelo do Corretor EMFAL: cabeçalho da escola, quadro de identificação com o nome do estudante, QR Code, instruções e a grade de bolinhas.</p><p class="small muted">Cabeçalho usado: ${esc(cabecalhoFolha().join(' · '))}. ${isMaster()?'Mude em Configuração → Escola e regras.':'O master muda em Configuração.'}</p>
+  <div class="acts"><button class="b p" data-act="folhasGerar">Gerar PDF das folhas (${ests.length})</button>${K.pdf?`<a class="b c" href="${K.pdf}" download="Folhas ${esc(av.nome)} ${esc(av.turma)}.pdf">Baixar PDF</a><a class="b" href="${K.pdf}" target="_blank" rel="noopener">Abrir PDF</a>`:''}</div>
+  <p class="small muted">Imprima em tamanho real (100%), em papel A4, de preferência em impressora a laser.</p></div>`;
  }else{h+=vAvalForm(av)}
  return h}
-function vAvalForm(av){const novo=!av;av=av||K.rasc||(K.rasc={nome:'',turma:minhasTurmas()[0]||'',data:hoje(),nq:10,na:4,valor:10,gab:Array(10).fill(null)});
- return `${novo?'<p><button class="b s" data-act="avVoltar">← Avaliações</button></p><h1>Nova avaliação</h1>':''}<div class="card"><div class="row"><label>Nome<input id="avNome" value="${esc(av.nome)}" placeholder="Ex.: Avaliação mensal de Matemática"></label><label>Turma${selTurma('avTurma',av.turma,minhasTurmas())}</label><label>Data<input type="date" id="avData" value="${esc(av.data||'')}"></label></div>
+function vAvalForm(av){const novo=!av;av=av||K.rasc||(K.rasc={nome:'',tipo:'Prova mensal',turma:minhasTurmas()[0]||'',data:hoje(),nq:10,na:4,valor:10,gab:Array(10).fill(null)});
+ return `${novo?'<p><button class="b s" data-act="avVoltar">← Avaliações</button></p><h1>Nova avaliação</h1>':''}<div class="card"><div class="row"><label>Nome<input id="avNome" value="${esc(av.nome)}" placeholder="Ex.: Avaliação mensal de Matemática"></label><label>Tipo<select id="avTipo">${TIPOS_AV.map(t=>`<option${t===(av.tipo||'')?' selected':''}>${t}</option>`).join('')}</select></label><label>Turma${selTurma('avTurma',av.turma,minhasTurmas())}</label><label>Data<input type="date" id="avData" value="${esc(av.data||'')}"></label></div>
  <div class="row" style="margin-top:12px"><label>Nº de questões<input type="number" min="1" max="60" data-chg="avNq" value="${av.nq}" style="width:110px"></label><label>Alternativas<select data-chg="avNa"><option value="4"${av.na!==5?' selected':''}>A a D</option><option value="5"${av.na===5?' selected':''}>A a E</option></select></label><label>Valor<input type="number" min="0" step="0.5" id="avValor" value="${esc(av.valor)}" style="width:110px"></label></div>
  <h3 style="margin-top:16px">Gabarito</h3>${Array.from({length:av.nq},(_,q)=>`<div class="qrow"><b>${q+1}</b><div class="bolhas">${Array.from({length:av.na||4},(_,j)=>`<button class="bol" aria-pressed="${av.gab[q]===j}" data-act="gabBol" data-q="${q}" data-j="${j}">${LETRAS[j]}</button>`).join('')}</div></div>`).join('')}
  <div class="acts"><button class="b p" data-act="avSalvar">${novo?'Criar avaliação':'Salvar alterações'}</button>${!novo&&podeEditar(av)?'<button class="b" data-act="avApagar">Apagar avaliação</button>':''}</div></div>`}
 function avEdit(){return K.novo?K.rasc:S.avaliacoes.find(a=>a.id===K.av)}
 
-/* ---------- leitura da folha (OMR) ---------- */
-function cinza(id){const g=new Uint8Array(id.width*id.height),d=id.data;for(let i=0,j=0;i<g.length;i++,j+=4)g[i]=(d[j]*77+d[j+1]*150+d[j+2]*29)>>8;return{w:id.width,h:id.height,g}}
-function otsu(g){const h=new Array(256).fill(0);for(let i=0;i<g.length;i++)h[g[i]]++;let tot=g.length,sum=0;for(let i=0;i<256;i++)sum+=i*h[i];let sB=0,wB=0,best=0,thr=127;for(let i=0;i<256;i++){wB+=h[i];if(!wB)continue;const wF=tot-wB;if(!wF)break;sB+=i*h[i];const mB=sB/wB,mF=(sum-sB)/wF,v=wB*wF*(mB-mF)*(mB-mF);if(v>best){best=v;thr=i}}return thr}
-function marcadores(im){const f=Math.max(1,Math.round(Math.max(im.w,im.h)/700)),w=Math.floor(im.w/f),h=Math.floor(im.h/f),s=new Uint8Array(w*h);
- for(let y=0;y<h;y++)for(let x=0;x<w;x++){let a=0;for(let yy=0;yy<f;yy++)for(let xx=0;xx<f;xx++)a+=im.g[(y*f+yy)*im.w+x*f+xx];s[y*w+x]=a/(f*f)}
- const t=otsu(s),lab=new Int32Array(w*h),bl=[],st=[];let n=0;
- for(let i=0;i<w*h;i++){if(s[i]>t||lab[i])continue;n++;let area=0,x0=w,x1=0,y0=h,y1=0,sx=0,sy=0;st.push(i);lab[i]=n;
-  while(st.length){const p=st.pop(),x=p%w,y=(p/w)|0;area++;sx+=x;sy+=y;if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;
-   if(x>0&&!lab[p-1]&&s[p-1]<=t){lab[p-1]=n;st.push(p-1)}if(x<w-1&&!lab[p+1]&&s[p+1]<=t){lab[p+1]=n;st.push(p+1)}if(y>0&&!lab[p-w]&&s[p-w]<=t){lab[p-w]=n;st.push(p-w)}if(y<h-1&&!lab[p+w]&&s[p+w]<=t){lab[p+w]=n;st.push(p+w)}}
-  const bw=x1-x0+1,bh=y1-y0+1,fill=area/(bw*bh),asp=bw/bh;if(area>=12&&fill>0.6&&asp>0.6&&asp<1.65&&bw<w*0.2&&bh<h*0.2)bl.push({x:(sx/area+0.5)*f,y:(sy/area+0.5)*f,area})}
- if(bl.length<4)return null;const maxA=Math.max(...bl.map(b=>b.area)),big=bl.filter(b=>b.area>=maxA*0.45);if(big.length<4)return null;
- const cs=[[0,0],[im.w,0],[im.w,im.h],[0,im.h]];const pick=cs.map(([cx,cy])=>{let m=null,md=1e18;for(const b of big){const dd=(b.x-cx)**2+(b.y-cy)**2;if(dd<md){md=dd;m=b}}return m});if(new Set(pick).size<4)return null;return pick}
-function resolver(A,b){const n=b.length,M=A.map((r,i)=>r.concat(b[i]));for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(M[r][c])>Math.abs(M[p][c]))p=r;if(Math.abs(M[p][c])<1e-12)return null;const tmp=M[c];M[c]=M[p];M[p]=tmp;for(let r=0;r<n;r++){if(r===c)continue;const k=M[r][c]/M[c][c];for(let j=c;j<=n;j++)M[r][j]-=k*M[c][j]}}return M.map((r,i)=>r[n]/r[i])}
-function homog(src,dst){const A=[],b=[];for(let i=0;i<4;i++){const[X,Y]=src[i],[x,y]=dst[i];A.push([X,Y,1,0,0,0,-x*X,-x*Y]);b.push(x);A.push([0,0,0,X,Y,1,-y*X,-y*Y]);b.push(y)}const h=resolver(A,b);if(!h)return null;return(X,Y)=>{const z=h[6]*X+h[7]*Y+1;return[(h[0]*X+h[1]*Y+h[2])/z,(h[3]*X+h[4]*Y+h[5])/z]}}
-function media(im,cx,cy,r0,r1){let s=0,n=0;const R=Math.ceil(r1);for(let y=Math.floor(cy-R);y<=cy+R;y++)for(let x=Math.floor(cx-R);x<=cx+R;x++){if(x<0||y<0||x>=im.w||y>=im.h)continue;const d=Math.hypot(x-cx,y-cy);if(d>=r0&&d<=r1){s+=im.g[y*im.w+x];n++}}return n?s/n:255}
-function analisar(im,av,qrPt){const m=marcadores(im);if(!m)return{erro:'Não encontrei os 4 quadrados pretos dos cantos. Tire a foto de novo, com a folha inteira aparecendo.'};
- let k=1;if(qrPt){let md=1e18;m.forEach((p,i)=>{const d=(p.x-qrPt.x)**2+(p.y-qrPt.y)**2;if(d<md){md=d;k=i}})}
- const dst=[0,1,2,3].map(i=>{const p=m[(k+i)%4];return[p.x,p.y]});const H=homog(MARC,dst);if(!H)return{erro:'Não consegui alinhar a folha. Tire a foto mais de cima.'};
- const G2=geom(av),val=Array.from({length:av.nq},()=>[]);
- for(const b of G2){const[cx,cy]=H(b.x,b.y),[ex,ey]=H(b.x+1,b.y),sc=Math.hypot(ex-cx,ey-cy);const dentro=media(im,cx,cy,0,b.r*0.62*sc),anel=media(im,cx,cy,b.r*1.45*sc,b.r*1.65*sc);val[b.q][b.j]=Math.max(0,(anel-dentro)/Math.max(anel,1))}
- const resp=[],st=[];for(const v of val){const o=v.map((d,j)=>({d,j})).sort((a,b)=>b.d-a.d);if(o[0].d<0.28){resp.push(null);st.push('branco')}else if(o[1]&&o[1].d>=0.28&&o[0].d-o[1].d<0.15){resp.push(null);st.push('dupla')}else{resp.push(o[0].j);st.push('ok')}}
- return{resp,st}}
-async function lerFoto(file,av){const url=URL.createObjectURL(file);try{const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=url});const max=2000,s=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);const x=c.getContext('2d');x.drawImage(img,0,0,c.width,c.height);const id=x.getImageData(0,0,c.width,c.height);
- let qr=null,qrPt=null;try{const jsQR=await carregar(LIB_JSQR,'jsQR');const code=jsQR(id.data,id.width,id.height);if(code&&/^P1\|/.test(code.data)){const[,a,e]=code.data.split('|');qr={av:a,est:e};const L=code.location;qrPt={x:(L.topLeftCorner.x+L.bottomRightCorner.x)/2,y:(L.topLeftCorner.y+L.bottomRightCorner.y)/2}}}catch(e){}
- if(qr&&qr.av!==av.id)return{erro:'Esta folha é de outra avaliação.'};
- const r=analisar(cinza(id),av,qrPt);if(r.erro)return r;return{resp:r.resp,st:r.st,est:qr?qr.est:'',qr:!!qr}}catch(e){return{erro:'Não consegui abrir esta imagem.'}}finally{URL.revokeObjectURL(url)}}
+/* ---------- leitura da folha (motor do Corretor EMFAL, em omr) ---------- */
+const TIPOS_AV=['Prova parcial','Prova mensal','Prova trimestral','Simulado','Outra avaliação'];
+const omrProva=av=>({id:av.id,nome:av.nome,tipo:av.tipo||'',questoes:av.nq,alternativas:av.na||4,valor:+av.valor||10});
+function cabecalhoFolha(){const c=(S.cabecalho||[]).map(x=>String(x).trim()).filter(Boolean);return c.length?c:[S.escola||'Escola']}
+async function lerFoto(file,av){const url=URL.createObjectURL(file);try{const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=url});const max=2000,sc=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);const x=c.getContext('2d');x.drawImage(img,0,0,c.width,c.height);const id=x.getImageData(0,0,c.width,c.height);
+ let jsQR;try{jsQR=await carregar(LIB_JSQR,'jsQR')}catch(e){jsQR=()=>null}
+ const pv=omrProva(av);let r=window.OMR.lerFolha(id,jsQR,pid=>pid===av.id?pv:null),qr=true;
+ if(!r.ok&&r.semQR){const r2=window.OMR.lerSemQR(id,pv);if(!r2.ok)return{erro:r.erro};r={ok:true,respostas:r2.respostas,estudanteId:''};qr=false}
+ if(!r.ok)return{erro:r.erro};
+ const resp=r.respostas.map(l=>{const k=LETRAS.indexOf(l);return k>=0?k:null}),st=r.respostas.map(l=>l==='-'?'branco':l==='*'?'dupla':'ok');
+ return{resp,st,est:r.estudanteId||'',qr}}catch(e){return{erro:'Não consegui abrir esta imagem.'}}finally{URL.revokeObjectURL(url)}}
+async function gerarFolhasPDF(av){const ests=estDaTurma(av.turma);if(!ests.length)throw new Error('A turma não tem estudantes.');await carregar(LIB_JSPDF,'jspdf');await carregar(LIB_QR,'qrcode');
+ const doc=window.OMR.gerarPDF(omrProva(av),ests,window.jspdf.jsPDF,window.qrcode,'',cabecalhoFolha());return URL.createObjectURL(doc.output('blob'))}
 
 /* ---------- PROVA ONLINE ---------- */
 let P={id:null,aba:'questoes',lote:''};
@@ -634,7 +1044,8 @@ async function lerArquivo(f){if(/\.xlsx?$/i.test(f.name)){const X=await carregar
 /* ---------- REGRAS ---------- */
 function vRegras(){const L=S.listas;
  let h=`<h1>Escola e regras</h1>`;
- h+=`<div class="card"><h2>Escola</h2><label>Nome da escola<input id="rEscola" value="${esc(S.escola)}" placeholder="Ex.: Escola Municipal …"></label></div>`;
+ h+=`<div class="card"><h2>Escola</h2><label>Nome da escola<input id="rEscola" value="${esc(S.escola)}" placeholder="Ex.: Escola Municipal …"></label>
+ <label style="margin-top:14px">Cabeçalho da folha de respostas (até 4 linhas, uma por linha)<textarea id="rCab" style="min-height:110px" placeholder="PREFEITURA MUNICIPAL DE …&#10;SECRETARIA MUNICIPAL DE EDUCAÇÃO&#10;REGIONAL / SUPERINTENDÊNCIA …&#10;ESCOLA MUNICIPAL …">${esc((S.cabecalho||[]).join('\n'))}</textarea></label><p class="small muted">Sai no topo de cada folha de respostas, em letras maiúsculas. Se ficar vazio, sai só o nome da escola.</p></div>`;
  h+=`<div class="card"><h2>Turnos e aulas</h2><p class="small muted">Horários de início de cada aula, separados por vírgula (opcional, aparecem na mensagem).</p><div class="scroll"><table class="stack"><thead><tr><th>Turno</th><th>Nº de aulas</th><th>Início das aulas</th><th></th></tr></thead><tbody>${S.turnos.map((x,i)=>`<tr><td><input data-tf="nome" data-i="${i}" value="${esc(x.nome)}" aria-label="Nome do turno"></td><td><input type="number" min="1" max="12" data-tf="aulas" data-i="${i}" value="${esc(x.aulas)}" style="width:90px" aria-label="Número de aulas"></td><td><input data-tf="horas" data-i="${i}" value="${esc(x.horas)}" aria-label="Horários"></td><td>${S.turnos.length>1?`<button class="b s" data-act="delTurno" data-i="${i}">Remover</button>`:''}</td></tr>`).join('')}</tbody></table></div>
  <div class="acts"><button class="b" data-act="addTurno">Adicionar turno</button><label class="ck"><input type="checkbox" id="rSab"${S.sabado?' checked':''}> A escola tem aulas aos sábados</label></div></div>`;
  h+=`<div class="card"><h2>Siglas do horário</h2><p class="small">Cada sigla diz se o professor pode ou não substituir naquele horário. O tipo <b>condicional</b> serve para casos como planejamento: o professor só é chamado se tiver até o limite desse tipo no dia (o horário dele é remanejado). Quem tem o dia todo nesse tipo não é chamado.</p><div class="scroll"><table class="stack"><thead><tr><th>Sigla</th><th>Significado</th><th>Regra</th><th>Limite no dia</th><th></th></tr></thead><tbody>${S.tipos.map((x,i)=>`<tr><td><input data-pf="sigla" data-i="${i}" value="${esc(x.sigla)}" style="width:100px" aria-label="Sigla"></td><td><input data-pf="nome" data-i="${i}" value="${esc(x.nome)}" aria-label="Significado"></td><td><select data-pf="papel" data-i="${i}" aria-label="Regra">${Object.entries(PAPEIS).map(([k,n])=>`<option value="${k}"${k===x.papel?' selected':''}>${n}</option>`).join('')}</select></td><td><input type="number" min="0" max="12" data-pf="limite" data-i="${i}" value="${esc(x.limite||0)}" style="width:80px" aria-label="Limite"></td><td><button class="b s" data-act="delTipo" data-i="${i}">Remover</button></td></tr>`).join('')}</tbody></table></div><div class="acts"><button class="b" data-act="addTipo">Adicionar sigla</button></div>
@@ -660,7 +1071,7 @@ function lerRegras(){const n=JSON.parse(JSON.stringify(S));const v=id=>($(id)?.v
  document.querySelectorAll('[data-tf]').forEach(el=>{const t=n.turnos[+el.dataset.i];if(t)t[el.dataset.tf]=el.dataset.tf==='aulas'?Math.max(1,Math.min(12,parseInt(el.value)||1)):el.value.trim()});
  document.querySelectorAll('[data-pf]').forEach(el=>{const t=n.tipos[+el.dataset.i];if(t)t[el.dataset.pf]=el.dataset.pf==='limite'?Math.max(0,parseInt(el.value)||0):el.value.trim()});
  n.sabado=!!$('rSab')?.checked;const ls=s=>String(s).split('\n').map(x=>x.trim()).filter(Boolean);
- n.reserva=ls(v('rRes'));if($('rPeriodos'))n.periodos=ls(v('rPeriodos'));
+ n.reserva=ls(v('rRes'));if($('rCab'))n.cabecalho=ls(v('rCab')).slice(0,4);if($('rPeriodos'))n.periodos=ls(v('rPeriodos'));
  document.querySelectorAll('[data-lst]').forEach(el=>{n.listas[el.dataset.lst]=ls(el.value)});
  if($('rItens')){const it={};for(const l of ls(v('rItens'))){const i=l.indexOf(':');if(i<1)continue;const c=l.slice(0,i).trim(),a=l.slice(i+1).trim();if(a)(it[c]||(it[c]=[])).push(a)}n.listas.itens=it}
  if($('rOcIni'))n.ocInicial=Math.max(0,parseFloat(v('rOcIni'))||0);if($('rOcData'))n.ocInicio=v('rOcData');
@@ -711,22 +1122,34 @@ function vEntrar(){const cad=AU.modo==='criar';return `<div class="auth"><div cl
 function vEscolher(){return `<div class="auth"><div class="card"><h1>Sua escola</h1><p>Sua conta ainda não está em nenhuma escola.</p><h2>Entrar numa escola</h2><label>Código de convite (peça à coordenação)<input id="esCod" style="text-transform:uppercase;letter-spacing:2px"></label><label style="margin-top:12px">Seu nome completo<input id="esNome"></label><div class="acts"><button class="b p" data-act="esEntrar">Entrar na escola</button></div></div>
  <div class="card"><h2>Cadastrar uma escola nova</h2><p class="small">Só para a coordenação ou direção. Você será o usuário master da escola (com o módulo Configuração) e receberá o código de convite para os professores.</p><label>Nome da escola<input id="esEscola"></label><label style="margin-top:12px">Seu nome completo<input id="esNome2"></label><div class="acts"><button class="b" data-act="esCriar">Cadastrar escola</button></div>${AU.erro?`<p class="rel err">${esc(AU.erro)}</p>`:''}</div><p><button class="b s" data-act="sair">Sair da conta</button></p></div>`}
 async function iniciarServidor(){try{await clienteSB();const{data:{session}}=await sb.auth.getSession();if(!session){view=location.hash.slice(1)==='aluno'?'aluno':'entrar';return render()}
- ME.uid=session.user.id;ME.email=session.user.email;const{data:ms,error}=await sb.from('membros').select('escola_id,papel,nome,escolas(nome,codigo)').eq('user_id',ME.uid);if(error)throw error;
+ ME.uid=session.user.id;ME.email=session.user.email;
+ try{const r=await sb.rpc('prumo_eh_dev');ME.dev=!r.error&&r.data===true}catch(e){ME.dev=false}
+ if(ME.dev){let alvo=null;try{alvo=sessionStorage.getItem('prumo.devEscola')}catch(e){}if(alvo)return entrarEscolaDev(alvo);view=location.hash.slice(1)==='aluno'?'aluno':'dev';return carregarPainelDev()}
+ const{data:ms,error}=await sb.from('membros').select('escola_id,papel,nome,escolas(nome,codigo)').eq('user_id',ME.uid);if(error)throw error;
  if(!ms.length){view=location.hash.slice(1)==='aluno'?'aluno':'escolher';return render()}
- const m=ms[0];ESCOLA=m.escola_id;ESCOLA_COD=m.escolas?.codigo||'';ME.papel=m.papel;ME.nome=m.nome||'';setSync('Carregando…');await carregarServidor();if(isMaster())await carregarMembros();setSync('Salvo');pronto=true;
- const v=location.hash.slice(1);view=permitido(v)||v==='aluno'?v:'inicio';render()}
+ const m=ms[0];await abrirEscola(m.escola_id,m.escolas?.codigo||'',m.papel,m.nome||'')}
  catch(e){$('app').innerHTML=`<div class="card auth"><h1>Sem conexão</h1><p>Não consegui falar com o servidor do Prumo. Verifique a internet e recarregue a página.</p><p class="small muted">${esc(e.message||e)}</p></div>`}}
+async function abrirEscola(id,cod,papel,nome){if(pend||syncando){clearTimeout(syncT);await sync()}ESCOLA=id;ESCOLA_COD=cod;ME.papel=papel;ME.nome=nome;MEMBROS=[];G={data:hoje(),turno:0,aus:{},esc:{}};setSync('Carregando…');await carregarServidor();if(isMaster())await carregarMembros();setSync('Salvo');pronto=true;
+ const v=location.hash.slice(1);view=permitido(v)||v==='aluno'?v:'inicio';render()}
+/* ---------- desenvolvedor ---------- */
+let DEV=[];
+async function carregarPainelDev(){pronto=false;$('app').innerHTML='<div class="card auth"><p>Carregando o painel…</p></div>';const{data,error}=await sb.rpc('prumo_painel_dev');if(error){$('app').innerHTML=`<div class="card auth"><p>Não consegui abrir o painel: ${esc(error.message)}</p></div>`;return}DEV=data||[];S=padrao();ESCOLA=null;view='dev';render()}
+async function entrarEscolaDev(id){try{sessionStorage.setItem('prumo.devEscola',id)}catch(e){}if(!DEV.length){const{data}=await sb.rpc('prumo_painel_dev');DEV=data||[]}const e=DEV.find(x=>x.id===id);if(!e){try{sessionStorage.removeItem('prumo.devEscola')}catch(x){}return carregarPainelDev()}await abrirEscola(e.id,e.codigo,e.meu_papel||'master',e.meu_nome||'Desenvolvedor')}
+function vDev(){const tot=k=>DEV.reduce((s,e)=>s+(+e[k]||0),0);const dt=v=>v?new Date(v).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'nunca';
+ return `<h1>Painel do desenvolvedor</h1><p class="muted">${DEV.length} escola(s) · ${tot('membros')} usuário(s) · ${tot('estudantes')} estudante(s). Você entra em qualquer escola com acesso de master.</p>
+ <div class="card"><div class="row"><label style="flex:1">Nova escola (você vira master dela)<input id="devNova" placeholder="Nome da escola"></label><button class="b p" data-act="devCriar">Cadastrar escola</button></div></div>
+ ${DEV.length?`<div class="scroll"><table class="stack"><thead><tr><th>Escola</th><th>Código</th><th class="n">Usuários</th><th class="n">Estudantes</th><th>Último uso</th><th></th></tr></thead><tbody>${DEV.map(e=>`<tr><td><b>${esc(e.nome)}</b>${e.meu_papel?` <span class="tag t-b">${esc(NOMEPAPEL[e.meu_papel]||e.meu_papel)}</span>`:''}</td><td class="nw">${esc(e.codigo)}</td><td class="n">${+e.membros||0}</td><td class="n">${+e.estudantes||0}</td><td class="nw">${esc(dt(e.ultima))}</td><td><button class="b s p" data-act="devEntrar" data-id="${esc(e.id)}">Entrar</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="card"><p>Nenhuma escola cadastrada ainda.</p></div>'}`}
 async function carregarMembros(){const{data,error}=await sb.from('membros').select('user_id,papel,nome,email').eq('escola_id',ESCOLA);if(!error)MEMBROS=data||[]}
 
 /* ---------- render ---------- */
-const views={inicio:vInicio,hoje:vHoje,horario:vHorario,chorario:vHorario,corretor:vCorretor,prova:vProva,relatorios:vRelatorios,relver:vRelVer,ocnova:()=>{O.aba='nova';return vOcorrencias()},ochist:()=>{O.aba='hist';O.edit=null;O.ultimo=null;return vOcorrencias()},ocpontos:()=>{O.aba='pontos';O.edit=null;O.ultimo=null;return vOcorrencias()},cprof:()=>{Cv.aba='prof';return vCadastros()},cturmas:()=>{Cv.aba='turmas';return vCadastros()},cest:()=>{Cv.aba='est';return vCadastros()},importar:vImportar,escola:vRegras,acessos:vAcessos,backup:vBackup,historico:vHistorico,tutorial:vTutorial,aluno:vAluno,entrar:vEntrar,escolher:vEscolher};
-const ESPECIAIS=['aluno','entrar','escolher'];
+const views={dev:vDev,inicio:vInicio,hoje:vHoje,horario:vHorario,chorario:vHorario,corretor:vCorretor,prova:vProva,relatorios:vRelatorios,relver:vRelVer,ocnova:()=>{O.aba='nova';return vOcorrencias()},ochist:()=>{O.aba='hist';O.edit=null;O.ultimo=null;return vOcorrencias()},ocpontos:()=>{O.aba='pontos';O.edit=null;O.ultimo=null;return vOcorrencias()},cprof:()=>{Cv.aba='prof';return vCadastros()},cturmas:()=>{Cv.aba='turmas';return vCadastros()},cest:()=>{Cv.aba='est';return vCadastros()},importar:vImportar,escola:vRegras,acessos:vAcessos,backup:vBackup,historico:vHistorico,tutorial:vTutorial,aluno:vAluno,entrar:vEntrar,escolher:vEscolher};
+const ESPECIAIS=['aluno','entrar','escolher','dev'];
 function render(){if(view!=='aluno')document.body.classList.remove('aluno');
  if(pronto&&!ESPECIAIS.includes(view)&&!permitido(view))view='inicio';
  const m=modDe(view),ss=m?subsDe(m):[];
  $('tabs').innerHTML=pronto&&m&&!ESPECIAIS.includes(view)?`<div class="modbar"><button class="voltar" data-v="inicio">← Início</button><span class="mt">${svgIc(m.k,22)}${m.n}</span></div>${ss.length>1?`<div class="subs" role="tablist">${ss.map(([v,n])=>`<button data-v="${v}"${v===view?' aria-current="page"':''}>${n}</button>`).join('')}</div>`:''}`:'';
- $('quem').innerHTML=(MODO==='servidor'&&ME.uid?`<span class="sync" id="sync">Salvo</span><span>${esc(ME.nome||ME.email)} · ${NOMEPAPEL[ME.papel]||''}</span><button data-act="sair">Sair</button>`:MODO==='local'?'<span class="sync">Modo demonstração · dados neste aparelho</span>':'');
- $('escolaNome').textContent=S.escola||'Gestão escolar';
+ $('quem').innerHTML=(MODO==='servidor'&&ME.uid?`${ESCOLA?'<span class="sync" id="sync">Salvo</span>':''}<span>${esc(ME.dev?'Desenvolvedor':(ME.nome||ME.email))}${ESCOLA&&!ME.dev?' · '+(NOMEPAPEL[ME.papel]||''):''}</span>${ME.dev&&view!=='dev'?'<button data-act="devPainel">Painel dev</button>':''}<button data-act="sair">Sair</button>`:MODO==='local'?'<span class="sync">Modo demonstração · dados neste aparelho</span>':'');
+ $('escolaNome').textContent=view==='dev'?'Todas as escolas':(S.escola||'Gestão escolar');
  $('app').innerHTML=views[view]();if(view==='aluno'&&AL.fase==='prova')relogio()}
 function go(v){if(!views[v])v='inicio';if(v==='aluno'&&view!=='aluno'){AL={fase:'entrar',erro:''};retomarProva()}if(location.hash.slice(1)!==v){try{history.replaceState(null,'','#'+v)}catch(e){try{location.hash=v}catch(e2){}}}view=v;render();window.scrollTo(0,0)}
 
@@ -779,12 +1202,12 @@ const A={
  copResumo:()=>{const t=$('tResumo');if(t)copiar([...t.rows].map(r=>[...r.cells].map(c=>c.textContent).join('\t')).join('\n'))},
  /* corretor */
  avNova:()=>{K.novo=true;K.rasc=null;render()},
- avVoltar:()=>{K={av:null,aba:'notas',novo:false,fotos:[],manual:null,folhas:false};render()},
- avAbrir:b=>{K={av:b.dataset.id,aba:'notas',novo:false,fotos:[],manual:null,folhas:false};render()},
+ avVoltar:()=>{K={av:null,aba:'notas',novo:false,fotos:[],manual:null,pdf:null};render()},
+ avAbrir:b=>{K={av:b.dataset.id,aba:'notas',novo:false,fotos:[],manual:null,pdf:null};render()},
  kAba:b=>{K.aba=b.dataset.k;K.manual=null;render()},
  gabBol:b=>{const av=avEdit();av.gab[+b.dataset.q]=+b.dataset.j;if(!K.novo)save();render()},
- avSalvar:()=>{const av=avEdit();av.nome=$('avNome').value.trim()||'Avaliação';av.data=$('avData').value;av.valor=Math.max(0,parseFloat($('avValor').value)||10);const falta=av.gab.findIndex(g=>g==null);if(falta>=0)return toast('Marque o gabarito da questão '+(falta+1)+'.');
-  if(K.novo){av.id=uid();av.autor=meuNome();av.autorUid=ME.uid;S.avaliacoes.push(av);K={av:av.id,aba:'folhas',novo:false,fotos:[],manual:null,folhas:false}}else{for(const c of S.correcoes.filter(c=>c.av===av.id))Object.assign(c,notaDe(av,c.resp))}save();toast('Avaliação salva.');render()},
+ avSalvar:()=>{const av=avEdit();av.nome=$('avNome').value.trim()||'Avaliação';av.tipo=$('avTipo').value;av.data=$('avData').value;av.valor=Math.max(0,parseFloat($('avValor').value)||10);const falta=av.gab.findIndex(g=>g==null);if(falta>=0)return toast('Marque o gabarito da questão '+(falta+1)+'.');
+  if(K.novo){av.id=uid();av.autor=meuNome();av.autorUid=ME.uid;S.avaliacoes.push(av);K={av:av.id,aba:'folhas',novo:false,fotos:[],manual:null,pdf:null}}else{for(const c of S.correcoes.filter(c=>c.av===av.id))Object.assign(c,notaDe(av,c.resp))}save();toast('Avaliação salva.');render()},
  avApagar:b=>{if(!confirma(b,'av'))return;S.correcoes=S.correcoes.filter(c=>c.av!==K.av);S.avaliacoes=S.avaliacoes.filter(a=>a.id!==K.av);save();A.avVoltar()},
  manAbrir:b=>{const av=avEdit(),c=S.correcoes.find(x=>x.av===av.id&&x.est===b.dataset.id);K.manual={est:b.dataset.id,resp:c?c.resp.slice():Array(av.nq).fill(null)};render()},
  manBol:b=>{const q=+b.dataset.q,j=+b.dataset.j;K.manual.resp[q]=K.manual.resp[q]===j?null:j;render()},
@@ -795,8 +1218,7 @@ const A={
  fotoSalvar:b=>{const i=+b.dataset.i,f=K.fotos[i];if(!f.est)return;gravarCorrecao(avEdit(),f.est,f.resp,'foto');K.fotos.splice(i,1);save();toast('Correção salva.');render()},
  fotoDesc:b=>{K.fotos.splice(+b.dataset.i,1);render()},
  fotoTodas:()=>{const av=avEdit();let n=0;K.fotos=K.fotos.filter(f=>{if(!f.erro&&f.est){gravarCorrecao(av,f.est,f.resp,'foto');n++;return false}return true});save();toast(n+' correção(ões) salvas.');render()},
- folhasGerar:async()=>{try{await carregar(LIB_QR,'qrcode')}catch(e){toast('Não consegui carregar o gerador de QR Code. As folhas saem sem QR.')}K.folhas=true;render()},
- folhasImp:()=>{const av=avEdit();$('folhas').innerHTML=estDaTurma(av.turma).map(e=>folhaSVG(av,e)).join('');document.body.classList.add('imprimindo');try{window.print()}catch(e){}setTimeout(()=>document.body.classList.remove('imprimindo'),1000)},
+ folhasGerar:async b=>{const av=avEdit();b.disabled=true;b.textContent='Gerando…';try{K.pdf=await gerarFolhasPDF(av);toast('PDF pronto.')}catch(e){toast('Não consegui gerar o PDF: '+(e.message||e))}render()},
  /* prova */
  pvNova:()=>{const t=minhasTurmas()[0]||'';const pr={id:uid(),nome:'',turma:t,tempo:30,valor:10,embaralhar:true,mostrarNota:true,aberta:false,codigo:codigoProva(),pins:{},questoes:[{e:'',alts:['','','',''],certa:0}],autor:meuNome(),autorUid:ME.uid};estDaTurma(t).forEach(e=>pr.pins[e.id]=pin6());S.provas.push(pr);save();P={id:pr.id,aba:'questoes',lote:''};render()},
  pvAbrir:b=>{P={id:b.dataset.id,aba:'questoes',lote:''};render()},
@@ -844,7 +1266,10 @@ const A={
  auEsqueci:async()=>{const email=$('auEmail').value.trim();if(!email)return toast('Escreva o seu e-mail acima.');await clienteSB();await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});toast('Se o e-mail estiver cadastrado, você vai receber um link.')},
  esEntrar:async()=>{const cod=$('esCod').value.trim().toUpperCase(),nome=$('esNome').value.trim();if(!cod||!nome){AU.erro='Preencha o código e o seu nome.';return render()}const{data,error}=await sb.rpc('prumo_entrar_escola',{p_codigo:cod,p_nome:nome});if(error||!data){AU.erro='Código não encontrado.';return render()}iniciarServidor()},
  esCriar:async()=>{const esc2=$('esEscola').value.trim(),nome=$('esNome2').value.trim();if(!esc2||!nome){AU.erro='Preencha o nome da escola e o seu nome.';return render()}const{error}=await sb.rpc('prumo_criar_escola',{p_nome:esc2,p_meu_nome:nome});if(error){AU.erro='Não consegui cadastrar: '+error.message;return render()}S.escola=esc2;await iniciarServidor();save()},
- sair:async()=>{if(sb)await sb.auth.signOut();location.hash='';location.reload()},
+ devEntrar:b=>entrarEscolaDev(b.dataset.id),
+ devPainel:async()=>{if(pend||syncando){clearTimeout(syncT);await sync()}try{sessionStorage.removeItem('prumo.devEscola')}catch(e){}carregarPainelDev()},
+ devCriar:async()=>{const n=($('devNova').value||'').trim();if(!n)return toast('Escreva o nome da escola.');const{data,error}=await sb.rpc('prumo_criar_escola',{p_nome:n,p_meu_nome:'Desenvolvedor'});if(error)return toast('Não consegui cadastrar: '+error.message);DEV=[];await entrarEscolaDev(data.escola_id);if(ESCOLA===data.escola_id){S.escola=n;save();render()}},
+ sair:async()=>{try{sessionStorage.removeItem('prumo.devEscola')}catch(e){}if(sb)await sb.auth.signOut();location.hash='';location.reload()},
  mRemover:async b=>{const m=MEMBROS[+b.dataset.i];if(!m||!confirma(b,'m'+m.user_id))return;const{error}=await sb.from('membros').delete().eq('escola_id',ESCOLA).eq('user_id',m.user_id);if(error)return toast('Não consegui remover.');await carregarMembros();render()}};
 function gravarCorrecao(av,est,resp,origem){const n=notaDe(av,resp);const id=av.id+'_'+est;const c=S.correcoes.find(x=>x.id===id);const d={id,av:av.id,est,resp:resp.slice(),acertos:n.acertos,nota:n.nota,origem,autorUid:ME.uid};if(c)Object.assign(c,d);else S.correcoes.push(d)}
 function retomarProva(){try{const a=JSON.parse(localStorage.getItem(AND)||'null');if(a&&a.fimEm>Date.now()-5*60000){AL=Object.assign({fase:'prova',erro:''},a);if(AL.fimEm<Date.now())AL.fimEm=Date.now()+15000}}catch(e){}}
@@ -879,7 +1304,7 @@ $('app').addEventListener('input',e=>{const el=e.target.closest('[data-inp]');if
 window.addEventListener('hashchange',()=>{const v=location.hash.slice(1);if(views[v]&&v!==view){if(v==='aluno'){AL={fase:'entrar',erro:''};retomarProva()}view=v;render()}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)atualizarDoServidor()});
 setInterval(atualizarDoServidor,60000);
-window.__prumo={geom,analisar,MARC,parseLote,textoRelatorio,textoOcorrencia,pontos,get S(){return S}};
+window.__prumo={omrProva,cabecalhoFolha,parseLote,textoRelatorio,textoOcorrencia,pontos,get S(){return S}};
 /* início */
 {const v=location.hash.slice(1);if(v==='aluno')retomarProva();
  if(MODO==='local'){try{const t=localStorage.getItem(KEY);if(t)S=Object.assign(padrao(),JSON.parse(t))}catch(e){}ids();view=views[v]&&!['entrar','escolher'].includes(v)?v:'inicio';render()}
