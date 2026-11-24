@@ -1,4 +1,4 @@
-# Prumo
+# Coordenadas
 
 Gestão escolar: substituições, corretor, prova online, relatórios e ocorrências.
 
