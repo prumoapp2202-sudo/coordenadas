@@ -1155,7 +1155,15 @@ function vAceite(){return `<div class="card" style="max-width:780px;margin:auto"
  <label class="ck" style="margin-top:14px"><input type="checkbox" id="acOk"> Li e aceito os Termos de uso e de privacidade do app Coordenadas.</label><div class="acts"><button class="b p" data-act="aceitar">Aceitar e continuar</button><button class="b" data-act="sair">Sair</button></div></div>`}
 /* ---------- LOGIN (servidor) ---------- */
 let AU={modo:'entrar',erro:''};
-async function clienteSB(){if(sb)return sb;const lib=await carregar(LIB_SB,'supabase');sb=lib.createClient(SERVIDOR.url,SERVIDOR.chave,{auth:{persistSession:true,autoRefreshToken:true}});return sb}
+async function clienteSB(){if(sb)return sb;const lib=await carregar(LIB_SB,'supabase');sb=lib.createClient(SERVIDOR.url,SERVIDOR.chave,{auth:{persistSession:true,autoRefreshToken:true}});sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY')telaNovaSenha()});if(RECUP)telaNovaSenha();return sb}
+const RECUP=/type=recovery/.test(location.hash);
+function telaNovaSenha(){if($('novaSenhaBox'))return;const d=document.createElement('div');d.id='novaSenhaBox';d.setAttribute('role','dialog');d.setAttribute('aria-modal','true');
+d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px';
+d.innerHTML='<div class="card" style="max-width:380px;width:100%;background:var(--paper);padding:22px;border-radius:14px"><h2 style="margin-top:0">Criar senha nova</h2><label>Senha nova (mínimo 8 caracteres)<input type="password" id="nsA" autocomplete="new-password"></label><label style="margin-top:10px">Repita a senha nova<input type="password" id="nsB" autocomplete="new-password"></label><p class="small" id="nsMsg" style="color:var(--coral)"></p><div class="acts"><button class="b p" id="nsOk">Salvar senha nova</button></div></div>';
+document.body.appendChild(d);$('nsA').focus();
+$('nsOk').onclick=async()=>{const a=$('nsA').value,b=$('nsB').value,m=$('nsMsg');if(a.length<8){m.textContent='A senha precisa ter pelo menos 8 caracteres.';return}if(a!==b){m.textContent='As duas senhas estão diferentes.';return}
+$('nsOk').disabled=true;const{error}=await sb.auth.updateUser({password:a});if(error){$('nsOk').disabled=false;m.textContent='Não deu certo: o link pode ter vencido. Peça outro em "Esqueci a senha".';return}
+d.remove();history.replaceState(null,'',location.pathname);toast('Senha nova salva. Você já está conectado.');location.reload()}}
 function vEntrar(){const cad=AU.modo==='criar';return `<div class="auth"><div class="card"><h1>${cad?'Criar conta':'Entrar'}</h1><label>E-mail<input id="auEmail" type="email" autocomplete="email"></label><label style="margin-top:12px">Senha<input id="auSenha" type="password" autocomplete="${cad?'new-password':'current-password'}"></label>${cad?'<p class="small muted">Use pelo menos 8 caracteres.</p><label class="ck" style="margin-top:10px"><input type="checkbox" id="auTermos"> <span>Li e aceito os <a href="#termos">Termos de uso e de privacidade</a>.</span></label>':''}${AU.erro?`<p class="rel err">${esc(AU.erro)}</p>`:''}
  <div class="acts"><button class="b p" data-act="auOk">${cad?'Criar conta':'Entrar'}</button><button class="b" data-act="auTroca">${cad?'Já tenho conta':'Criar conta'}</button></div>${cad?'':'<div class="acts" style="margin-top:12px"><button class="b s" data-act="auEsqueci">Esqueci a senha</button><button class="b s" data-act="auReenviar">Não recebi o e-mail de confirmação</button></div>'}</div>
  <div class="card"><h2>É estudante?</h2><div class="acts"><button class="b c" data-act="go" data-v="aluno">Sou estudante — fazer prova</button></div></div></div>`}
@@ -1359,6 +1367,7 @@ window.__prumo={omrProva,cabecalhoFolha,parseLote,textoRelatorio,textoOcorrencia
  else{$('app').innerHTML='<div class="card auth"><p>Carregando…</p></div>';if(v==='aluno'){view='aluno';render()}else iniciarServidor()}}
 }
 </script>
+<script>if(typeof RECUP!=='undefined'&&RECUP)clienteSB();</script>
 <script>if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}</script>
 </body>
 </html>
