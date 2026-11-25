@@ -11,4 +11,4 @@ jobs:
     steps:
       - name: Consulta leve ao servidor
         run: |
-          curl -fsS "https://dqiczyjjbjperoagswgp.supabase.co/rest/v1/escolas?select=id&limit=1" -H "apikey: sb_publishable_STerZw0LCBYFdkh3enzfNQ_jSg87ebz" -o /dev/null -w "Servidor respondeu: HTTP %{http_code}\n"
+          curl -fsS -X POST "https://dqiczyjjbjperoagswgp.supabase.co/rest/v1/rpc/prumo_prova_abrir" -H "apikey: sb_publishable_STerZw0LCBYFdkh3enzfNQ_jSg87ebz" -H "Content-Type: application/json" -d '{"p_codigo":"PING","p_pin":"000000"}' -w "\nServidor respondeu: HTTP %{http_code}\n"
