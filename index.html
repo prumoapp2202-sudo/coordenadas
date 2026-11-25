@@ -68,10 +68,10 @@ input,select,textarea{font:16px Inter,system-ui,sans-serif;color:var(--ink);back
 textarea{width:100%;min-height:120px}
 textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;min-height:140px}
 input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:1px}
-button.b,label.b{font:700 15px Inter,system-ui,sans-serif;border-radius:10px;padding:10px 16px;min-height:44px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink);position:relative}
-button.b.p{background:var(--blue);border-color:var(--blue);color:light-dark(#fff,#0f131b)}
+button.b,label.b,a.b{font:700 15px Inter,system-ui,sans-serif;border-radius:10px;padding:10px 16px;min-height:44px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink);position:relative}
+button.b.p,a.b.p{background:var(--blue);border-color:var(--blue);color:light-dark(#fff,#0f131b)}
 button.b.c{background:var(--coral);border-color:var(--coral);color:light-dark(#fff,#0f131b)}
-button.b.s{padding:6px 10px;min-height:36px;font-size:14px}
+button.b.s,a.b.s{padding:6px 10px;min-height:36px;font-size:14px}
 button.b.perigo{background:var(--coralSoft);border-color:var(--coral);color:var(--coral)}
 button.b:disabled{opacity:.45;cursor:not-allowed}
 .hid{position:absolute;opacity:0;width:1px;height:1px}
@@ -137,8 +137,11 @@ body.aluno .top nav,body.aluno .quem,body.aluno footer{display:none}
 .enun{font-size:19px;line-height:1.5;white-space:pre-wrap}
 .auth{max-width:440px;margin:24px auto}
 footer{text-align:center;padding:10px 16px 40px;color:var(--muted);font-size:14px}
-#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(120px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:700;max-width:92vw;transition:transform .25s;z-index:9}
+#toast{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(160%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font:600 14px/1.35 Inter,system-ui,sans-serif;width:max-content;max-width:min(440px,calc(100vw - 24px));box-shadow:0 6px 20px rgba(0,0,0,.25);transition:transform .25s;z-index:9;pointer-events:none}
 #toast.on{transform:translateX(-50%) translateY(0)}
+a.b{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.asst h3{font-size:18px}
+@media(min-width:900px){#toast{left:auto;right:20px;transform:translateY(160%)}#toast.on{transform:translateY(0)}}
 #folhas{display:none}
 @media(prefers-reduced-motion:reduce){#toast{transition:none}}
 @media(max-width:600px){table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;color:var(--muted);font-size:13px}.stack td:empty{display:none}.stack td input,.stack td select{width:100%}}
@@ -641,7 +644,7 @@ const isMaster=()=>ME.papel==='master';
 const gestor=()=>ME.papel==='master'||ME.papel==='coordenacao';
 const isCoord=gestor;
 const veTudo=()=>gestor()||ME.papel==='aee';
-let toastT;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),3400)}
+let toastT;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),Math.min(12000,3400+Math.max(0,String(m).length-60)*45))}
 let armado=null,armT;
 function confirma(b,id){if(armado===id){armado=null;clearTimeout(armT);return true}armado=id;b.dataset.orig=b.textContent;b.textContent='Clique de novo para confirmar';b.classList.add('perigo');clearTimeout(armT);armT=setTimeout(()=>{armado=null;if(b.isConnected){b.textContent=b.dataset.orig;b.classList.remove('perigo')}},4500);return false}
 async function copiar(txt){try{await navigator.clipboard.writeText(txt);toast('Copiado.');return}catch(e){}const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();toast(ok?'Copiado.':'Não consegui copiar. Selecione o texto e copie.')}
@@ -656,21 +659,37 @@ const LIB_XLSX='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min
 
 /* ---------- persistência ---------- */
 function ids(){for(const c of COLS)for(const d of S[c])if(!d.id)d.id=uid()}
-let snap=new Map();
+let snap=new Map(),META=new Map();
+const nomeMembro=u=>{if(!u)return '';if(u===ME.uid)return 'você';const m=MEMBROS.find(x=>x.user_id===u);return m?(m.nome||m.email||''):''};
 const podeColecao=c=>isMaster()||(gestor()&&!CAD.includes(c))||PROF_ESCREVE.includes(c);
 function docsAtuais(){const m=new Map();const cfg={};for(const k of CFG)cfg[k]=S[k];if(podeColecao('config'))m.set('config|config',JSON.stringify(cfg));for(const c of COLS){if(!podeColecao(c))continue;for(const d of S[c]){if(!isCoord()&&d.autorUid&&d.autorUid!==ME.uid)continue;m.set(c+'|'+d.id,JSON.stringify(d))}}return m}
 function save(){ids();if(MODO==='local'){try{localStorage.setItem(KEY,JSON.stringify(S));return true}catch(e){toast('Não consegui salvar neste navegador. Faça um backup agora.');return false}}agendarSync();return true}
 let syncT,syncando=false,pend=false;
 function setSync(t){const el=$('sync');if(el)el.textContent=t}
 function agendarSync(){if(!ESCOLA)return;pend=true;setSync('Salvando…');clearTimeout(syncT);syncT=setTimeout(sync,600)}
-async function sync(){if(syncando){syncT=setTimeout(sync,600);return}syncando=true;pend=false;const atual=docsAtuais();const up=[],del={};
+async function conferirServidor(keys){/* devolve as chaves que outra pessoa alterou depois que este aparelho carregou */
+ const por={};for(const k of keys){const c=k.split('|')[0];(por[c]||(por[c]=[])).push(k.slice(c.length+1))}const out=[];
+ for(const c in por)for(let i=0;i<por[c].length;i+=150){const{data,error}=await sb.from('dados').select('colecao,id,doc,atualizado_em,editado_por').eq('escola_id',ESCOLA).eq('colecao',c).in('id',por[c].slice(i,i+150));if(error)throw error;
+  for(const r of data){const k=r.colecao+'|'+r.id,m=META.get(k);if(r.editado_por&&r.editado_por!==ME.uid&&(!m||m.em!==r.atualizado_em))out.push(r)}}
+ return out}
+function aplicarDoServidor(r){const k=r.colecao+'|'+r.id;if(r.colecao==='config'){for(const x of CFG)if(r.doc[x]!==undefined)S[x]=r.doc[x]}else if(S[r.colecao]){const i=S[r.colecao].findIndex(d=>d.id===r.id);if(i>=0)S[r.colecao][i]=r.doc;else S[r.colecao].push(r.doc)}snap.set(k,JSON.stringify(r.doc));META.set(k,{em:r.atualizado_em,por:r.editado_por})}
+const NOMECOL={config:'as regras da escola',historico:'o quadro de substituição',professores:'o cadastro de professores',turmas:'as turmas',estudantes:'o cadastro de estudantes',horario:'o horário',avaliacoes:'uma avaliação',correcoes:'uma correção',provas:'uma prova',ocorrencias:'uma ocorrência',relatorios:'um relatório'};
+async function sync(){if(syncando){syncT=setTimeout(sync,600);return}syncando=true;pend=false;const atual=docsAtuais();let up=[];const del={};
  for(const[k,v]of atual)if(snap.get(k)!==v)up.push(k);
  for(const k of snap.keys()){const c=k.split('|')[0];if(!atual.has(k)&&podeColecao(c)){const d=k.slice(c.length+1);const own=!isCoord()?S[c]?.some(x=>x.id===d):false;if(!own&&(isCoord()||JSON.parse(snap.get(k)).autorUid===ME.uid))(del[c]||(del[c]=[])).push(d)}}
- try{for(let i=0;i<up.length;i+=300){const rows=up.slice(i,i+300).map(k=>{const c=k.split('|')[0];return{escola_id:ESCOLA,colecao:c,id:k.slice(c.length+1),doc:JSON.parse(atual.get(k)),atualizado_em:new Date().toISOString()}});const{error}=await sb.from('dados').upsert(rows);if(error)throw error;rows.forEach(r=>snap.set(r.colecao+'|'+r.id,JSON.stringify(r.doc)))}
-  for(const c in del)for(let i=0;i<del[c].length;i+=200){const part=del[c].slice(i,i+200);const{error}=await sb.from('dados').delete().eq('escola_id',ESCOLA).eq('colecao',c).in('id',part);if(error)throw error;part.forEach(d=>snap.delete(c+'|'+d))}
-  setSync('Salvo')}catch(e){setSync('Erro ao salvar');toast('Não consegui salvar no servidor: '+(e.message||e))}syncando=false}
-async function carregarServidor(){let all=[],from=0;for(;;){const{data,error}=await sb.from('dados').select('colecao,id,doc').eq('escola_id',ESCOLA).range(from,from+999);if(error)throw error;all=all.concat(data);if(data.length<1000)break;from+=1000}
- const n=padrao();snap=new Map();for(const r of all){if(r.colecao==='config')for(const k of CFG){if(r.doc[k]!==undefined)n[k]=r.doc[k]}else if(n[r.colecao])n[r.colecao].push(r.doc);snap.set(r.colecao+'|'+r.id,JSON.stringify(r.doc))}S=n}
+ const falhas=[];let conflitos=[];
+ try{if(up.length){conflitos=await conferirServidor(up);if(conflitos.length){const cs=new Set(conflitos.map(r=>r.colecao+'|'+r.id));up=up.filter(k=>!cs.has(k));conflitos.forEach(aplicarDoServidor)}}
+  for(let i=0;i<up.length;i+=300){const lote=up.slice(i,i+300),rows=lote.map(k=>{const c=k.split('|')[0];return{escola_id:ESCOLA,colecao:c,id:k.slice(c.length+1),doc:JSON.parse(atual.get(k))}});
+   let{data,error}=await sb.from('dados').upsert(rows).select('colecao,id,atualizado_em,editado_por');
+   if(error){data=[];for(const r of rows){const x=await sb.from('dados').upsert(r).select('colecao,id,atualizado_em,editado_por');if(x.error){falhas.push(r.colecao);snap.set(r.colecao+'|'+r.id,JSON.stringify(r.doc))}else data.push(...x.data)}}/* um item recusado não trava os outros */
+   const ok=new Set(data.map(r=>r.colecao+'|'+r.id));rows.forEach(r=>{const k=r.colecao+'|'+r.id;if(ok.has(k))snap.set(k,JSON.stringify(r.doc))});data.forEach(r=>META.set(r.colecao+'|'+r.id,{em:r.atualizado_em,por:r.editado_por}))}
+  for(const c in del)for(let i=0;i<del[c].length;i+=200){const part=del[c].slice(i,i+200);const{error}=await sb.from('dados').delete().eq('escola_id',ESCOLA).eq('colecao',c).in('id',part);if(error)throw error;part.forEach(d=>{snap.delete(c+'|'+d);META.delete(c+'|'+d)})}
+  setSync(falhas.length?'Erro ao salvar':'Salvo');
+  if(conflitos.length){const r=conflitos[0],quem=nomeMembro(r.editado_por)||'outra pessoa',hr=new Date(r.atualizado_em).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});toast(`${quem} alterou ${NOMECOL[r.colecao]||'este item'} às ${hr}. Mostrei a versão mais recente${conflitos.length>1?' (e de mais '+(conflitos.length-1)+' item(ns))':''}; confira e refaça a sua mudança, se precisar.`);render()}
+  else if(falhas.length)toast('Alguns itens não foram salvos porque você não tem permissão para alterá-los: '+[...new Set(falhas)].map(c=>NOMECOL[c]||c).join(', ')+'.')}
+ catch(e){setSync('Erro ao salvar');toast('Não consegui salvar no servidor: '+(e.message||e))}syncando=false}
+async function carregarServidor(){let all=[],from=0;for(;;){const{data,error}=await sb.from('dados').select('colecao,id,doc,atualizado_em,editado_por').eq('escola_id',ESCOLA).range(from,from+999);if(error)throw error;all=all.concat(data);if(data.length<1000)break;from+=1000}
+ const n=padrao();snap=new Map();META=new Map();for(const r of all){META.set(r.colecao+'|'+r.id,{em:r.atualizado_em,por:r.editado_por});if(r.colecao==='config')for(const k of CFG){if(r.doc[k]!==undefined)n[k]=r.doc[k]}else if(n[r.colecao])n[r.colecao].push(r.doc);snap.set(r.colecao+'|'+r.id,JSON.stringify(r.doc))}S=n}
 async function atualizarDoServidor(){if(MODO!=='servidor'||!ESCOLA||pend||syncando)return;const ae=document.activeElement;if(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))return;try{await carregarServidor();if(['inicio','hoje','corretor','prova','relatorios','relver','ochist','ocpontos','historico'].includes(view))render()}catch(e){}}
 
 /* ---------- consultas ---------- */
@@ -709,6 +728,13 @@ function calcular(){const t=G.turno,d=diaDaData(G.data);if(d<0||!S.turnos[t])ret
   const conflito=!!sub&&set.has(sub);if(sub)set.add(sub);if(tipo==='prof'&&sub)dia.set(sub,(dia.get(sub)||0)+1);
   itens.push(Object.assign({},n,{key,sub,tipo,nota,remanejar,cands,conflito}))}
  return{d,itens}}
+function foneZap(t){let d=String(t||'').replace(/\D/g,'');if(!d)return '';if(d.startsWith('0'))d=d.replace(/^0+/,'');if(d.length===10||d.length===11)d='55'+d;return d.length>=12?d:''}
+const linkZap=(fone,txt)=>'https://wa.me/'+(fone||'')+'?text='+encodeURIComponent(txt);
+function avisosSubs(data,turno,itens){const hs=horas(turno),m=new Map();for(const i of itens){if(!i.sub)continue;(m.get(i.sub)||m.set(i.sub,[]).get(i.sub)).push(i)}
+ return[...m].map(([nome,its])=>{const pr=S.professores.find(p=>p.nome===nome);const txt=`Olá, ${nome.split(' ')[0]}! Substituição ${dias()[diaDaData(data)]?'de '+dias()[diaDaData(data)].toLowerCase()+', ':''}${dataBR(data)} (${S.turnos[turno]?.nome||''}):\n`+its.sort((a,b)=>a.a-b.a).map(i=>`• ${i.a+1}ª aula${hs[i.a]?' ('+hs[i.a]+')':''} · turma ${i.turma}, no lugar de ${i.aus}`+(i.remanejar?' (vamos remanejar o seu horário)':'')).join('\n')+`\n\nObrigado!${S.escola?' — Coordenação, '+S.escola:''}`;return{nome,its,fone:foneZap(pr?.telefone),txt}})}
+function minhasSubs(data){if(!ME.nome)return[];const r=[];for(const q of S.historico.filter(q=>q.data===data))for(const i of q.itens||[])if(i.sub===ME.nome)r.push(Object.assign({turno:q.turno},i));return r.sort((a,b)=>a.turno-b.turno||a.a-b.a)}
+function cartaoMinhasSubs(data,link){const ms=minhasSubs(data);if(!ms.length)return '';return `<div class="card" style="border-color:var(--coral);background:var(--coralSoft)"><h2 style="margin-top:0">Você substitui ${data===hoje()?'hoje':'em '+esc(dataBR(data))}</h2><ul style="margin:0;padding-left:20px">${ms.map(i=>{const h=horas(i.turno)[i.a];return `<li><b>${i.a+1}ª aula${h?' ('+esc(h)+')':''}</b> · turma ${esc(i.turma)}, no lugar de ${esc(i.aus)}${S.turnos.length>1?' · '+esc(S.turnos[i.turno]?.nome||''):''}${i.remanejar?' · <span class="small">horário remanejado</span>':''}</li>`}).join('')}</ul>${link?'<div class="acts"><button class="b s" data-act="go" data-v="hoje">Ver o quadro do dia</button></div>':''}</div>`}
+function quemPublicou(q){const m=META.get('historico|'+q.id);if(!m||!m.em)return '';const nome=nomeMembro(m.por);return `<p class="small muted" style="margin:6px 0 0">Publicado${nome?' por '+esc(nome):''} às ${esc(new Date(m.em).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}))} de ${esc(new Date(m.em).toLocaleDateString('pt-BR'))}.</p>`}
 function textoQuadro(data,turno,itens){const hs=horas(turno),aus=[...new Set(itens.map(i=>i.aus))];let s='*Quadro de substituição'+(S.escola?' — '+S.escola:'')+'*\n'+(dias()[diaDaData(data)]||'')+', '+dataBR(data)+' · '+(S.turnos[turno]?.nome||'')+'\nAusentes: '+aus.join(', ')+'\n';
  for(const i of itens)s+='\n'+(i.a+1)+'ª aula'+(hs[i.a]?' ('+hs[i.a]+')':'')+' · '+i.turma+': '+(i.sub||'SEM SUBSTITUTO')+(i.remanejar?' (remanejar o horário dele no dia)':'');return s}
 
@@ -723,15 +749,15 @@ const MODS=[
  {k:'relatorios',n:'Relatórios',d:'Desenvolvimento de cada estudante',subs:[['relatorios','Escrever','todos'],['relver','Relatórios prontos','todos']]},
  {k:'ocorrencias',n:'Ocorrências',d:'Registro, histórico e pontuação',subs:[['ocnova','Nova ocorrência','todos'],['ochist','Histórico','todos'],['ocpontos','Pontuação','todos']]},
  {k:'config',n:'Configuração',d:'Estudantes, professores, horários e regras',subs:[['escola','Escola e regras','master'],['cprof','Professores','master'],['cturmas','Turmas','master'],['cest','Estudantes','master'],['chorario','Horário','master'],['importar','Importar planilhas','master'],['acessos','Pessoas e acessos','master'],['backup','Backup','master']]},
- {k:'ajuda',n:'Ajuda',d:'Tutorial passo a passo',subs:[['tutorial','Tutorial','todos']]}];
+ {k:'ajuda',n:'Ajuda',d:'Tutorial passo a passo',subs:[['tutorial','Tutorial','todos'],['conta','Minha conta','todos']]}];
 const podeVer=n=>n==='todos'||(n==='gestor'&&gestor())||(n==='master'&&isMaster());
-const subsDe=m=>m.subs.filter(x=>podeVer(x[2])&&!(x[0]==='acessos'&&MODO!=='servidor'));
+const subsDe=m=>m.subs.filter(x=>podeVer(x[2])&&!((x[0]==='acessos'||x[0]==='conta')&&MODO!=='servidor'));
 const modsVisiveis=()=>MODS.filter(m=>subsDe(m).length);
 const modDe=v=>MODS.find(m=>m.subs.some(x=>x[0]===v));
 function permitido(v){if(v==='inicio')return true;const m=modDe(v);return !!m&&subsDe(m).some(x=>x[0]===v)}
 function saud(){const h=new Date().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}
 function vInicio(){const ms=modsVisiveis(),hq=S.historico.some(q=>q.data===hoje());
- return `<h1>${saud()}${ME.nome?', '+esc(ME.nome.split(' ')[0]):''}</h1><p class="muted">${esc(S.escola||'Escolha um módulo para começar.')}</p>${hq?'<p><button class="tag t-w" style="border:0;cursor:pointer" data-act="go" data-v="hoje">Há quadro de substituição publicado para hoje</button></p>':''}${isMaster()?vAssistente()+(MODO==='local'&&vazio()?'<div class="card"><p>Quer ver o app Coordenadas funcionando antes de cadastrar a sua escola?</p><div class="acts"><button class="b c" data-act="exemplo">Testar com escola de exemplo</button></div></div>':''):''}${MODO==='servidor'&&!gestor()&&ME.papel!=='aee'&&!S.professores.some(p=>p.nome===ME.nome)?'<div class="card" style="border-color:var(--coral)"><p><b>Seu nome não foi encontrado no cadastro de professores.</b> Por isso, você ainda não vê as suas turmas. Peça ao master da escola para ligar a sua conta ao seu nome em Configuração → Pessoas e acessos.</p></div>':''}
+ return `<h1>${saud()}${ME.nome?', '+esc(ME.nome.split(' ')[0]):''}</h1><p class="muted">${esc(S.escola||'Escolha um módulo para começar.')}</p>${cartaoMinhasSubs(hoje(),true)||(hq?'<p><button class="tag t-w" style="border:0;cursor:pointer" data-act="go" data-v="hoje">Há quadro de substituição publicado para hoje</button></p>':'')}${isMaster()?vAssistente()+(MODO==='local'&&vazio()?'<div class="card"><p>Quer ver o app Coordenadas funcionando antes de cadastrar a sua escola?</p><div class="acts"><button class="b c" data-act="exemplo">Testar com escola de exemplo</button></div></div>':''):''}${MODO==='servidor'&&!gestor()&&ME.papel!=='aee'&&!S.professores.some(p=>p.nome===ME.nome)?'<div class="card" style="border-color:var(--coral)"><p><b>Seu nome não foi encontrado no cadastro de professores.</b> Por isso, você ainda não vê as suas turmas. Peça ao master da escola para ligar a sua conta ao seu nome em Configuração → Pessoas e acessos.</p></div>':''}
  <div class="mods">${ms.map(m=>`<button class="mod${m.k==='config'?' cfg':''}" data-act="go" data-v="${subsDe(m)[0][0]}"><span class="ico">${svgIc(m.k)}</span><b>${m.n}</b><span>${m.d}</span></button>`).join('')}</div>`}
 function vazio(){return !S.professores.length||!S.horario.length}
 const APP_URL='https://prumoapp2202-sudo.github.io/coordenadas/';
@@ -743,12 +769,14 @@ function passosConfig(){const ligados=MEMBROS.filter(m=>m.user_id!==ME.uid&&S.pr
  {t:'Importe o quadro de horários',d:'Uma linha por professor e dia. É o horário que libera as substituições e mostra a cada professor as turmas dele.',ok:S.horario.length>0,v:'importar',b:'Importar horário'}];
  if(MODO==='servidor')p.push({t:'Convide os professores',d:'Mande a mensagem pronta pelo WhatsApp. Quem digitar o nome igual ao do cadastro é ligado sozinho.',ok:ligados>0,convite:true,x:ligados?ligados+' professor(es) já entraram e foram ligados':''});
  return p}
-function vAssistente(){const p=passosConfig(),feitos=p.filter(x=>x.ok).length;if(feitos===p.length&&S.assistenteFechado)return '';
- const atual=p.findIndex(x=>!x.ok);
- return `<div class="card" style="border-color:var(--blue)"><div class="row" style="justify-content:space-between;align-items:center"><h2 style="margin:0">${feitos===p.length?'Escola configurada':'Primeiros passos da escola'}</h2><span class="tag t-b">${feitos} de ${p.length}</span></div>
- <div style="height:8px;background:var(--grey);border-radius:6px;margin:12px 0 4px"><div style="height:8px;border-radius:6px;background:var(--blue);width:${Math.round(feitos/p.length*100)}%"></div></div>
- <ol class="steps" style="margin-top:14px">${p.map((x,i)=>`<li class="${x.ok?'feito':''}"><h3>${esc(x.t)}</h3><p class="small">${esc(x.d)}${x.x?' <b>'+esc(x.x)+'.</b>':''}</p>${x.convite?`<p class="small">Código da escola: <b style="font-size:18px;letter-spacing:2px">${esc(ESCOLA_COD)}</b></p><div class="acts"><button class="b s ${i===atual?'p':''}" data-act="copConvite">Copiar mensagem de convite</button><button class="b s" data-act="go" data-v="acessos">Ver quem entrou</button></div>`:`<button class="b s ${i===atual?'p':''}" data-act="go" data-v="${x.v}">${esc(x.b)}</button>`}</li>`).join('')}</ol>
- ${feitos===p.length?'<div class="acts"><button class="b" data-act="fecharAssistente">Fechar este quadro</button></div>':''}</div>`}
+function vAssistente(){const p=passosConfig(),feitos=p.filter(x=>x.ok).length,tudo=feitos===p.length;if(tudo&&S.assistenteFechado)return '';
+ const atual=p.findIndex(x=>!x.ok),x=p[atual];
+ const barra=`<div style="height:6px;background:var(--grey);border-radius:6px;margin:8px 0 0"><div style="height:6px;border-radius:6px;background:var(--blue);width:${Math.round(feitos/p.length*100)}%"></div></div>`;
+ if(tudo)return `<div class="card asst"><div class="row" style="justify-content:space-between;align-items:center;gap:10px"><b>Escola configurada: ${p.length} de ${p.length} passos feitos.</b><button class="b s" data-act="fecharAssistente">Fechar</button></div></div>`;
+ const bot=x.convite?`<div class="acts"><button class="b s p" data-act="copConvite">Copiar mensagem de convite</button><button class="b s" data-act="go" data-v="acessos">Ver quem entrou</button></div>`:`<div class="acts"><button class="b s p" data-act="go" data-v="${x.v}">${esc(x.b)}</button></div>`;
+ return `<div class="card asst" style="border-color:var(--blue)"><div class="row" style="justify-content:space-between;align-items:center"><span class="small muted">Primeiros passos da escola</span><span class="tag t-b">${feitos} de ${p.length}</span></div>${barra}
+ <h3 style="margin:14px 0 4px">Próximo passo: ${esc(x.t)}</h3><p class="small" style="margin:0">${esc(x.d)}${x.convite?` Código da escola: <b style="letter-spacing:2px">${esc(ESCOLA_COD)}</b>.`:''}</p>${bot}
+ <details style="margin-top:10px"><summary class="small">Ver todos os passos</summary><ol class="steps" style="margin-top:10px">${p.map(y=>`<li class="${y.ok?'feito':''}"><h3>${esc(y.t)}</h3><p class="small">${y.x?esc(y.x)+'.':esc(y.d)}</p>${y.convite?'':`<button class="b s" data-act="go" data-v="${y.v}">${esc(y.b)}</button>`}</li>`).join('')}</ol></details></div>`}
 function semDados(titulo,txt){return `<div class="card empty"><h1>${esc(titulo)}</h1><p style="margin:auto">${esc(txt)}</p><div class="acts" style="justify-content:center">${isMaster()?`<button class="b p" data-act="go" data-v="tutorial">Abrir o tutorial</button>${MODO==='local'?'<button class="b" data-act="exemplo">Testar com escola de exemplo</button>':''}`:''}</div></div>`}
 
 function vHoje(){
@@ -774,13 +802,16 @@ function vHoje(){
   if(i.sub&&!i.cands.some(c=>c.nome===i.sub)&&!S.reserva.includes(i.sub))opts.push(`<option selected value="${esc(i.sub)}">${esc(i.sub)}</option>`);
   const tag=i.conflito?'<span class="tag t-c">Conflito</span>':i.tipo==='sem'?'<span class="tag t-c">Sem substituto</span>':i.tipo==='reserva'?'<span class="tag t-w">Último recurso</span>':i.remanejar?'<span class="tag t-w">Remanejar horário</span>':'<span class="tag t-ok">'+esc(i.nota)+'</span>';
   return `<tr><td class="nw">${i.a+1}ª${hs[i.a]?' · '+esc(hs[i.a]):''}</td><td>${esc(i.turma)}</td><td>${esc(i.aus)}</td><td><select data-chg="sub" data-k="${esc(i.key)}" aria-label="Substituto">${opts.join('')}</select></td><td>${tag}</td></tr>`}).join('');
- h+=`</tbody></table></div><div class="acts noprint"><button class="b p" data-act="zap">Copiar para WhatsApp</button><button class="b" data-act="salvarQ">Salvar e publicar</button><button class="b" data-act="limparG">Recomeçar</button></div><p class="small muted">“Salvar e publicar” guarda no histórico${MODO==='servidor'?' e mostra o quadro para todos os professores da escola':''}.</p></div>`;
+ h+=`</tbody></table></div><div class="acts noprint"><button class="b p" data-act="zapGrupo">Enviar ao grupo pelo WhatsApp</button><button class="b" data-act="zap">Copiar mensagem</button><button class="b" data-act="salvarQ">Salvar e publicar</button><button class="b" data-act="limparG">Recomeçar</button></div><p class="small muted">“Salvar e publicar” guarda no histórico${MODO==='servidor'?' e mostra o quadro para todos os professores da escola':''}.</p></div>`;
+ {const av=avisosSubs(G.data,t,r.itens),qs=S.historico.find(q=>q.data===G.data&&q.turno===t);
+ if(qs)h+=`<div class="card">${quemPublicou(qs)||'<p class="small muted" style="margin:0">Quadro já publicado para esta data e turno.</p>'}</div>`;
+ if(av.length)h+=`<div class="card noprint"><h2>Avisar cada substituto</h2><p class="small muted">Abre o WhatsApp com a mensagem pronta para a pessoa. Quem não tem telefone no cadastro recebe a mensagem copiada, para você colar.</p><div class="scroll"><table class="stack"><thead><tr><th>Substituto</th><th>Aulas</th><th></th></tr></thead><tbody>${av.map((a,k)=>`<tr><td><b>${esc(a.nome)}</b></td><td>${a.its.map(i=>(i.a+1)+'ª '+esc(i.turma)).join(', ')}</td><td>${a.fone?`<a class="b s p" href="${esc(linkZap(a.fone,a.txt))}" target="_blank" rel="noopener">Avisar no WhatsApp</a>`:`<button class="b s" data-act="zapUm" data-k="${k}">Copiar aviso</button> <span class="small muted">sem telefone</span>`}</td></tr>`).join('')}</tbody></table></div></div>`}
  h+=`<div class="card noprint"><h3>Prévia da mensagem</h3><pre class="zap">${esc(textoQuadro(G.data,t,r.itens))}</pre></div>`;
  return h}
 function vHojeLeitura(){const qs=S.historico.filter(q=>q.data===G.data).sort((a,b)=>a.turno-b.turno);
- let h=`<h1>Quadro do dia</h1><div class="card"><div class="row"><label>Data<input type="date" data-chg="gData" value="${esc(G.data)}"></label></div></div>`;
+ let h=`<h1>Quadro do dia</h1><div class="card"><div class="row"><label>Data<input type="date" data-chg="gData" value="${esc(G.data)}"></label></div></div>`+cartaoMinhasSubs(G.data,false);
  if(!qs.length)return h+'<div class="card"><p>Nenhum quadro de substituição publicado para esta data.</p></div>';
- return h+qs.map(q=>`<div class="card"><pre class="zap">${esc(textoQuadro(q.data,q.turno,q.itens))}</pre></div>`).join('')}
+ return h+qs.map(q=>`<div class="card"><pre class="zap">${esc(textoQuadro(q.data,q.turno,q.itens))}</pre>${quemPublicou(q)}</div>`).join('')}
 
 let Hv={modo:'prof',item:'',turno:0};
 function vHorario(){
@@ -1083,7 +1114,12 @@ function vBackup(){let h=`<h1>Backup</h1>`;
  <label style="margin-top:14px">Restaurar: cole aqui um backup<textarea class="mono" id="bkTxt" placeholder="Cole o texto do backup"></textarea></label><div class="acts"><label class="b">Abrir arquivo de backup<input class="hid" type="file" accept=".json,.txt" data-chg="bkArq"></label><button class="b" data-act="bkRest">Restaurar</button></div></div>`;
  h+=`<div class="card"><h2>Recomeçar</h2><div class="acts">${MODO==='local'?'<button class="b" data-act="exemplo">Carregar escola de exemplo</button>':''}<button class="b" data-act="apagar">Apagar todos os dados da escola</button></div></div>`;
  return h}
-function vAcessos(){return `<h1>Pessoas e acessos</h1>`+vMembros()}
+function vAcessos(){return `<h1>Pessoas e acessos</h1>`+vMembros()+vCargoMaster()+vExcluirEscola()}
+function vCargoMaster(){const outros=MEMBROS.filter(m=>m.user_id!==ME.uid);if(ME.dev&&!MEMBROS.some(m=>m.user_id===ME.uid))return '';
+ return `<div class="card"><h2>Passar o cargo de master</h2><p class="small">Use quando você for deixar a coordenação. A pessoa escolhida passa a ter a Configuração. Você continua na escola com o papel que escolher abaixo.</p>${outros.length?`<div class="row"><label>Novo master<select id="pmPara">${outros.map(m=>`<option value="${esc(m.user_id)}">${esc(m.nome||m.email||'')}</option>`).join('')}</select></label><label>Meu papel depois<select id="pmMeu"><option value="coordenacao">Coordenação</option><option value="professor">Professor</option><option value="aee">AEE</option><option value="master">Continuar master também</option></select></label></div><label class="ck" style="margin-top:10px"><input type="checkbox" id="pmOk"> Confirmo a troca do cargo de master.</label><div class="acts"><button class="b p" data-act="passarMaster">Passar o cargo</button></div>`:'<p class="muted small">Ninguém mais entrou na escola ainda. Convide a pessoa primeiro.</p>'}</div>`}
+function vExcluirEscola(){return `<div class="card" style="border-color:var(--coral)"><h2>Excluir a escola</h2><p class="small">Apaga para sempre a escola e todos os dados dela no servidor: cadastros, horários, quadros, avaliações, provas, relatórios e ocorrências. Todas as pessoas perdem o acesso. <b>Não dá para desfazer.</b> Antes, faça um backup em Configuração → Backup.</p><label>Para confirmar, digite o nome da escola: <b>${esc(S.escola||'')}</b><input id="exNome" autocomplete="off"></label><div class="acts"><button class="b" style="border-color:var(--coral);color:var(--coral)" data-act="excluirEscola">Excluir a escola para sempre</button></div></div>`}
+function vConta(){const pap=NOMEPAPEL[ME.papel]||ME.papel;return `<h1>Minha conta</h1><div class="card"><p>E-mail: <b>${esc(ME.email||'')}</b></p><p>Nome no cadastro: <b>${esc(ME.nome||'—')}</b></p><p>Escola: <b>${esc(S.escola||'')}</b> · papel: <b>${esc(pap||'')}</b></p><div class="acts"><button class="b" data-act="sair">Sair da conta neste aparelho</button></div></div>
+ <div class="card"><h2>Sair desta escola</h2><p class="small">Sua conta deixa de ter acesso a esta escola. O que você registrou (ocorrências, relatórios, avaliações) continua com a escola. Para voltar, será preciso o código de convite.${ME.papel==='master'?' Como você é master, passe antes o cargo a outra pessoa em Configuração → Pessoas e acessos.':''}</p><label class="ck"><input type="checkbox" id="seOk"> Quero sair da escola ${esc(S.escola||'')}.</label><div class="acts"><button class="b" data-act="sairEscola">Sair da escola</button></div></div>`}
 function vMembros(){const outros=MEMBROS.filter(m=>m.user_id!==ME.uid),sem=outros.filter(m=>!S.professores.some(p=>p.nome===m.nome)&&m.papel==='professor');return `<div class="card"><h2>Pessoas com acesso</h2>${sem.length?`<p class="rel w">${sem.length} pessoa(s) sem ligação com o cadastro de professores. Elas não veem as próprias turmas até você escolher o nome delas abaixo.</p>`:outros.length?'<p class="rel ok">Todas as pessoas estão ligadas ao cadastro.</p>':''}<div class="acts" style="margin-bottom:10px"><button class="b p" data-act="copConvite">Copiar mensagem de convite</button></div><p>Código de convite da escola: <b style="font-size:22px;letter-spacing:2px">${esc(ESCOLA_COD)}</b></p><p class="small">Os professores criam a conta no app Coordenadas e entram com este código. Quem digitar o nome igual ao do cadastro é ligado sozinho; os outros, ligue aqui. Defina também o papel de cada pessoa. O papel Master pode tudo, inclusive esta Configuração; Coordenação vê tudo e gera substituições, mas não altera cadastros. Só quem tem o código entra na sua escola, e ninguém de outra escola vê os seus dados.</p>
  <div class="scroll"><table class="stack"><thead><tr><th>E-mail</th><th>Nome no cadastro</th><th>Papel</th><th></th></tr></thead><tbody>${MEMBROS.map((m,i)=>`<tr><td>${esc(m.email||'')}</td><td>${S.professores.some(p=>p.nome===m.nome)||m.papel!=='professor'?'':'<span class="tag t-w">Sem ligação</span> '}<select data-chg="mNome" data-i="${i}"><option value="">— escolher —</option>${S.professores.map(p=>`<option${p.nome===m.nome?' selected':''}>${esc(p.nome)}</option>`).join('')}${m.nome&&!S.professores.some(p=>p.nome===m.nome)?`<option selected>${esc(m.nome)}</option>`:''}</select></td><td><select data-chg="mPapel" data-i="${i}"${m.user_id===ME.uid?' disabled':''}>${Object.entries(NOMEPAPEL).map(([k,n])=>`<option value="${k}"${k===m.papel?' selected':''}>${n}</option>`).join('')}</select></td><td>${m.user_id===ME.uid?'<span class="small muted">você</span>':`<button class="b s" data-act="mRemover" data-i="${i}">Remover</button>`}</td></tr>`).join('')}</tbody></table></div></div>`}
 function lerRegras(){const n=JSON.parse(JSON.stringify(S));const v=id=>($(id)?.value??'');
@@ -1178,7 +1214,7 @@ async function iniciarServidor(){try{await clienteSB();const{data:{session}}=awa
  if(!ms.length){view=location.hash.slice(1)==='aluno'?'aluno':'escolher';return render()}
  const m=ms[0];await abrirEscola(m.escola_id,m.escolas?.codigo||'',m.papel,m.nome||'')}
  catch(e){$('app').innerHTML=`<div class="card auth"><h1>Sem conexão</h1><p>Não consegui falar com o servidor do app Coordenadas. Verifique a internet e recarregue a página.</p><p class="small muted">${esc(e.message||e)}</p></div>`}}
-async function abrirEscola(id,cod,papel,nome){if(pend||syncando){clearTimeout(syncT);await sync()}ESCOLA=id;ESCOLA_COD=cod;ME.papel=papel;ME.nome=nome;MEMBROS=[];G={data:hoje(),turno:0,aus:{},esc:{}};setSync('Carregando…');await carregarServidor();if(isMaster())await carregarMembros();setSync('Salvo');pronto=true;
+async function abrirEscola(id,cod,papel,nome){if(pend||syncando){clearTimeout(syncT);await sync()}ESCOLA=id;ESCOLA_COD=cod;ME.papel=papel;ME.nome=nome;MEMBROS=[];G={data:hoje(),turno:0,aus:{},esc:{}};setSync('Carregando…');await carregarServidor();await carregarMembros();setSync('Salvo');pronto=true;
  const v=location.hash.slice(1);view=permitido(v)||v==='aluno'?v:'inicio';render()}
 /* ---------- desenvolvedor ---------- */
 let DEV=[];
@@ -1191,7 +1227,7 @@ function vDev(){const tot=k=>DEV.reduce((s,e)=>s+(+e[k]||0),0);const dt=v=>v?new
 async function carregarMembros(){const{data,error}=await sb.from('membros').select('user_id,papel,nome,email').eq('escola_id',ESCOLA);if(!error)MEMBROS=data||[]}
 
 /* ---------- render ---------- */
-const views={termos:vTermos,aceite:vAceite,dev:vDev,inicio:vInicio,hoje:vHoje,horario:vHorario,chorario:vHorario,corretor:vCorretor,prova:vProva,relatorios:vRelatorios,relver:vRelVer,ocnova:()=>{O.aba='nova';return vOcorrencias()},ochist:()=>{O.aba='hist';O.edit=null;O.ultimo=null;return vOcorrencias()},ocpontos:()=>{O.aba='pontos';O.edit=null;O.ultimo=null;return vOcorrencias()},cprof:()=>{Cv.aba='prof';return vCadastros()},cturmas:()=>{Cv.aba='turmas';return vCadastros()},cest:()=>{Cv.aba='est';return vCadastros()},importar:vImportar,escola:vRegras,acessos:vAcessos,backup:vBackup,historico:vHistorico,tutorial:vTutorial,aluno:vAluno,entrar:vEntrar,escolher:vEscolher};
+const views={termos:vTermos,aceite:vAceite,dev:vDev,inicio:vInicio,hoje:vHoje,horario:vHorario,chorario:vHorario,corretor:vCorretor,prova:vProva,relatorios:vRelatorios,relver:vRelVer,ocnova:()=>{O.aba='nova';return vOcorrencias()},ochist:()=>{O.aba='hist';O.edit=null;O.ultimo=null;return vOcorrencias()},ocpontos:()=>{O.aba='pontos';O.edit=null;O.ultimo=null;return vOcorrencias()},cprof:()=>{Cv.aba='prof';return vCadastros()},cturmas:()=>{Cv.aba='turmas';return vCadastros()},cest:()=>{Cv.aba='est';return vCadastros()},importar:vImportar,escola:vRegras,acessos:vAcessos,backup:vBackup,historico:vHistorico,tutorial:vTutorial,conta:vConta,aluno:vAluno,entrar:vEntrar,escolher:vEscolher};
 const ESPECIAIS=['aluno','entrar','escolher','dev','termos','aceite'];
 function render(){if(view!=='aluno')document.body.classList.remove('aluno');
  if(pronto&&!ESPECIAIS.includes(view)&&!permitido(view))view='inicio';
@@ -1225,6 +1261,8 @@ const A={
  aus:b=>{const p=b.dataset.p;if(G.aus[p])delete G.aus[p];else G.aus[p]={todo:true,aulas:[]};render()},
  ausAula:b=>{const p=b.dataset.p,a=+b.dataset.a,x=G.aus[p];if(!x)return;const t=G.turno,d=diaDaData(G.data);if(x.todo){x.todo=false;x.aulas=[];for(let i=0;i<nAulas(t);i++)if(i!==a&&classe(cel(p,t,d,i)).k==='aula')x.aulas.push(i)}else if(x.aulas.includes(a))x.aulas=x.aulas.filter(i=>i!==a);else x.aulas.push(a);if(!x.todo&&!x.aulas.length)delete G.aus[p];render()},
  zap:()=>copiar(textoQuadro(G.data,G.turno,calcular().itens)),
+ zapGrupo:()=>{window.open(linkZap('',textoQuadro(G.data,G.turno,calcular().itens)),'_blank','noopener')},
+ zapUm:b=>{const a=avisosSubs(G.data,G.turno,calcular().itens)[+b.dataset.k];if(a)copiar(a.txt)},
  limparG:()=>{G.aus={};G.esc={};render()},
  salvarQ:()=>{const r=calcular();if(!r.itens.length)return;const t=G.turno,i=S.historico.findIndex(h=>h.data===G.data&&h.turno===t);const q={id:i>=0?S.historico[i].id:uid(),data:G.data,turno:t,itens:r.itens.map(i=>({a:i.a,turma:i.turma,aus:i.aus,sub:i.sub,tipo:i.tipo,remanejar:i.remanejar}))};if(i>=0)S.historico[i]=q;else S.historico.push(q);if(save())toast(i>=0?'Quadro do dia atualizado.':'Quadro salvo.')},
  cAba:b=>{Cv.aba=b.dataset.k;render()},
@@ -1324,6 +1362,9 @@ const A={
  termosVoltar:()=>{const v=antesTermos&&views[antesTermos]&&antesTermos!=='termos'?antesTermos:(MODO==='servidor'&&!ESCOLA?'entrar':'inicio');antesTermos=null;if(v==='aceite'||v==='entrar'||v==='escolher'||v==='dev'){view=v;try{history.replaceState(null,'','#')}catch(e){}render()}else go(v)},
  devPainel:async()=>{if(pend||syncando){clearTimeout(syncT);await sync()}try{sessionStorage.removeItem('prumo.devEscola')}catch(e){}carregarPainelDev()},
  devCriar:async()=>{const n=($('devNova').value||'').trim();if(!n)return toast('Escreva o nome da escola.');const{data,error}=await sb.rpc('prumo_criar_escola',{p_nome:n,p_meu_nome:'Desenvolvedor'});if(error)return toast('Não consegui cadastrar: '+error.message);DEV=[];await entrarEscolaDev(data.escola_id);if(ESCOLA===data.escola_id){S.escola=n;save();render()}},
+ passarMaster:async()=>{if(!$('pmOk')?.checked)return toast('Marque a caixa de confirmação.');const para=$('pmPara').value,meu=$('pmMeu').value;const{error}=await sb.rpc('prumo_passar_master',{p_escola:ESCOLA,p_para:para,p_meu_papel:meu});if(error)return toast(error.message);toast('Cargo de master passado.');ME.papel=meu;await carregarMembros();view=permitido('acessos')?'acessos':'inicio';render()},
+ excluirEscola:async()=>{const n=$('exNome')?.value||'';if(n.trim().toLowerCase()!==(S.escola||'').trim().toLowerCase())return toast('O nome digitado não confere com o nome da escola.');const{error}=await sb.rpc('prumo_excluir_escola',{p_escola:ESCOLA,p_nome:n});if(error)return toast(error.message);try{sessionStorage.removeItem('prumo.devEscola')}catch(e){}snap=new Map();META=new Map();ESCOLA=null;toast('Escola excluída.');location.hash='';setTimeout(()=>location.reload(),1200)},
+ sairEscola:async()=>{if(!$('seOk')?.checked)return toast('Marque a caixa de confirmação.');const{error}=await sb.rpc('prumo_sair_escola',{p_escola:ESCOLA});if(error)return toast(error.message);snap=new Map();ESCOLA=null;toast('Você saiu da escola.');location.hash='';setTimeout(()=>location.reload(),1200)},
  sair:async()=>{try{sessionStorage.removeItem('prumo.devEscola')}catch(e){}if(sb)await sb.auth.signOut();location.hash='';location.reload()},
  mRemover:async b=>{const m=MEMBROS[+b.dataset.i];if(!m||!confirma(b,'m'+m.user_id))return;const{error}=await sb.from('membros').delete().eq('escola_id',ESCOLA).eq('user_id',m.user_id);if(error)return toast('Não consegui remover.');await carregarMembros();render()}};
 function gravarCorrecao(av,est,resp,origem){const n=notaDe(av,resp);const id=av.id+'_'+est;const c=S.correcoes.find(x=>x.id===id);const d={id,av:av.id,est,resp:resp.slice(),acertos:n.acertos,nota:n.nota,origem,autorUid:ME.uid};if(c)Object.assign(c,d);else S.correcoes.push(d)}
@@ -1367,7 +1408,6 @@ window.__prumo={omrProva,cabecalhoFolha,parseLote,textoRelatorio,textoOcorrencia
  else{$('app').innerHTML='<div class="card auth"><p>Carregando…</p></div>';if(v==='aluno'){view='aluno';render()}else iniciarServidor()}}
 }
 </script>
-<script>if(typeof RECUP!=='undefined'&&RECUP)clienteSB();</script>
 <script>if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}</script>
 </body>
 </html>
